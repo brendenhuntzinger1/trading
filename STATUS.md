@@ -25,13 +25,13 @@ The research and paper infrastructure needed to find one, and to recognise a fal
 | Prediction research tools | Causal panel; purged walk-forward; PBO; calibration; block bootstrap (`tradelab/predict`, `tradelab/research/validation.py`) |
 | P1 study and verdict | `P1_REPORT.md`; every phase reproduces identically |
 | Paper state persistence script | Tested against a local remote: save → restore → save round trips, no-change skip, and failure when the remote is unreachable |
-| **One manual daily paper cycle on GitHub Actions** | Run 40257231608, success. State saved to `paper-state@6ce7e32`: 8 decisions, 6 simulated fills, 4 equity marks |
+| **Two manual daily paper cycles on GitHub Actions (restore verified)** | Run 40257231608 succeeded and saved `paper-state@6ce7e32`: 8 decisions, 6 simulated fills, 4 equity marks. Run 40257385219 restored that state and saved `f007904`: still 6 orders and 6 fills (the same UTC day traded nothing twice), 16 decisions, 8 equity marks. Run 40256991578 failed (scikit-learn/scipy missing from the lock file; now fixed) |
 
 ## 2. Implemented but not verified
 | Component | What is missing |
 |---|---|
 | **Scheduled** paper workflows (daily; crypto intraday every 15 min; stocks intraday every 30 min in market hours) | They exist only on this branch. GitHub runs schedules only from the default branch, so **no scheduled run has happened**. The intraday workflows cannot even be triggered manually until merged. **Continuous paper trading is not running and must not be claimed until scheduled runs are observed** |
-| State restore across consecutive runs on Actions | A second manual daily run was dispatched to check it. Its result is reported in the PR, not here |
+| Same-day re-runs | They append duplicate decision and equity-mark rows. Harmless to positions, but they double-count marks on the dashboard. To fix before relying on equity curves |
 | Alerts | **None configured.** By default GitHub emails failed scheduled-run notifications to whoever last edited the schedule; that has not been tested |
 | Intraday paper runners (`live_crypto`, `live_stocks`) | Unit-tested and run by hand before; never run on Actions. The stocks runner uses Yahoo prints, not consolidated quotes |
 | Dashboard "evidence by source" section | Built locally and on Actions; nobody has reviewed it |
