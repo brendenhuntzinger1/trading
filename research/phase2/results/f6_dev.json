@@ -454,6 +454,98 @@
    "summary": {
     "net": {
      "days": 756,
+     "mean_bp": 0.0,
+     "sharpe": 0.0,
+     "total": 0.0,
+     "max_dd": 0.0,
+     "ci_bp": [
+      0.0,
+      0.0
+     ]
+    },
+    "gross": {
+     "days": 756,
+     "mean_bp": 0.0,
+     "sharpe": 0.0,
+     "total": 0.0,
+     "max_dd": 0.0
+    },
+    "cost_bp_per_day": 0.0,
+    "turnover_per_day": 0.0,
+    "breakeven_cost_bp_per_unit_traded": null,
+    "vs_control_net_bp": {
+     "mean": -3.9123534858860753,
+     "ci": [
+      -15.235394636320601,
+      6.416233262529832
+     ]
+    },
+    "vs_control_gross_bp": {
+     "mean": -4.544487463041841,
+     "ci": [
+      -15.882662307567808,
+      5.767817536338746
+     ]
+    },
+    "control_net": {
+     "days": 756,
+     "mean_bp": 3.9123534858860753,
+     "sharpe": 0.345685301166309,
+     "total": 0.18914335741431598,
+     "max_dd": -0.4077416122914522
+    },
+    "stress_net_mean_bp": 0.0,
+    "by_year_net": {
+     "2020": 0.0,
+     "2021": 0.0,
+     "2022": 0.0
+    },
+    "by_half_net": {
+     "2020H1": 0.0,
+     "2020H2": 0.0,
+     "2021H1": 0.0,
+     "2021H2": 0.0,
+     "2022H1": 0.0,
+     "2022H2": 0.0
+    },
+    "top10_days_share": null,
+    "avg_positions": 0.0,
+    "avg_exposure": 0.0,
+    "diagnosis": {
+     "model": "hgb_all",
+     "rank_ic_dev": {
+      "2020": 0.011520494119002878,
+      "2021": 0.02745177961113059,
+      "2022": 0.00957926190089922
+     },
+     "decile_mean_demeaned_bp": {
+      "0": -3.386795287951827,
+      "1": -3.5612331703305244,
+      "2": -1.465207024011761,
+      "3": 0.565232039662078,
+      "4": 0.27990001399302855,
+      "5": 1.269955828320235,
+      "6": 1.3227597810328007,
+      "7": 1.7123557336162776,
+      "8": 1.1593877570703626,
+      "9": 3.301518445368856
+     },
+     "cash_share": 1.0
+    }
+   },
+   "qualifiers": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   }
+  },
+  "C4_first_run_superseded": {
+   "spec": "hgb_all",
+   "summary": {
+    "net": {
+     "days": 756,
      "mean_bp": -12.480585814059317,
      "sharpe": -0.6307740069244494,
      "total": -0.7328167253734716,
@@ -541,5 +633,6 @@
     "qualified": false
    }
   }
- }
+ },
+ "c4_correction": "C4's cost filter first used a flat 2 bp half-spread instead of the registered Amendment-1 per-name measured cost; rerun with the registered cost model."
 }

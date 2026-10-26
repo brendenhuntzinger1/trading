@@ -37,5 +37,6 @@
     "qualified": false
    }
   }
- }
+ },
+ "stopped": "Stage B: no configuration dev-qualified; validation and final unread. ML learned a small, consistent ranking signal: gradient-boosted trees on all feature families had positive daily rank IC in every development year (0.012, 0.027, 0.010) and roughly monotone deciles (about -3.4 to +3.3 bp/day demeaned), beating the linear reversal baseline; C3 chose 'momentum' from 2017-19 training folds. Top-20 gross excess over the control +8.3 bp/day [-2.6, +20.1] (not significant) against ~25 bp/day of measured opening-auction costs. C4 with the registered per-name cost filter abstained 100% of days: no prediction exceeded its round-trip cost - the correct no-trade decision. Lesson: weak daily ranking skill exists but is ~5-10x too small for open-to-open execution; ML would need a cheaper execution point (closing quote ~1.5 bp) or a longer horizon. Not a rescue."
 }
