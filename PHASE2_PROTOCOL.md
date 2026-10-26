@@ -171,3 +171,13 @@ budget. They never rescue the failed test, and a losing rule is never simply rev
   - F3 already failed on gross alone.
   - F5's results are not yet computed. Its ETF tier is kept, because SPY-class spreads (about 0.1–0.3 bp) are
     below the tier, so the tier is conservative.
+
+## Amendment 2 (2026-10-26 ~13:10 UTC, before any F4 outcome was computed)
+**F4 data window and the C3 volume filter.**
+- Alpaca serves 30-minute bars in pages of about 367 bars, because pagination counts source minutes.
+- Full-session bars for the F4 development universe would take about 5 hours of rate-limited requests.
+- So F4 requests only the 14:30–16:00 ET window of each session. That holds every price the registered rule
+  uses: the 15:00 price, the 15:30 entry, the close, and the previous session's 15:30-bar close.
+- F4-C3's "volume 09:30–15:00 > 2× its 20-day mean" becomes "**14:30–15:00 bar volume > 2× its own 20-day
+  mean**", the same news-day idea measured on the last pre-signal bar.
+- The reason is data cost, decided before any F4 result. No other F4 rule changes.

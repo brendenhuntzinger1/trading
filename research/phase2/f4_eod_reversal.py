@@ -8,7 +8,7 @@ From SIP 30-minute bars (`all` adjustment, stamped at bar start, ET):
     prev_close  close of the 15:30 bar of t-1 (last continuous-session trade, not the auction)
     p15         close of the 14:30 bar of t (price at 15:00)
     entry       open of the 15:30 bar of t      exit  close of the 15:30 bar of t
-    vol_to_15   regular-session volume 09:30-15:00 of t
+    v1430       volume of the 14:30-15:00 bar (Amendment 2; replaces 09:30-15:00 volume for C3)
 Signal ROD = p15 / prev_close - 1, known at 15:00; trades 15:30 -> close. Half-days skipped.
 Costs (Amendment 1): measured band-median half-spreads at 15:30 (entry) and 15:59 (exit).
 """
@@ -53,47 +53,75 @@ def universe(lo: str, hi: str, top_n: int = 500):
     return e, dvol.shift(1), sorted(set(e.columns[e.any()]) | {"SPY"})
 
 
-def fetch(lo: str, hi: str) -> None:
-    from tradelab.pit.alpaca_sip import AlpacaData
-    _, _, syms = universe(lo, hi)
+WIN_START, WIN_END = "14:30", "16:00"       # Amendment 2: only the window the rule needs
+WARMUP = "2019-12-02"                         # 20+ sessions before development, for C3's volume norm
+
+
+def _day_symbols(e500: pd.DataFrame, days: list) -> dict:
+    """Per session: names eligible that day or the next (the day's 15:30 close is the next day's prev_close)."""
+    out = {}
+    for i, d in enumerate(days):
+        names = set(e500.columns[e500.loc[d]]) if d in e500.index else set()
+        if i + 1 < len(days) and days[i + 1] in e500.index:
+            names |= set(e500.columns[e500.loc[days[i + 1]]])
+        out[d] = sorted(names | {"SPY"})
+    return out
+
+
+def fetch(lo: str, hi: str, years: list[int] | None = None) -> None:
+    from tradelab.pit.alpaca_sip import AlpacaData, require_old_enough
+    e500, _, _ = universe(WARMUP, hi, top_n=500)
+    days = list(e500.index)
+    syms = _day_symbols(e500, days)
     d = Phase2Data(AlpacaData.from_env(), log=lambda m: print(m, flush=True))
-    for y in range(int(lo[:4]), int(hi[:4]) + 1):
-        d.intraday_year(syms, y, "30Min", hi)
-        print("30Min", y, "symbols", len(syms), flush=True)
+    for i, day in enumerate(days):
+        if years and day.year not in years:
+            continue
+        ds = day.strftime("%Y-%m-%d")
+        st_utc = pd.Timestamp(f"{ds} {WIN_START}", tz=ET).tz_convert("UTC")
+        en_utc = pd.Timestamp(f"{ds} {WIN_END}", tz=ET).tz_convert("UTC")
+        for j in range(0, len(syms[day]), 100):
+            chunk = syms[day][j:j + 100]
+            key = f"win_{ds}_{chunk[0]}_{len(chunk)}"
+            if d.cache.get("f4win", key) is not None:
+                continue
+            require_old_enough(en_utc.to_pydatetime())
+            st, got = d.c.bars_multi(chunk, st_utc.to_pydatetime(), en_utc.to_pydatetime(), timeframe="30Min",
+                                     adjustment="all")
+            if st != 200:
+                raise RuntimeError(f"F4 window bars failed {ds}: HTTP {st}")
+            d.cache.put("f4win", key, got)
+        if i % 50 == 0:
+            print("F4 window", ds, flush=True)
     print("F4 FETCH DONE", flush=True)
 
 
-def session_table(lo: str, hi: str, syms: list[str]) -> pd.DataFrame:
-    p = PANELS / f"f4_table_{lo}_{hi}.pkl"
+def session_table(lo: str, hi: str, syms: list[str] | None = None) -> pd.DataFrame:
+    p = PANELS / f"f4_table_{WARMUP}_{hi}.pkl"
     if p.exists():
         return pickle.loads(p.read_bytes())
-    rows: dict[str, list] = {}
-    for f in sorted((CACHE / "intraday").glob("30Min_all_*")):
-        for s, r in json.loads(gzip.decompress(f.read_bytes())).items():
-            rows.setdefault(s, []).extend(r)
-    out = []
-    for s in syms:
-        b = bars_frame(rows.get(s, []))
-        if b.empty:
-            continue
-        b.index = b.index.tz_convert(ET)
-        b["day"], b["hm"] = b.index.strftime("%Y-%m-%d"), b.index.strftime("%H:%M")
-        reg = b[(b.hm >= "09:30") & (b.hm < "16:00")]
-        prev = np.nan
-        for day, g in reg.groupby("day", sort=True):
-            bd = session_bounds(day)
-            if bd is None:
+    rows = []
+    for f in sorted((CACHE / "f4win").glob("win_*")):
+        ds = f.name.split("_")[1]
+        for s, bars in json.loads(gzip.decompress(f.read_bytes())).items():
+            b = bars_frame(bars)
+            if b.empty:
                 continue
-            half = bd[1].tz_convert(ET).strftime("%H:%M") != "16:00"
-            def bar(hm, col):
-                x = g[g.hm == hm]
+            hm = b.index.tz_convert(ET).strftime("%H:%M")
+            def get(h, col):
+                x = b[hm == h]
                 return float(x[col].iloc[0]) if len(x) else np.nan
-            out.append({"day": day, "symbol": s, "half": half, "prev_close": prev, "p15": bar("14:30", "close"),
-                        "entry": bar("15:30", "open"), "exit": bar("15:30", "close"),
-                        "vol_to_15": float(g[g.hm < "15:00"].volume.sum())})
-            prev = bar("15:30", "close")
-    t = pd.DataFrame(out)
+            rows.append({"day": ds, "symbol": s, "p15": get("14:30", "close"), "v1430": get("14:30", "volume"),
+                         "entry": get("15:30", "open"), "exit": get("15:30", "close")})
+    t = pd.DataFrame(rows).drop_duplicates(["day", "symbol"]).sort_values(["symbol", "day"])
     t["day"] = pd.to_datetime(t["day"])
+    t["half"] = [session_bounds(d.strftime("%Y-%m-%d"))[1].tz_convert(ET).strftime("%H:%M") != "16:00" for d in t.day]
+    t["prev_close"] = t.groupby("symbol").exit.shift(1)
+    prev_day = t.groupby("symbol").day.shift(1)
+    sess = pd.Series(range(len(sorted(set(t.day)))), index=sorted(set(t.day)))
+    gap = t.day.map(sess) - prev_day.map(sess)
+    t.loc[gap != 1, "prev_close"] = np.nan                      # previous session missing: no prev_close
+    t["vol_norm"] = t.groupby("symbol").v1430.transform(lambda v: v.shift(1).rolling(20, min_periods=20).mean())
     p.write_bytes(pickle.dumps(t))
     return t
 
@@ -106,10 +134,8 @@ def day_pnl(t: pd.DataFrame, elig: pd.DataFrame, cfg: dict, hs_in: pd.DataFrame,
     x = x[x.symbol != "SPY"]
     if cfg["market_adj"]:
         x["rod"] = x.rod - x.day.map(spy)
-    if cfg["no_news"]:
-        x = x.sort_values(["symbol", "day"])
-        norm = x.groupby("symbol").vol_to_15.transform(lambda v: v.shift(1).rolling(20, min_periods=20).mean())
-        x = x[~(x.vol_to_15 > 2 * norm)]
+    if cfg["no_news"]:                                           # Amendment 2: 14:30-bar volume vs its norm
+        x = x[~(x.v1430 > 2 * x.vol_norm)]
     e = elig.stack()
     e = set(e[e].index)
     x = x[[(d, s) in e for d, s in zip(x.day, x.symbol)]]
@@ -140,7 +166,8 @@ def dev() -> dict:
     out, quals, metrics = {"family": FAMILY, "window": DEV, "configs": {}}, {}, {}
     for name, cfg in CONFIGS.items():
         elig, dvol, syms = universe(*DEV, top_n=cfg["top_n"])
-        t = session_table(*DEV, universe(*DEV, top_n=500)[2])
+        t = session_table(*DEV)
+        t = t[(t.day >= DEV[0]) & (t.day <= DEV[1])]
         hs_in = ev.measured_half_spread(dvol, elig, "15:30")
         hs_out = ev.measured_half_spread(dvol, elig, "15:59")
         p, ctrl = day_pnl(t, elig, cfg, hs_in, hs_out)
@@ -164,7 +191,7 @@ def dev() -> dict:
 
 if __name__ == "__main__":
     if sys.argv[1] == "fetch":
-        fetch(sys.argv[2], sys.argv[3])
+        fetch(sys.argv[2], sys.argv[3], [int(y) for y in sys.argv[4].split(",")] if len(sys.argv) > 4 else None)
     elif sys.argv[1] == "dev":
         r = dev()
         for k, v in r["configs"].items():
