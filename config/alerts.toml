@@ -3,9 +3,10 @@
 # alert text is written to the GitHub Actions run log and job summary only.
 [destination]
 type = "github_issue"        # proposed: an issue in this repository, labelled paper-alert (no external service, no secret)
-approved = false
-approved_by = ""
-approved_at = ""
+approved = true
+approved_by = "owner (brendenhuntzinger1), in the Claude Code session"
+approved_at = "2026-10-26"
+note = "Owner: 'You may create deduplicated operational issues in this repository labeled paper-alert. Do not contact anyone through email, messaging or other services.' The repository is PUBLIC, so alert issues are publicly visible; they carry only workflow names, reasons and run links."
 
 # A missed run = no successful run recorded within max_age_hours.
 [missed_run.paper-daily]

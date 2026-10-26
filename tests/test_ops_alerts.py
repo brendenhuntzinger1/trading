@@ -13,8 +13,9 @@ NOW = datetime(2026, 10, 27, 15, 0, tzinfo=timezone.utc)          # a Tuesday, N
 CFG = tomllib.loads((ROOT / "config" / "alerts.toml").read_text())
 
 
-def test_repository_alert_destination_is_not_approved_by_default():
-    assert CFG["destination"]["approved"] is False
+def test_repository_alert_destination_is_the_approved_github_issue():
+    d = CFG["destination"]
+    assert d["approved"] is True and d["type"] == "github_issue" and d["approved_by"] and d["approved_at"]
 
 
 def test_missed_and_fresh_runs(tmp_path):
