@@ -152,3 +152,22 @@ budget. They never rescue the failed test, and a losing rule is never simply rev
 ## 8. Stopping
 - Stop a family early when data quality or execution assumptions make further testing uninformative.
 - If no candidate qualifies: deliver the findings and the ranked remaining opportunities. Do not force a winner.
+
+## Amendment 1 (2026-10-26 ~12:20 UTC, before any F1, F2, F4 or F6 outcome was computed)
+**Cost source for the stock families (F1, F2, F4, F6).**
+- A random measured-spread sample (`research/phase2/spread_sample.py`) is taken before those families' results:
+  - 40 development sessions;
+  - 32 names per session across dollar-volume rank bands 1–100, 101–200, 201–500 and 501–1,000;
+  - at 09:31, 15:30 and 15:59.
+- The **median measured half-spread of each band at the execution minute** replaces the §3 tier assumption:
+  - 09:31 for market-on-open entries and exits, a proxy for the opening auction (labelled);
+  - 15:30 for F4 entries, 15:59 for F4 exits.
+- The tier stays as the fallback where a band or minute has fewer than 30 valid observations.
+- Slippage (1 bp base / 5 bp stress) and fees are unchanged.
+- Results report the cost per trade under both the measured medians and the original tiers.
+- **Decision rules use the measured medians.** This is fixed now, so the cost model cannot be chosen after
+  seeing which one passes.
+- F3 and F5 are unaffected: their ETF costs stay at the §3 tier.
+  - F3 already failed on gross alone.
+  - F5's results are not yet computed. Its ETF tier is kept, because SPY-class spreads (about 0.1–0.3 bp) are
+    below the tier, so the tier is conservative.

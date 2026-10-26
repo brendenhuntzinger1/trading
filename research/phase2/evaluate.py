@@ -34,6 +34,25 @@ def tier_half_spread(dollar_volume: pd.DataFrame | pd.Series, etf_major: set[str
     return hs
 
 
+SPREAD_SAMPLE = __import__("pathlib").Path(__file__).resolve().parent / "results" / "spread_sample.json"
+BANDS = [(1, 100), (101, 200), (201, 500), (501, 1000)]
+
+
+def measured_half_spread(dvol: pd.DataFrame, eligible: pd.DataFrame, minute: str, min_obs: int = 30,
+                         sample: dict | None = None) -> pd.DataFrame:
+    """Amendment 1: half-spread = median measured in the name's dollar-volume rank band at the execution minute
+    (research/phase2/results/spread_sample.json); the protocol tier where the band has < min_obs observations."""
+    import json
+    sample = sample or json.loads(SPREAD_SAMPLE.read_text())["by_minute_band"]
+    rank = dvol.where(eligible).rank(axis=1, ascending=False)
+    out = tier_half_spread(dvol)
+    for lo, hi in BANDS:
+        cell = sample.get(f"{minute}|{lo}-{hi}")
+        if cell and cell["n"] >= min_obs:
+            out = out.mask((rank >= lo) & (rank <= hi), cell["median_bp"] / 1e4)
+    return out
+
+
 def backtest_weights(w: pd.DataFrame, ret: pd.DataFrame, half_spread: pd.DataFrame, slip: float = SLIP_BASE,
                      ) -> pd.DataFrame:
     """Target weights w (row t = weights held over the return in ret row t) -> daily gross, cost and net P&L.

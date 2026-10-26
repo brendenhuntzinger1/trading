@@ -8,7 +8,8 @@ from tradelab.pit.alpaca_sip import AlpacaData                   # noqa: E402
 first, last = int(sys.argv[1]), sys.argv[2]
 d = Phase2Data(AlpacaData.from_env(), log=lambda m: print(m, flush=True))
 print("universe", len(d.universe()), flush=True)
+FIELDS = {"all": ("open", "high", "low", "close", "volume"), "raw": ("close", "volume")}
 for adj in (sys.argv[3].split(",") if len(sys.argv) > 3 else ("all", "raw")):
-    p = d.build_panel(first, last, adj)
+    p = d.build_panel(first, last, adj, FIELDS[adj])
     print("panel", adj, {k: v.shape for k, v in p.items()}, flush=True)
 print("PANELS DONE", flush=True)

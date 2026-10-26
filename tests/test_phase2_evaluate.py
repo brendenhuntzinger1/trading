@@ -37,3 +37,15 @@ def test_dev_criteria_need_control_beating_years_concentration_and_stress():
     assert q["qualified"] and s["vs_control_net_bp"]["ci"][0] > 0
     s2 = ev.summarise(pnl, net, net, net - 1e-4)          # identical to its control: no skill
     assert not ev.dev_qualifies(s2)["D1"]
+
+
+def test_measured_band_medians_replace_the_tier_with_fallback():
+    idx = pd.bdate_range("2020-01-01", periods=1)
+    cols = [f"S{i}" for i in range(150)]
+    dvol = pd.DataFrame([np.linspace(5e9, 3e7, 150)], index=idx, columns=cols)   # ranks 1..150
+    sample = {"09:31|1-100": {"n": 50, "median_bp": 1.2}, "09:31|101-200": {"n": 5, "median_bp": 9.0}}
+    hs = ev.measured_half_spread(dvol, dvol > 0, "09:31", sample=sample)
+    assert hs.loc[idx[0], "S0"] == pytest.approx(1.2e-4)            # band 1-100, measured
+    assert hs.loc[idx[0], "S99"] == pytest.approx(1.2e-4)
+    tier = ev.tier_half_spread(dvol).loc[idx[0], "S149"]
+    assert hs.loc[idx[0], "S149"] == pytest.approx(tier)            # band 101-200 has n < 30: tier fallback

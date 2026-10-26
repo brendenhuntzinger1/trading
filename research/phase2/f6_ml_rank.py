@@ -131,7 +131,7 @@ def dev() -> dict:
     configs = {"B0": "ridge_reversal", "C1": "ridge_all", "C2": "hgb_all", "C3": f"hgb_{best}", "C4": "hgb_all"}
     opens = a["open"][cols]
     ret = target
-    hs = ev.tier_half_spread(dvol[cols].shift(1))
+    hs = ev.measured_half_spread(dvol[cols], elig, "09:31").shift(1)   # Amendment 1
     rt_cost = 2 * (2e-4 + ev.SLIP_BASE + ev.FEES_PER_SIDE)
     cw = xs.control_weights(elig).where(opens.notna(), 0.0)
     keep = (elig.index >= pd.Timestamp(DEV[0])) & (elig.index <= pd.Timestamp(DEV[1]))

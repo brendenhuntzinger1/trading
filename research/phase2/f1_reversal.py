@@ -80,7 +80,7 @@ def run(cfg, a, r, comp, f, lo, hi, slip=ev.SLIP_BASE):
     elig, dvol = xs.eligibility(r["close"], r["volume"], allowed=comp, top_n=cfg["top_n"])
     w = weights(cfg, f, elig, a["open"][elig.columns])
     ret = open_to_open_with_exit({"open": a["open"][elig.columns], "close": a["close"][elig.columns]})
-    hs = ev.tier_half_spread(dvol.shift(1))                       # tier known at the decision (row = entry day)
+    hs = ev.measured_half_spread(dvol, elig, "09:31").shift(1)  # Amendment 1; band known at the decision
     keep = (w.index >= pd.Timestamp(lo)) & (w.index <= pd.Timestamp(hi))
     p = ev.backtest_weights(w[keep], ret[keep], hs[keep], slip=slip)
     cw = xs.control_weights(elig).where(a["open"][elig.columns].notna(), 0.0)

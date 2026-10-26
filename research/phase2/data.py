@@ -20,6 +20,7 @@ import os
 import pickle
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from tradelab.pit.alpaca_sip import AlpacaData, is_ticker, require_old_enough
@@ -93,44 +94,53 @@ class Phase2Data:
         return sorted(x for x in master | delisted | self.corporate_action_tickers() if is_ticker(x))
 
     # --------------------------------------------------------------- daily ----
-    def daily_year(self, symbols: list[str], year: int, adjustment: str, last_day: str) -> dict[str, list]:
-        """All daily bars of `year` (through `last_day` for the current year) for the universe, chunked."""
+    def daily_year(self, symbols: list[str], year: int, adjustment: str, last_day: str) -> None:
+        """Download (into the cache only) all daily bars of `year` (through `last_day` for the current year)."""
+        for key, chunk, start, end_day in self._daily_keys(symbols, year, adjustment, last_day):
+            if self.cache._p("daily", key).exists():
+                continue
+            end = pd.Timestamp(end_day, tz="UTC") + pd.Timedelta(days=1)
+            require_old_enough(end.to_pydatetime())
+            st, got = self.c.bars_multi(chunk, start, end.strftime("%Y-%m-%dT%H:%M:%SZ"), timeframe="1Day",
+                                        adjustment=adjustment)
+            if st != 200:
+                raise RuntimeError(f"daily bars failed {year} {chunk[0]}: HTTP {st}")
+            self.cache.put("daily", key, got)
+
+    @staticmethod
+    def _daily_keys(symbols, year, adjustment, last_day):
         start = f"{year}-01-01"
         end_day = min(f"{year}-12-31", last_day)
-        out: dict[str, list] = {}
         for i in range(0, len(symbols), 100):
             chunk = symbols[i:i + 100]
-            key = f"{adjustment}_{start}_{end_day}_{chunk[0]}_{len(chunk)}"
-            got = self.cache.get("daily", key)
-            if got is None:
-                end = pd.Timestamp(end_day, tz="UTC") + pd.Timedelta(days=1)
-                require_old_enough(end.to_pydatetime())
-                st, got = self.c.bars_multi(chunk, start, end.strftime("%Y-%m-%dT%H:%M:%SZ"), timeframe="1Day",
-                                            adjustment=adjustment)
-                if st != 200:
-                    raise RuntimeError(f"daily bars failed {year} {chunk[0]}: HTTP {st}")
-                self.cache.put("daily", key, got)
-            out.update(got)
-        return out
+            yield f"{adjustment}_{start}_{end_day}_{chunk[0]}_{len(chunk)}", chunk, start, end_day
 
-    def build_panel(self, first_year: int, last_day: str, adjustment: str) -> dict[str, pd.DataFrame]:
-        """Wide frames (date x symbol) per field. Saved to data/stocks/p2panels/daily_<adj>_<first>_<last>.pkl."""
+    def build_panel(self, first_year: int, last_day: str, adjustment: str,
+                    fields: tuple[str, ...] = ("open", "high", "low", "close", "volume")) -> dict[str, pd.DataFrame]:
+        """Wide float32 frames (date x symbol) per field, assembled year by year from the cache (download first
+        with daily_year). Saved to data/stocks/p2panels/daily_<adj>_<first>_<last>.pkl."""
         p = PANELS / f"daily_{adjustment}_{first_year}_{last_day}.pkl"
         if p.exists():
             return pickle.loads(p.read_bytes())
         syms = self.universe()
-        recs = []
+        inv = {v: k for k, v in FIELDS.items()}
+        parts: dict[str, list[pd.DataFrame]] = {f: [] for f in fields}
         for year in range(first_year, int(last_day[:4]) + 1):
-            got = self.daily_year(syms, year, adjustment, last_day)
-            self.log(f"daily {adjustment} {year}: {len(got)} symbols with bars")
-            for s, rows in got.items():
-                for r in rows:
-                    recs.append((r["t"][:10], s, r.get("o"), r.get("h"), r.get("l"), r.get("c"), r.get("v"),
-                                 r.get("vw"), r.get("n")))
-        df = pd.DataFrame(recs, columns=["date", "symbol", *FIELDS.values()])
-        df["date"] = pd.to_datetime(df["date"])
-        panel = {f: df.pivot_table(index="date", columns="symbol", values=f, aggfunc="last").sort_index()
-                 for f in FIELDS.values()}
+            self.daily_year(syms, year, adjustment, last_day)
+            cols: dict[str, list] = {"date": [], "symbol": [], **{f: [] for f in fields}}
+            for key, *_ in self._daily_keys(syms, year, adjustment, last_day):
+                for s, rows in (self.cache.get("daily", key) or {}).items():
+                    for r in rows:
+                        cols["date"].append(r["t"][:10]); cols["symbol"].append(s)
+                        for f in fields:
+                            cols[f].append(r.get(inv[f]))
+            df = pd.DataFrame({k: (np.asarray(v, dtype="float32") if k in fields else v) for k, v in cols.items()})
+            df["date"] = pd.to_datetime(df["date"])
+            for f in fields:
+                parts[f].append(df.pivot_table(index="date", columns="symbol", values=f, aggfunc="last").astype("float32"))
+            self.log(f"panel {adjustment} {year}: {df.symbol.nunique()} symbols, {len(df)} bars")
+            del df, cols
+        panel = {f: pd.concat(v, axis=0).sort_index() for f, v in parts.items()}
         PANELS.mkdir(parents=True, exist_ok=True)
         p.write_bytes(pickle.dumps(panel))
         return panel
