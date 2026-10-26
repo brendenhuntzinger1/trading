@@ -42,7 +42,9 @@ REGISTRY: dict[str, Entry] = {
                     "out-of-universe replication S2X on 29 new ETFs: gross -2.7bp, 95% upper 4.8bp < 8bp cost -> no useful effect. "
                     "Paper run kept only to exercise the engine; not a candidate"),
     "S2X": Entry(Status.REJECTED, "none", "29 untouched ETFs 2016-2026: gross -2.7bp [-8.9, 3.9]; placebo p 0.86"),
-    "ORB": Entry(Status.PENDING, "none", "pre-registered (prereg_orb); blocked on verifying SIP access; paper's own avg +0.08R ~ 2-5bp < 20bp cost"),
+    "ORB": Entry(Status.REJECTED, "none", "pre-registered (prereg_orb + Amendments 1-5). Development 2020-21 on SIP data with measured "
+                 "spreads: primary 4,048 trades, gross -9 bp, net -35 bp per trade; loses to placebo and to direction-only; sanity "
+                 "gate failed (-0.22R vs paper +0.08R). Stopped after development (B16); validation and final windows unread"),
     "S3": Entry(Status.UNTESTABLE, "none", "needs multi-year 5-minute data"),
     # intraday crypto (INTRADAY_CRYPTO.md) - updated when results are final
     "C1": Entry(Status.REJECTED, "experimental", "E1-E6 fail; gross +0.03%/trade vs 1.06% round trip; holdout coins also fail. "
