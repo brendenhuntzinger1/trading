@@ -96,6 +96,11 @@ def test_state_round_trip_and_unchanged_state_is_not_resaved(repo):
     (a / "data" / "paper").mkdir(parents=True)
     (a / "data" / "paper" / "x.txt").write_text("one")
     r = _state("save", a, "r1"); assert r.returncode == 0, r.stderr
+    # Regression: the save used to switch this checkout to paper-state, deleting scripts/config that later
+    # workflow steps (alerts) still needed.
+    assert (a / "README").read_text() == "x"
+    assert subprocess.run(["git", "branch", "--show-current"], cwd=a, capture_output=True, text=True).stdout.strip() == "main"
+    assert (a / "data" / "paper" / "x.txt").read_text() == "one"
     b = clone("b")
     assert _state("restore", b).returncode == 0
     assert (b / "data" / "paper" / "x.txt").read_text() == "one"

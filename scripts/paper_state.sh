@@ -33,24 +33,26 @@ case "${1:-}" in
     done
     tmp=$(mktemp -d)
     for p in $PATHS; do [ -e "$p" ] && mkdir -p "$tmp/$(dirname "$p")" && cp -r "$p" "$tmp/$p"; done
-    git config user.name "tradelab-paper-bot"
-    git config user.email "tradelab-paper-bot@users.noreply.github.com"
     st=$(remote_state)
-    # The state is already copied to $tmp, so local changes in the checkout can be discarded (-f).
+    # Commit from a separate worktree so this checkout (scripts, config) stays intact for later job steps.
+    wt=$(mktemp -d)
     if [ "$st" = present ]; then
       git fetch -q origin +refs/heads/paper-state:refs/remotes/origin/paper-state
-      git checkout -q -f -B paper-state origin/paper-state
+      git worktree add -q -f -B paper-state "$wt" origin/paper-state
     else
-      git checkout -q -f --orphan paper-state && { git rm -rqf --cached . >/dev/null 2>&1 || true; }
+      git worktree add -q -f --detach "$wt"
+      git -C "$wt" checkout -q --orphan paper-state
+      git -C "$wt" rm -rqf . >/dev/null 2>&1 || true
     fi
-    find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-    cp -r "$tmp"/. .
-    printf "# paper-state\n\nSimulated paper-trading state written by GitHub Actions. Fills are SIMULATED by tradelab,\nnot broker paper fills and not live results. Nothing here is real money.\n" > README.md
-    git add -A -f
-    if git diff --cached --quiet; then echo "nothing to save"; exit 0; fi
-    git commit -qm "$msg"
-    git push -q origin paper-state      # a failed push fails the job; it is never reported as "nothing to save"
-    echo "saved state as paper-state@$(git rev-parse --short HEAD)"
+    trap 'git worktree remove --force "$wt" >/dev/null 2>&1 || true' EXIT
+    find "$wt" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+    cp -r "$tmp"/. "$wt"/
+    printf "# paper-state\n\nSimulated paper-trading state written by GitHub Actions. Fills are SIMULATED by tradelab,\nnot broker paper fills and not live results. Nothing here is real money.\n" > "$wt/README.md"
+    git -C "$wt" -c user.name="tradelab-paper-bot" -c user.email="tradelab-paper-bot@users.noreply.github.com" add -A -f
+    if git -C "$wt" diff --cached --quiet; then echo "nothing to save"; exit 0; fi
+    git -C "$wt" -c user.name="tradelab-paper-bot" -c user.email="tradelab-paper-bot@users.noreply.github.com" commit -qm "$msg"
+    git -C "$wt" push -q origin paper-state     # a failed push fails the job; it is never reported as "nothing to save"
+    echo "saved state as paper-state@$(git -C "$wt" rev-parse --short HEAD)"
     ;;
   *) echo "usage: $0 restore|save <msg>"; exit 2 ;;
 esac
