@@ -55,6 +55,32 @@ costs.** We do not have one.
 
 All run with public data only, write simulated state to `paper-state`, and cannot place real orders.
 
+## Which dates each study covered (correction, 2026-10-26)
+An earlier summary said "three strategies tested on 2020–21". That was wrong as a description of the whole
+programme:
+- **2020–21 was only the *development* window of ORB and H3** (US stocks in play, Alpaca SIP).
+  - Their later windows (2022–23 validation, 2024-01-02 → 2026-07-24 final) were never read, because both
+    failed in development.
+- **Crypto ran through the most recent data.**
+  - P1 read Coinbase data from 2021-03-01 to **2026-10-24** across development, validation and final.
+  - The daily crypto strategies and C1/C2 were tested on 2024-01-01 → 2026-10-24.
+- **US stocks on Yahoo data:**
+  - S1/S2 tests ran to 2026-10-23;
+  - S2X covered 2016 → 2026-10-24.
+- The full reconciliation (hypotheses, configurations, periods, data read, costs) is in `TESTED_INVENTORY.md`.
+- Every local dataset's first and last timestamp is in `research/phase2/data_inventory.json`
+  (`scripts/data_inventory.py`).
+
+**Data freshness (2026-10-26):**
+- Coinbase crypto candles end 2026-10-25.
+- Yahoo stock files end 2026-10-23.
+- The Alpaca SIP caches end 2022/2023 (ORB/H3 only).
+- A phase-2 SIP daily panel for 2016 → 2026-10-23 is being built.
+- **Stock data access:**
+  - consolidated (SIP) history is free up to 15 minutes ago;
+  - real-time is IEX only (about 2–4% of volume);
+  - so live intraday stock decisions on consolidated prices are not possible on the free plan.
+
 ## Research results (all failures preserved)
 - **REJECTED:**
   - S1, S2, S2-ETF, S2X, C1, C2, daily breakout.
