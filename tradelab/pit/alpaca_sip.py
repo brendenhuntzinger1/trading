@@ -145,6 +145,23 @@ class AlpacaData:
     def trades(self, symbol, start, end, feed="sip"):
         return self._paged("trades", symbol, {"start": _iso(start), "end": _iso(end), "feed": feed})
 
+    def quotes_multi(self, symbols: list[str], start, end, feed="sip", max_pages: int = 1000) -> tuple[int, dict[str, list]]:
+        """Quotes for several symbols in one paged request (Alpaca's 10,000-row limit spans all symbols)."""
+        out: dict[str, list] = {}
+        token, status = None, 0
+        for _ in range(max_pages):
+            q = {"symbols": ",".join(symbols), "start": _iso(start), "end": _iso(end), "feed": feed, "limit": 10000,
+                 **({"page_token": token} if token else {})}
+            status, body = self._get(f"{DATA_URL}/quotes?{urllib.parse.urlencode(q)}")
+            if status != 200:
+                return status, out
+            for sym, rows in (body.get("quotes") or {}).items():
+                out.setdefault(sym, []).extend(rows)
+            token = body.get("next_page_token")
+            if not token:
+                break
+        return status, out
+
     def quotes(self, symbol, start, end, feed="sip"):
         return self._paged("quotes", symbol, {"start": _iso(start), "end": _iso(end), "feed": feed})
 

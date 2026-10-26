@@ -199,3 +199,27 @@ def test_universe_adds_delisted_tickers_and_dedupes_mapped_symbols(tmp_path):
     src._or_bars = lambda day: {"FB": bar, "META": bar}
     c = src.candidates("2022-06-01")
     assert list(c.symbol) == ["FB"]
+
+
+def test_quote_batching_matches_single_symbol_rule(tmp_path):
+    """One request per minute for every symbol of the day, with the same 2 s / 60 s rule per symbol."""
+    from research.orb.data import AlpacaSource
+    calls = []
+
+    class FakeClient:
+        def quotes_multi(self, symbols, start, end):
+            calls.append((tuple(symbols), (end - start).total_seconds()))
+            if (end - start).total_seconds() == 2:
+                return 200, {"AAA": [{"t": "2022-06-01T19:59:59.5Z", "bp": 10.0, "ap": 10.02, "bs": 1, "as": 1}]}
+            return 200, {"BBB": [{"t": "2022-06-01T19:59:30Z", "bp": 20.0, "ap": 20.1, "bs": 1, "as": 1}]}
+
+    src = AlpacaSource(FakeClient(), "2022-01-03", "2022-12-30", cache=tmp_path)
+    src._day_syms["2022-06-01"] = {"AAA", "BBB", "CCC"}
+    m = pd.Timestamp("2022-06-01T19:59:00Z")
+    a = src.half_spread("AAA", m)
+    assert calls == [(("AAA", "BBB", "CCC"), 2.0), (("BBB", "CCC"), 60.0)]
+    b, c = src.half_spread("BBB", m), src.half_spread("CCC", m)
+    assert len(calls) == 2                                   # BBB and CCC came from the cache
+    assert src.cache.get("quotes", "BBB_20220601T2000")[0]["bp"] == 20.0
+    assert src.cache.get("quotes", "CCC_20220601T2000") == []
+    assert a is not None

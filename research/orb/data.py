@@ -70,6 +70,7 @@ class AlpacaSource:
         self._daily_raw: dict[str, pd.DataFrame] | None = None
         self._daily_adj: dict[str, pd.DataFrame] | None = None
         self._or_cache: dict[str, dict] = {}
+        self._day_syms: dict[str, set] = {}     # symbols whose minute bars were requested, per day (quote batching)
 
     # ----------------------------------------------------------- universe ----
     def symbols(self) -> list[str]:
@@ -192,6 +193,7 @@ class AlpacaSource:
 
     # ------------------------------------------------------------- minute ----
     def minute_bars(self, symbols: list[str], day: str) -> dict[str, pd.DataFrame]:
+        self._day_syms.setdefault(day, set()).update(symbols)
         o, c = session_bounds(day)
         require_old_enough(c.to_pydatetime())
         out, missing = {}, []
@@ -216,17 +218,28 @@ class AlpacaSource:
         if not self.quotes_available:
             return None
         end = minute_start + pd.Timedelta(minutes=1)
-        key = f"{symbol}_{end.strftime('%Y%m%dT%H%M')}"
-        got = self.cache.get("quotes", key)
+        stamp = end.strftime('%Y%m%dT%H%M')
+        got = self.cache.get("quotes", f"{symbol}_{stamp}")
         if got is None:
             require_old_enough(end.to_pydatetime())
-            got = []
+            # Same rule as one symbol at a time (last quote in the final 2 s, else in the final 60 s), but every
+            # symbol of the day still missing a quote for this minute is fetched in the same request: benchmark
+            # entries share 09:35 and every exit shares 15:59.
+            day = minute_start.tz_convert("America/New_York").strftime("%Y-%m-%d")
+            batch = sorted({symbol} | {s for s in self._day_syms.get(day, set())
+                                       if self.cache.get("quotes", f"{s}_{stamp}") is None})
+            found: dict[str, list] = {}
             for back in (2, 60):              # busy names: the last 2 s suffice; quiet names: up to the staleness limit
-                st, rows, _ = self.c.quotes(symbol, (end - pd.Timedelta(seconds=back)).to_pydatetime(), end.to_pydatetime())
-                if st != 200:
-                    raise RuntimeError(f"quotes failed for {symbol} at {end}: HTTP {st}")
-                if rows:
-                    got = rows[-1:]
+                todo = [s for s in batch if s not in found]
+                if not todo:
                     break
-            self.cache.put("quotes", key, got)
+                for i in range(0, len(todo), 50):
+                    st, part = self.c.quotes_multi(todo[i:i + 50], (end - pd.Timedelta(seconds=back)).to_pydatetime(),
+                                                   end.to_pydatetime())
+                    if st != 200:
+                        raise RuntimeError(f"quotes failed at {end}: HTTP {st}")
+                    found.update({s: rows[-1:] for s, rows in part.items() if rows})
+            for s in batch:
+                self.cache.put("quotes", f"{s}_{stamp}", found.get(s, []))
+            got = found.get(symbol, [])
         return half_spread_at(quotes_frame(got), minute_start)
