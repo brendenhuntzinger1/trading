@@ -8,7 +8,7 @@ from pathlib import Path
 R = Path(__file__).resolve().parent / "results"
 NAMES = {"f3": "F3 market intraday momentum (SPY/QQQ...)", "f5": "F5 RSI(2) pullback (ETFs)",
          "f1": "F1 liquidity-provision reversal", "f6": "F6 ML ranking", "f4": "F4 end-of-day reversal",
-         "f2": "F2 earnings drift"}
+         "f2": "F2 earnings drift", "f7": "F7 ML ranking at the close"}
 
 
 def fmt(x, nd=1):

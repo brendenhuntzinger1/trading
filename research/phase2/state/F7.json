@@ -1,0 +1,42 @@
+{
+ "dev": {
+  "qualifiers": {
+   "B0": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C1": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C2": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C3": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": true,
+    "qualified": false
+   },
+   "C4": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": true,
+    "qualified": false
+   }
+  }
+ },
+ "stopped": "Stage B: no configuration dev-qualified; validation and final unread. Closest result so far but not qualified. Moving F6's model to close execution cut costs from ~25 to 2-4 bp/day; boosted-tree configs net +5.6..+7.5 bp/day, beating the equal-weight control by +1.4..+3.3 bp/day net (best C4 [-3.9, +10.1], C3 [-7.3, +14.1]) - intervals include 0 (D1 fails). 2020 and 2021 positive, 2022 negative in every config; the 10 best days exceed total net P&L (D3). Rank IC 0.006/0.027/0.031 (2020/21/22): the signal strengthened while P&L fell in 2022, so per-day dispersion and market regime dominate. Linear reversal baseline has no skill at the close. Lesson: execution timing turned a cost-dominated signal into a marginal one; the remaining gap is statistical strength and concentration, not cost."
+}
