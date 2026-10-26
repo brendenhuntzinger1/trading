@@ -1,105 +1,92 @@
 # Tradelab status (authoritative)
 
-**As of 2026-10-26, branch `claude/prediction-track`, [PR #1](https://github.com/brendenhuntzinger1/trading/pull/1)
-(draft; merging not authorised).** Where any other document disagrees with this file, this file wins.
+**As of 2026-10-26 ~10:00 UTC.** Where any other document disagrees with this file, this file wins.
+- `main` is at the merge of [PR #1](https://github.com/brendenhuntzinger1/trading/pull/1), commit `14c2a32`,
+  merged 03:18 UTC under the owner's conditions. All scheduled paper workflows run from it.
+- Research since the merge (ORB result, H3) is on branch `claude/prediction-track` and is not yet on `main`.
+  None of it changes what runs.
 
-**Mode:** paper only (`mode = "paper"` in both configs). No broker or exchange credentials are configured. No
-strategy is live-eligible (`tradelab/governance/status.py`). Real orders, purchases and subscriptions are not
-authorised.
+**Mode:** paper only (`mode = "paper"` in both configs).
+- No strategy is live-eligible (`tradelab/governance/status.py`).
+- Real orders, purchases, subscriptions, live credentials, transfers and leverage are not authorised.
+- **Credentials:** one Alpaca **paper** key exists. The owner pasted it in chat on 2026-10-25. It is used
+  only inside the working session, per command, and is not in the repository or in any repository secret.
+  It should be rotated and stored as an environment secret (`docs/CREDENTIALS_SETUP.md`).
+- No live or exchange keys exist.
 
-**Objective:** an autonomous trader that makes informed entry, hold, exit and no-trade decisions with an edge that
-survives costs. **The next proof point is one reproducible, economically meaningful signal after realistic
+**Objective:** an autonomous trader that makes informed entry, hold, exit and no-trade decisions with an edge
+that survives costs. **The next proof point is one reproducible, economically meaningful signal after realistic
 costs.** We do not have one.
 
 ## Verified
 | Item | Evidence |
 |---|---|
-| Test suite on the latest commit | See the "CI on the exact latest commit" line in the PR |
-| Central historical results reproduce | Audit, cross-checks, DSR, S2X and all P1 phases recompute identically |
-| P1 frozen | Config and code hash `research/p1/frozen_config.json`. Re-runs are reproduction-only; a changed configuration is refused (test) |
-| Consumed-data guard | `research/consumed_data.json`; selection windows overlapping consumed data raise (test) |
-| One equity mark per account per UTC day | Unique index plus migration (tests). Before: same-day re-runs added marks, and the dashboard summed operating cost over them |
-| Duplicate prevention | Same-day re-runs add no orders, fills or marks (test). Run 3 on Actions kept 6 orders and 6 fills |
-| State recovery | Save → fresh clone → restore round trip (test, and on Actions runs 2 → 3) |
-| Failed saves fail the job | Unreachable remote and a rejected push both exit non-zero (tests); never reported as "nothing to save" |
+| Test suite | CI green on every pushed commit; the latest is in the PR's checks |
+| Scheduled paper runs on `main` | `paper-crypto-intraday` runs 2–12, `paper-daily` run 6 (06:52), `paper-watchdog` runs 1–3, all green ([Actions](https://github.com/brendenhuntzinger1/trading/actions)) |
+| Alert delivery | Watchdog run 1 (03:49) opened [issue #2](https://github.com/brendenhuntzinger1/trading/issues/2) (`paper-alert`, missed crypto run); run 2 (03:56) closed it automatically when the condition cleared |
+| State recovery | Save → fresh clone → restore round trip (test, and on Actions every run since). State lives on branch `paper-state` |
+| Duplicate prevention | Same-day re-runs add no orders, fills or marks (test, and Actions run 4: 2 → 1 mark per day, orders and fills unchanged) |
+| Failed saves fail the job | Unreachable remote and a rejected push both exit non-zero (tests) |
 | WAL-safe saves | Rows still in the SQLite write-ahead log are checkpointed before saving. The test fails without the fix |
-| Persistent risk halts | A latched breaker survives a state save and a restore on a fresh machine, and is still enforced (test) |
-| Missed-run detection | Heartbeats plus watchdog, market-hours aware (tests) |
+| Persistent risk halts | A latched breaker survives a save and a restore on a fresh machine, and is still enforced (test) |
+| Missed-run detection | Heartbeats plus watchdog, market-hours aware (tests, and live on Actions) |
+| No live path | `tests/test_no_live_path.py`: configs are paper; no `secrets.` in workflows; only the paper broker module may send state-changing requests, and only to an exact (host, path) allow-list on the paper host |
+| Alpaca SIP data on the paper key | Data gates B7.1–B7.5 passed (`research/stocks/verify_2026-10-26.json`): consolidated bars and NBBO quotes, timestamps across DST, delisted-name coverage, spreads, splits |
+| Alpaca paper broker | One $10 BTC round trip, 2026-10-26 (`research/execution/alpaca_paper_roundtrip_20261026T030457Z.json`). Fee 0.25% per side; buy 4.7 bp and sell 1.1 bp from mid; order POST 122–161 ms; a duplicate resend returned the existing order |
+| Central historical results reproduce | Audit, cross-checks, DSR, S2X, all P1 phases; ORB mechanics audited independently (31 trades, 0 mismatches) |
+| P1 frozen | Config and code hash `research/p1/frozen_config.json`. A changed configuration is refused (test) |
+| Consumed-data guard | `research/consumed_data.json`; selection windows overlapping consumed data raise (test) |
 
-## Implemented, not yet verified in operation
+## Running, not yet verified
 | Item | Gap |
 |---|---|
-| Scheduled runs | None has happened: GitHub schedules run only from `main`, and merging is not authorised |
-| Alert delivery | **Approved by the owner on 2026-10-26:** GitHub issues labelled `paper-alert` in this repository, deduplicated per key. The repository is **public**, so alert issues are publicly visible. Delivery is tested only with a stub until the first real alert fires |
-| Intraday paper workflows, watchdog | Cannot be dispatched before they exist on `main` |
-| Broker paper fills | An Alpaca **paper** adapter exists (`tradelab/broker/alpaca_paper.py`). One $10 BTC round trip was verified on 2026-10-26. **No workflow uses it**, because there are no repository secrets. Every scheduled-run fill is still simulated by tradelab |
+| `paper-stocks-intraday` | Scheduled 13:07–21:37 UTC on weekdays. It has not yet had a market session on `main` (first: 2026-10-26) |
+| GitHub's scheduler | It ran far fewer 15-minute crypto slots than scheduled (incident 18). The runner catches up on missed bars, so no data is lost, but decisions run late. Real intraday trading would need an always-on host |
+| Broker paper fills in workflows | The Alpaca paper adapter is **not wired to any workflow**: there are no repository secrets. Every scheduled-run fill is simulated by tradelab |
 
-## What merging would activate (after approval)
-| Workflow | Schedule | Runs | What it is |
+## Active workflows on `main`
+| Workflow | Schedule (UTC) | Runs | What it is |
 |---|---|---|---|
-| `paper-daily` | 00:17 and 06:17 UTC | `ensemble_vol40`; `breakout_20_atr3_vol40` (shadow); `fixed_allocation`, `buy_hold` | **Diagnostic.** ensemble is INCONCLUSIVE (named "champion" in `strategies.lock` only because it is the incumbent), breakout is REJECTED, the other two are benchmarks. **No trading candidate** |
+| `paper-daily` | 00:17 and 06:17 | `ensemble_vol40`; `breakout_20_atr3_vol40` (shadow); `fixed_allocation`, `buy_hold` | **Diagnostic.** ensemble is INCONCLUSIVE, breakout is REJECTED, the other two are benchmarks. **No trading candidate** |
 | `paper-crypto-intraday` | every 15 min | C1, C2 on BTC/ETH/SOL | **Diagnostic engine exercise.** Both REJECTED |
-| `paper-stocks-intraday` | every 30 min in market hours | S2 on 15 ETFs (Yahoo prints) | **Diagnostic engine exercise.** REJECTED |
-| `paper-watchdog` | every 3 h | — | Monitoring |
-| `ci` | push / PR | tests | Already active |
+| `paper-stocks-intraday` | :07 and :37, 13–21 on weekdays | S2 on 15 ETFs (Yahoo prints) | **Diagnostic engine exercise.** REJECTED |
+| `paper-watchdog` | :41 every 3 h | — | Monitoring; opens and closes `paper-alert` issues |
+| `ci` | push / PR | tests | — |
 
-All of them run with public data only, write simulated state to `paper-state`, and cannot place real orders.
+All run with public data only, write simulated state to `paper-state`, and cannot place real orders.
 
 ## Research results (all failures preserved)
-- **REJECTED:** S1, S2, S2-ETF, S2X, C1, C2, breakout.
-- **P1a/P1b:** the **8 tested configurations** failed under their data, rules and assumed Coinbase costs. That
-  is not a verdict on price/volume models, top-3 portfolios or intraday crypto in general (`P1_REPORT.md`).
-- **The audit** (`P1_METHODS_AND_AUDIT.md`) covers:
-  - why the final window was read without a candidate (a design mistake, now banned by ORB B9);
-  - the data now consumed;
-  - how the break-even rank correlation was derived (a construction-specific diagnostic);
-  - what PBO does and does not mean.
+- **REJECTED:**
+  - S1, S2, S2-ETF, S2X, C1, C2, daily breakout.
+  - **P1a/P1b:** the 8 tested configurations failed (`P1_REPORT.md`, `P1_METHODS_AND_AUDIT.md`). Frozen.
+  - **ORB, 2026-10-26, in development (2020–21):** 4,048 trades, gross −9.2 bp and net −35 bp per trade.
+    It loses to its placebo and to direction-only, and failed the sanity gate (−0.22R against the paper's
+    +0.08R). Stopped under B16, so its validation and final windows are unread.
 - **INCONCLUSIVE:** the daily ensemble.
+- **IN PROGRESS: H3, first-candle continuation** (`H3_PREREGISTRATION.md`). It is ORB's direction-only
+  benchmark, which looked strong in development (+60 bp net per trade).
+  - Registered before any 2022–26 data for it was read.
+  - Validation 2022–23 is running now.
+  - The final window (2024–26) is read only if H3-L qualifies.
+- **Research budget:** H3 is the third and last hypothesis allowed by `RESEARCH_BUDGET.md`. If it fails, the
+  budget rule applies: stop intraday research, keep the platform and benchmarks, and say so plainly.
 
 ## Assumed, not verified
 - **Coinbase fees:** a 0.60% taker fee is assumed. Your account tier would verify it.
-- **Stock costs:**
-  - The 8 bp round trip (COSTS.md) is an **assumption** for market-on-open/MOC trading. It does not apply to ORB.
-  - ORB uses measured spreads when SIP quotes are available, otherwise an assumed 10 bp per side.
-  - Slippage beyond the touch is always an assumption: 1 bp base, 5 bp stress.
-- **SIP data access** on the Alpaca paper account is unverified.
-- **Slippage for crypto alts:** BTC/ETH spreads were measured live once; alts were not.
-
-## Stock track (everything possible without credentials is done)
-- **ORB: REJECTED in development (2026-10-26).** 4,048 trades, net −35 bp per trade; it loses to placebo and to direction-only. Stopped under B16, so validation and final are unread. Details in `MORNING_REPORT.md`.
-- **ORB pre-registration, finalised:** Amendments 1–5, registered before any ORB data. It is:
-  - benchmarks first (SPY, in-play basket, direction-only, placebo), then the rule;
-  - measured spread kept apart from assumed slippage; with no quotes the result is labelled "cost assumed"
-    and cannot PASS;
-  - frozen by hash, and **only the primary configuration can be frozen**;
-  - stopped after validation if nothing qualifies, leaving the final window unread;
-  - E6 trial count N = 106, read from the registry.
-- **Built and tested on fake API responses only. No stock data has been downloaded.**
-  - A read-only Alpaca data client: GET only; order, position and account-configuration endpoints refused;
-    the paper host enforced.
-  - Data gates B7.1–B7.5: SIP access, timestamps across DST, coverage including 13 delisted names, spreads at
-    09:35–10:30 and 15:59 ET, splits.
-  - A spread module (measured only), a cost module, and the ORB simulator.
-  - The study harness (gates → dev → validation → freeze → final), which calls the consumed-data guard.
-- **Known unknowns until real data arrives:**
-  - whether Alpaca quote timestamps are consolidated or exchange time;
-  - spin-offs are not detected;
-  - the delisting dates were written from memory (the gate's window tolerates a few days' error);
-  - the live-data path will likely need fixes on first real contact.
-
-## Blocked on credentials: the exact next action
-1. You add an **Alpaca paper** key as environment secrets, following `docs/CREDENTIALS_SETUP.md`. Never in chat.
-2. I run `scripts/pit_verify_alpaca.py --quick`, then the full gates:
-   - SIP bars and quotes;
-   - timestamps;
-   - instrument coverage, including delisted names;
-   - spreads at 09:35–10:30 and 15:59 ET;
-   - corporate actions.
-3. If gates 1–3 pass: ORB development replication, then development and validation.
-4. The final window is read only if a configuration qualifies.
+- **Slippage beyond the touch** (stocks): always an assumption, 1 bp base and 5 bp stress. Quoted spreads
+  are measured from SIP quotes; a trade without a usable quote takes an assumed 10 bp per side.
+- **Survivorship:** the stock universe adds corporate-action tickers to Alpaca's asset master (ORB
+  Amendment 4). Non-merger delistings may still be missing.
+- **Crypto alt spreads:** BTC/ETH spreads were measured; alts were not. Alpaca crypto costs rest on one
+  round trip.
+- **Real-time stock data:** the free plan delays consolidated data by 15 minutes. Any strategy that acts at
+  09:35 would need a paid real-time feed. That purchase is **not authorised**.
 
 ## Decisions waiting on you
-- Merge authorisation, after the readiness items above.
+- **Rotate the Alpaca paper key** pasted in chat. If you want workflows to use broker paper fills, store the
+  new key as an environment secret (`docs/CREDENTIALS_SETUP.md`). Never in chat.
+- **After H3:** whether to authorise any further research budget. Under the current budget, the answer
+  defaults to stop.
 - Coinbase fee tier, which you read from your account. It is not a secret.
 
 ## Rules (reconciled)
@@ -110,7 +97,7 @@ All of them run with public data only, write simulated state to `paper-state`, a
 - **Evidence is labelled by source:**
   - historical backtest (assumed costs unless measured);
   - simulated paper fills;
-  - broker paper fills (not connected);
+  - broker paper fills (adapter verified once; not wired to workflows);
   - live (disabled).
 - **Historical windows are labelled honestly.**
   - A final window already examined is "opened once", never "untouched".

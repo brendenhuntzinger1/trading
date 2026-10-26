@@ -7,7 +7,19 @@ claim below links to a commit, a run, a file or a test. Paper only throughout: n
 subscriptions or relaxed limits.
 
 ## A. Verdict
-**ORB_VERDICT_PLACEHOLDER**
+**No demonstrated advantage. One exploratory lead, now under a pre-registered test on unread data.**
+- **ORB (stocks in play, opening-range breakout): REJECTED in development** (2020–21, 4,048 trades).
+  - Net −35 bp per trade after measured spreads and assumed slippage; worse than its placebo.
+  - Stopped under B16, so the 2022–26 data was never read for ORB.
+- **P1 (crypto ranking): stays REJECTED and frozen.**
+- **Exploratory lead: H3, first-candle continuation.** ORB's direction-only benchmark (buy in-play stocks
+  whose first 5-minute candle is bullish, at 09:35; hold to the close):
+  - +60 bp net per trade (+34 bp without the best 5% of trades) across 4,058 development trades;
+  - but from 2020–21, an unusual period inside the source paper's sample, with portfolio P&L concentrated
+    in a few days.
+  - Registered as H3 (`H3_PREREGISTRATION.md`) before any 2022–26 data for it was read. Its 2022–23
+    validation is running now. **Until that finishes, it is a lead, not evidence.**
+- **Nothing is a historically qualified candidate. Nothing has forward support. Nothing is live-eligible.**
 
 ## B. Completed research (all outcomes, including failures)
 
@@ -29,7 +41,29 @@ subscriptions or relaxed limits.
   Alpaca's *simulated* fills, so indicative only.
 
 ## C. Best remaining opportunities (ranked; none is a profitable strategy)
-OPPORTUNITIES_PLACEHOLDER
+Ranked by evidence, feasibility and information value. **None is a profitable strategy.**
+
+1. **H3, first-candle continuation on stocks in play (US equities, 09:35 → close).**
+   - *Observable edge:* the direction of the first 5-minute candle on a high-relative-volume day.
+   - *Why it could exist:* informed or forced flow (news, index or fund rebalancing) executes over hours, so
+     an imbalance visible at 09:35 persists.
+   - *Why it could persist:* capacity is small. These are volatile, mid-sized names at the open, where large
+     funds cannot trade at size.
+   - *Data and execution:* SIP minute bars and quotes. Live use would need **real-time** consolidated data at
+     09:35; the free plan delays SIP by 15 minutes.
+   - *Costs:* about 23 bp per round trip measured in development, against +81 bp gross.
+   - *Invalidated by:* 2022–23 net ≤ 0, failure to beat the in-play basket, a losing year, or dependence on
+     the top 5% of trades.
+   - **Being tested now.**
+2. **Short side of H3, bearish first candle (same setup).** +36 bp gross in development, so probably near
+   zero after costs. It needs borrow availability and fees, which aren't modelled. Labelled secondary only.
+3. **Cheaper crypto execution as a precondition, not a strategy.**
+   - P1's break-even diagnostic needed a rank IC near 0.10 at Coinbase's assumed 1.32% round trip. At about
+     0.5% the bar falls to roughly 0.04, which P1's reversal baseline (IC +0.035) nearly reached.
+   - One Alpaca paper round trip measured about 0.56% all-in. That is a single simulated sample.
+   - Every historical Coinbase window is consumed, so the only clean test would be **prospective**: months of
+     forward data on the cheaper venue.
+   - *Invalidated by:* measured all-in cost above about 0.8%, or forward IC below 0.03.
 
 ## D. Decision-quality findings
 ORB's registered decompositions separate the decisions. Numbers are from development (2020–2021) only, per

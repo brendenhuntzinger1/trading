@@ -1,11 +1,61 @@
 {
  "about": "Historical windows whose outcomes have been read by an evaluation (test / final / holdout). They may be re-run for reproduction but must not be used to select models, rules or parameters in the same scope. Maintained with tradelab/research/consumed.py. Development and validation windows of the same studies were also examined; they are listed where they were used for selection.",
  "entries": [
-  {"scope": "crypto.coinbase.cross_section", "start": "2021-03-01", "end": "2026-10-24", "study": "P1 (dev+validation+final)", "note": "All three P1 phases read outcomes; daily and weekly horizons, Coinbase USD point-in-time universe, price/volume features. The whole span is consumed for cross-sectional coin selection.", "recorded_at": "2026-10-26T03:00:00+00:00"},
-  {"scope": "crypto.coinbase.daily", "start": "2024-01-01", "end": "2026-10-24", "study": "phase-3 daily strategies test (test3:*)", "note": "Rotation, breakout, mean reversion, calendar, gate on daily Coinbase data; earlier years used for development.", "recorded_at": "2026-10-26T03:00:00+00:00"},
-  {"scope": "crypto.coinbase.intraday", "start": "2024-01-01", "end": "2026-10-24", "study": "C1/C2 test (intraday_crypto_test:*)", "note": "BTC/ETH/SOL 5-minute bars; holdout coins also evaluated over the same dates.", "recorded_at": "2026-10-26T03:00:00+00:00"},
-  {"scope": "stocks.us.intraday.open_close", "start": "2021-01-04", "end": "2026-10-23", "study": "S1/S2 tests (intraday_stocks_test:*)", "note": "Yahoo daily/hourly; S1 test 2025-08-26..2026-10-23, S2 test 2021-01-04..2026-10-23.", "recorded_at": "2026-10-26T03:00:00+00:00"},
-  {"scope": "stocks.us.intraday.open_close", "start": "2016-01-01", "end": "2026-10-24", "study": "S2X (29 ETFs)", "note": "Out-of-universe replication of S2-ETF.", "recorded_at": "2026-10-26T03:00:00+00:00"},
-  {"scope": "stocks.us.intraday.momentum_5m", "start": "2026-07-27", "end": "2026-10-23", "study": "S3 exploratory (Yahoo 5-minute)", "note": "Excluded from every ORB period.", "recorded_at": "2026-10-26T03:00:00+00:00"}
+  {
+   "scope": "crypto.coinbase.cross_section",
+   "start": "2021-03-01",
+   "end": "2026-10-24",
+   "study": "P1 (dev+validation+final)",
+   "note": "All three P1 phases read outcomes; daily and weekly horizons, Coinbase USD point-in-time universe, price/volume features. The whole span is consumed for cross-sectional coin selection.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "crypto.coinbase.daily",
+   "start": "2024-01-01",
+   "end": "2026-10-24",
+   "study": "phase-3 daily strategies test (test3:*)",
+   "note": "Rotation, breakout, mean reversion, calendar, gate on daily Coinbase data; earlier years used for development.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "crypto.coinbase.intraday",
+   "start": "2024-01-01",
+   "end": "2026-10-24",
+   "study": "C1/C2 test (intraday_crypto_test:*)",
+   "note": "BTC/ETH/SOL 5-minute bars; holdout coins also evaluated over the same dates.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "stocks.us.intraday.open_close",
+   "start": "2021-01-04",
+   "end": "2026-10-23",
+   "study": "S1/S2 tests (intraday_stocks_test:*)",
+   "note": "Yahoo daily/hourly; S1 test 2025-08-26..2026-10-23, S2 test 2021-01-04..2026-10-23.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "stocks.us.intraday.open_close",
+   "start": "2016-01-01",
+   "end": "2026-10-24",
+   "study": "S2X (29 ETFs)",
+   "note": "Out-of-universe replication of S2-ETF.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "stocks.us.intraday.momentum_5m",
+   "start": "2026-07-27",
+   "end": "2026-10-23",
+   "study": "S3 exploratory (Yahoo 5-minute)",
+   "note": "Excluded from every ORB period.",
+   "recorded_at": "2026-10-26T03:00:00+00:00"
+  },
+  {
+   "scope": "stocks.us.intraday.first_candle",
+   "start": "2022-01-03",
+   "end": "2023-12-29",
+   "study": "H3 validation",
+   "note": "marked before the first read",
+   "recorded_at": "2026-10-26T09:37:59+00:00"
+  }
  ]
 }
