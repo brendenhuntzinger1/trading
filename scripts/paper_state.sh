@@ -3,7 +3,7 @@
 # Usage: scripts/paper_state.sh restore | save "<message>"
 # State = simulated paper journals and engine state; never credentials.
 set -euo pipefail
-PATHS="data/journal_paper.db data/paper_venue data/paper data/intraday data/events/events.sqlite data/dashboard"
+PATHS="data/journal_paper.db data/paper_venue data/paper data/intraday data/events/events.sqlite data/dashboard data/heartbeat"
 
 # 0 = branch exists, 2 = branch absent; anything else (network, auth) is an error and must stop the job,
 # otherwise a failed fetch would look like "no state yet" and the save would overwrite the real state.
@@ -23,6 +23,14 @@ case "${1:-}" in
     fi ;;
   save)
     msg="${2:-paper state}"
+    # SQLite journals run in WAL mode: committed rows can sit in <db>-wal until a checkpoint. Fold them into
+    # the main file before copying, or a crash-free run could still lose its last writes.
+    for p in $PATHS; do
+      [ -e "$p" ] || continue
+      find "$p" -type f \( -name '*.db' -o -name '*.sqlite' \) -print0 | while IFS= read -r -d '' db; do
+        python3 -c "import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); c.execute('PRAGMA wal_checkpoint(TRUNCATE)'); c.close()" "$db"
+      done
+    done
     tmp=$(mktemp -d)
     for p in $PATHS; do [ -e "$p" ] && mkdir -p "$tmp/$(dirname "$p")" && cp -r "$p" "$tmp/$p"; done
     git config user.name "tradelab-paper-bot"

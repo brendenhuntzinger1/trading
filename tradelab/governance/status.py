@@ -50,11 +50,11 @@ REGISTRY: dict[str, Entry] = {
     "C2": Entry(Status.REJECTED, "experimental", "E1-E7 fail (74 trades); gross +0.35%/trade vs 1.32% round trip. "
                 "Paper run kept only to exercise the engine; not a candidate"),
     # crypto cross-sectional prediction (P1_PREREGISTRATION.md + Amendment 1; P1_REPORT.md)
-    "P1a": Entry(Status.REJECTED, "none", "daily top-3 ranking of Coinbase coins, 5 configs: all negative net in development; "
-                 "candidate M1 lost 0.21%/day in validation -> no qualifying candidate. Rank ICs -0.04..+0.06 vs ~0.10 needed. "
-                 "PBO 0.43"),
-    "P1b": Entry(Status.REJECTED, "none", "weekly top-3 ranking, 3 configs: no model beat momentum in development -> no candidate; "
-                 "low power (122 dev weeks). PBO 0.54"),
+    "P1a": Entry(Status.REJECTED, "none", "5 tested configs (B1, B2, ridge, logistic, GBT; daily top-3, Coinbase point-in-time "
+                 "universe, assumed 1.32% round trip) all negative net in development; candidate M1 failed validation. "
+                 "Claim limited to these configs, data and costs (P1_METHODS_AND_AUDIT.md). Frozen; reproducible, not re-selectable"),
+    "P1b": Entry(Status.REJECTED, "none", "3 tested configs (B1, ridge, GBT; weekly top-3): no model beat momentum in development, "
+                 "so no candidate; low power. Claim limited to these configs, data and costs. Frozen"),
 }
 
 

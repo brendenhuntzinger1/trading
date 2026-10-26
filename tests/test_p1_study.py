@@ -76,3 +76,23 @@ def test_features_at_decision_ignore_later_bars():
     full = p1._per_symbol_features(r).loc[t]
     cut = p1._per_symbol_features(r.iloc[:300]).loc[t]    # only bars ending <= t
     pd.testing.assert_series_equal(full, cut)
+
+
+def test_frozen_p1_refuses_a_changed_configuration(tmp_path, monkeypatch):
+    import dataclasses
+    import json
+    import sys as _sys
+    frozen = tmp_path / "frozen.json"
+    frozen.write_text(json.dumps({"hash": p1.config_hash()}))
+    monkeypatch.setattr(p1, "FROZEN", frozen)
+    monkeypatch.setattr(p1, "record", lambda *a, **k: None)
+    monkeypatch.setitem(p1.SPECS, "M1", dataclasses.replace(p1.SPECS["M1"], params={"alpha": 10.0}))   # "tuned" after the fact
+    monkeypatch.setattr(_sys, "argv", ["study.py", "final", "--horizon", "p1a"])
+    with pytest.raises(SystemExit) as e:
+        p1.main()
+    assert "REFUSED" in str(e.value)
+
+
+def test_repository_p1_is_frozen_at_current_code():
+    import json
+    assert json.loads(p1.FROZEN.read_text())["hash"] == p1.config_hash()

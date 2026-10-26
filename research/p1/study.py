@@ -506,9 +506,49 @@ def verdict(out: dict, dev: dict, val: dict, horizon: str) -> dict:
     return v
 
 
+# ============================================================== freezing ====
+FROZEN = ROOT / "research" / "p1" / "frozen_config.json"
+
+
+def config_hash() -> str:
+    """Hash of everything that determines a P1 result: specs, periods, costs, policy, and the evaluation code."""
+    import dataclasses
+    import hashlib
+    import inspect
+    from tradelab.predict import panel as _panel
+    code = [inspect.getsource(f) for f in (
+        fill_grid, labels_at, decision_times, build, btc_returns, in_phase, simulate, per_period, _ci, alpha_beta,
+        series_stats, evaluate, calibration, score_config, matched_random, comparators, oof_predictions,
+        frozen_predictions, gate, phase_dev, phase_eval, verdict, fit_predict, _panel._per_symbol_features)]
+    payload = {"specs": {k: dataclasses.asdict(v) for k, v in SPECS.items()}, "periods": PERIODS, "horizons": HORIZONS,
+               "base_rt": BASE_RT, "grid": GRID, "k": K, "features": FEATURES, "n_trials": N_TRIALS_DSR,
+               "return_models": sorted(RETURN_MODELS), "code": code}
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _compute(horizon: str, phase: str) -> dict:
+    prior = {p: RESULTS / f"{horizon}_{p}.json" for p in ("gate", "dev", "validation")}
+    if phase == "gate":
+        return jsonable(gate(horizon))
+    if phase == "dev":
+        return jsonable(phase_dev(horizon))
+    out = phase_eval(horizon, phase)
+    if phase == "final":
+        out["verdict"] = verdict(out, json.loads(prior["dev"].read_text()), json.loads(prior["validation"].read_text()), horizon)
+    return jsonable(out)
+
+
+def _reproduce(horizon: str, phase: str) -> bool:
+    path = RESULTS / f"{horizon}_{phase}.json"
+    same = json.dumps(json.loads(path.read_text()), sort_keys=True) == json.dumps(_compute(horizon, phase), sort_keys=True)
+    record("reproduction", f"p1_{horizon}_{phase}_reproduction", {"prereg": "prereg_p1", "config_hash": config_hash()[:16]},
+           "2021-03-01..2026-10-24", "deterministic reproduction of a frozen evaluation", metrics={"identical": same})
+    return same
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["build", "gate", "dev", "validation", "final"])
+    ap.add_argument("phase", choices=["build", "gate", "dev", "validation", "final", "freeze", "refreeze"])
     ap.add_argument("--horizon", choices=list(HORIZONS), default="p1a")
     ap.add_argument("--reproduce", action="store_true")
     a = ap.parse_args()
@@ -519,7 +559,41 @@ def main():
             print(hz, len(p), "rows", p.decision_time.nunique(), "periods", int(p.carried_hours.gt(0).sum()), "rows with carried hours",
                   int(p.truncated.sum()), "truncated")
         return
+    # Protection against selecting on seen results is the frozen hash plus the consumed-data ledger, not a
+    # refusal to execute: once frozen, every phase may be re-run any number of times, but only as a
+    # reproduction of the stored result, and only with the exact frozen configuration and code.
+    if a.phase == "freeze":
+        if FROZEN.exists():
+            sys.exit(f"already frozen at {json.loads(FROZEN.read_text())['hash'][:16]}")
+        FROZEN.write_text(json.dumps({"hash": config_hash(), "frozen_at": pd.Timestamp.now(tz="UTC").isoformat(),
+                                      "note": "P1 rejected. Results may be reproduced, never re-selected."}, indent=1) + "\n")
+        record("frozen_config", "p1_frozen", {"config_hash": config_hash()[:16]}, "2021-03-01..2026-10-24", "freeze P1")
+        print("frozen", config_hash()[:16])
+        return
+    frozen = json.loads(FROZEN.read_text()) if FROZEN.exists() else None
+    if a.phase == "refreeze":
+        # A code change is accepted only if it reproduces every stored P1 result exactly.
+        if frozen is None:
+            sys.exit("not frozen")
+        ok = all(_reproduce(hz, ph) for hz in HORIZONS for ph in ("gate", "dev", "validation", "final"))
+        if not ok:
+            sys.exit("REFUSED: the changed code does not reproduce the stored results; the frozen configuration stands")
+        FROZEN.write_text(json.dumps({**frozen, "hash": config_hash(), "refrozen_at": pd.Timestamp.now(tz="UTC").isoformat()}, indent=1) + "\n")
+        record("change", "p1_refreeze", {"config_hash": config_hash()[:16]}, "2021-03-01..2026-10-24",
+               "code change verified to reproduce all P1 results identically")
+        print("refrozen", config_hash()[:16])
+        return
+    if frozen is not None and config_hash() != frozen["hash"]:
+        record("change", "p1_refused_changed_config", {"config_hash": config_hash()[:16], "frozen": frozen["hash"][:16]},
+               "2021-03-01..2026-10-24", "refused: P1 configuration differs from the frozen one")
+        sys.exit("REFUSED: P1 configuration or evaluation code differs from the frozen configuration. Changing models or "
+                 "parameters after seeing P1 results is prohibited; register a new study on unconsumed data. "
+                 "A pure refactor can be accepted with `refreeze`, which requires identical reproduction.")
     path = RESULTS / f"{a.horizon}_{a.phase}.json"
+    if frozen is not None and path.exists():
+        same = _reproduce(a.horizon, a.phase)
+        print("REPRODUCED IDENTICALLY" if same else "DIFFERS")
+        sys.exit(0 if same else 1)
     prior = {p: RESULTS / f"{a.horizon}_{p}.json" for p in ("gate", "dev", "validation")}
     order = ["gate", "dev", "validation", "final"]
     for need in order[:order.index(a.phase)]:

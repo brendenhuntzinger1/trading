@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  issues: write               # alerts, only if a destination is approved in config/alerts.toml
 concurrency:
   group: paper-state            # shared by every paper workflow: state writes never interleave
   cancel-in-progress: false
@@ -27,7 +28,21 @@ jobs:
         env:
           TRADELAB_MODE: paper
         run: python -m tradelab.intraday.live_stocks --once
+      - name: Heartbeat
+        run: python -m tradelab.ops.watchdog beat paper-stocks-intraday --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
       - name: Save paper state
         # Keep fills recorded before a crash, but never save over the stored state when it was not restored first.
         if: always() && steps.restore.outcome == 'success'
         run: scripts/paper_state.sh save "stocks intraday $(date -u +%FT%TZ)"
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          scripts/paper_alert.sh open "failed:paper-stocks-intraday" "paper-stocks-intraday failed" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - name: Clear failure alert
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          scripts/paper_alert.sh resolve "failed:paper-stocks-intraday" "Recovered: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"

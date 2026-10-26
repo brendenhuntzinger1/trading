@@ -1,0 +1,17 @@
+# Where paper-operation alerts go. Nothing is delivered until the owner approves a destination in writing
+# and this file records it (approved = true, approved_by, approved_at, in a reviewed commit). Until then the
+# alert text is written to the GitHub Actions run log and job summary only.
+[destination]
+type = "github_issue"        # proposed: an issue in this repository, labelled paper-alert (no external service, no secret)
+approved = false
+approved_by = ""
+approved_at = ""
+
+# A missed run = no successful run recorded within max_age_hours.
+[missed_run.paper-daily]
+max_age_hours = 26           # schedules at 00:17 and 06:17 UTC
+[missed_run.paper-crypto-intraday]
+max_age_hours = 2            # schedule every 15 minutes
+[missed_run.paper-stocks-intraday]
+max_age_hours = 2            # schedule every 30 minutes in market hours
+market_hours_only = true     # judged only while NYSE is in session

@@ -8,12 +8,20 @@ Coinbase costs. None of it is evidence about any other venue. Paper only; nothin
 
 ## Verdict
 
-**P1 failed on both horizons: no qualifying candidate.**
+**P1 failed on both horizons: no qualifying candidate.** The claim is limited to the **eight tested
+configurations**:
+- P1a: B1, B2, M1, M2, M3;
+- P1b: B1, M1, M3.
+
+It holds under the specified data, rules and **assumed** Coinbase costs (see "What P1 does and does not show").
+The evaluation procedure, the data now consumed, and the statistics are explained in `P1_METHODS_AND_AUDIT.md`.
 - **Daily (P1a):** every configuration lost money after costs in development. The candidate (M1, ridge)
   was chosen only because it lost the least. It then lost 0.21% a day in validation, which disqualified it.
 - **Weekly (P1b):** no model beat the momentum baseline in development, so there was never a candidate.
 
-The final historical period was opened once, for the record, and no configuration can pass. P1a and P1b are
+The final historical period was also read, because the pre-registration said to run it "for the record"
+even without a candidate. That was a design mistake: it consumed the window and could not change the verdict
+(`P1_METHODS_AND_AUDIT.md` §2). No configuration could pass. P1a and P1b are
 recorded as REJECTED in `tradelab/governance/status.py`. Nothing is frozen for trading, and no prospective
 trial starts.
 
@@ -54,31 +62,48 @@ trial starts.
      the final period.
    - BTC buy-and-hold returned +44%, +69% and −26% over the same periods.
    - This describes those periods. It is not a strategy, and it is not a reason to hold BTC.
-7. **The development ranking of configurations would not have been reliable anyway.** PBO was 0.43 for
-   the daily configurations and 0.54 for the weekly ones, against the ≤ 0.05 the pre-registration requires.
+7. **Choosing the best development configuration was not a reliable procedure here.**
+   - PBO was 0.43 for the five daily configurations and 0.54 for the three weekly ones, against the ≤ 0.05
+     the pre-registration requires.
+   - PBO estimates how often "pick the best in-sample Sharpe" lands below the median out of sample, across
+     splits of the same development history. It is **not** the probability that any result was luck
+     (`P1_METHODS_AND_AUDIT.md` §4).
 8. **Weekly results have little power.** There were 122 out-of-fold development weeks, 53 validation weeks
    and 68 final weeks, and their intervals are wide. "No candidate" here means no evidence of skill, not
    evidence of no skill.
 
-## What P1 rules out, and what it does not
+## What P1 does and does not show
 
-**Ruled out, at Coinbase's assumed retail taker costs:** long-only daily or weekly top-3 selection among liquid
-Coinbase coins using price, volume, volatility, trend, relative-strength and breadth features with
-regularised linear, logistic or shallow-tree models. Also ruled out at the daily horizon: the simple momentum
-and reversal rules.
+**Shown, and only this:** under P1's data, rules and assumed costs, none of the eight configurations met its
+pre-registered standard. The specific conditions:
+- Coinbase USD point-in-time universe, hourly bars 2021-03 → 2026-10;
+- daily or weekly decisions;
+- equal-weight top-3, long-only;
+- abstention only for the two return models;
+- costs: an assumed, unverified 1.32% round trip.
 
-**Not ruled out:**
-- lower execution costs (maker orders, higher fee tiers, another venue measured properly);
-- slower policies (monthly, or with a hold buffer);
-- market timing (in or out of crypto altogether);
+All eight lost money net in development. The daily momentum and reversal rules, as specified (7-day return;
+negative 24-hour return), had net Sharpe below zero in every phase.
+
+**Not shown:**
+- Not that price/volume models in general fail. Other feature sets, targets, model classes, horizons and
+  training schemes were not tested.
+- Not that top-3 portfolios in general fail. Other weightings, a hold buffer, k ≠ 3, other universes and
+  risk targeting were not tested.
+- Not that intraday crypto trading fails. Nothing intraday was tested in P1.
+- Not that crypto prediction fails at lower costs. The cost grid shows the same configurations at
+  hypothetical lower Coinbase fees, but those fees were not verified and the configurations were not re-selected.
+- Not that the features carry no information. B2's positive rank IC in development and validation, and M2's
+  slight calibration, are consistent with small effects that these costs swamp.
+
+The things P1 leaves open:
+- maker execution or a verified lower fee tier;
+- slower policies;
+- market timing;
 - short selling;
-- information other than price and volume (on-chain data, flows, events);
-- intraday execution timing;
-- stocks, where round-trip costs are about 8 bp rather than 132 bp.
-
-Nor does P1 say the features carry no information. The reversal effect and M2's calibration suggest small
-real effects, far too small for these costs. **P1 is not a verdict on AI trading in general.** It is a
-verdict on one component, at one cost level, with one data family.
+- non-price information;
+- intraday approaches;
+- stocks, where costs are unmeasured. The 8 bp figure used elsewhere is an assumption.
 
 ## How P1 bears on the intraday objective
 
@@ -91,8 +116,9 @@ verdict on one component, at one cost level, with one data family.
 - the decision simulator: entry, hold, exit and abstain, with costs on actual turnover and comparators at
   matched risk;
 - the gate → development → validation → final-once harness, with deterministic reproduction;
-- above all, the **required-skill check**, which tells us before any modelling whether a horizon and cost
-  level are feasible at all.
+- the **break-even rank-correlation diagnostic**. For a given portfolio construction, universe, period and
+  cost, it estimates how much ranking skill would be needed to cover turnover costs. It is a
+  construction-specific diagnostic, not a universal minimum (`P1_METHODS_AND_AUDIT.md` §3).
 
 **Needs separate research:**
 - intraday features (trades, quotes, order book);
@@ -102,12 +128,11 @@ verdict on one component, at one cost level, with one data family.
 - event data;
 - latency.
 
-**The main lesson for intraday crypto: cost is the binding constraint.** A strategy that trades more often than
-daily needs even more skill per trade at the same cost, and the daily bar is already out of reach. Intraday
-crypto is not worth modelling at retail taker fees until execution costs are measured lower. That means
-maker fills or a cheaper fee tier, verified on the account. The same check at about 8 bp for liquid stocks
-should show a much lower required skill. That is the next thing to compute, and it waits on consolidated (SIP)
-quotes.
+**What it suggests for intraday crypto, as a hypothesis rather than a result.** At an assumed 1.32% round
+trip, the P1 construction needed a rank IC near 0.10 at slow turnover. Approaches that turn positions over
+faster pay more cost per unit of skill, so execution cost should be measured before intraday crypto
+modelling, either from maker fills or a verified fee tier. The same diagnostic for stocks needs measured
+spreads (consolidated quotes). Until then the stock cost is an assumption.
 
 ## Tables
 ### P1A development stopping check (1218 days, median 16 coins)
