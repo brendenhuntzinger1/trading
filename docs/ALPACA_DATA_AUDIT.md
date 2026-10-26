@@ -133,3 +133,25 @@ All are lower bounds: they assume no retries and full 10,000-point pages.
 **Bottom line:** the ORB experiment needs **historical SIP** bars and, for costs, SIP quotes. If a free
 paper-only account is limited to IEX (G), the experiment cannot be run on Alpaca's free tier. The choice would
 then be the $99/month SIP plan or another provider, and that purchase needs your approval.
+
+## Data gates for the ORB study (ORB_PREREGISTRATION.md Amendment 1, B7). **Not run yet: no key**
+
+`scripts/pit_verify_alpaca.py` (logic in `tradelab/stocks/verify.py`) checks each gate against API responses,
+and appends a dated results table below. Until that table exists, every "unverified" item above stays unverified.
+
+| Gate | What is checked | Pass rule |
+|---|---|---|
+| B7.1 SIP access | **Paper key:** confirmed first. **Data:** SPY 1-minute SIP bars and one minute of SIP quotes on the first session of 2016-03, 2020-03 and 2024-06, and the latest session ≥ 2 days old. **Entitlement:** `verify_entitlement` exchange-code / volume test | All requests 200 with data; entitlement verdict `sip` |
+| B7.2 Timestamps | SPY on 2024-07-15 (DST) and 2024-01-16 (standard): bar at the session open exists and is 09:30 ET; no bars outside 04:00–20:00 ET. Quotes: inside the requested window, monotonic. Records whether timestamps carry nanoseconds and which quote fields exist | Both days pass |
+| B7.3 Coverage | **Asset master:** listed with inactive assets. **Stock sample:** 200 random stocks with median 2023 close > $5 and volume ≥ 1M, 5 random sessions each, need ≥ 1 regular-session minute bar. **Delisted:** 13 names with daily bars in the 30 days ending one month before their last trading day | Coverage ≥ 95%, inactive assets > 0, ≥ 10 delisted names with bars |
+| B7.4 Spreads (measured) | In-play stock-days (RV ≥ 1) drawn from the coverage sample. Quoted half-spread of the NBBO quote in force at the end of each minute 09:35–10:30 ET and at 15:59 ET. Median, p90 and the share of minutes with no usable quote | ≥ 20 in-play stock-days, < 20% unusable minutes. **A measurement, never mixed with the slippage assumption** |
+| B7.5 Corporate actions | NVDA 2024-06-10 (10:1), AAPL 2020-08-31 (4:1), TSLA 2022-08-25 (3:1): the raw/split-adjusted ratio jumps by the split ratio; the raw intraday last close matches the raw daily close | All three within 1% / 0.5% |
+
+**Delisting dates are from memory.** The confidence of each is listed in `tradelab/stocks/verify.py`. The check
+uses a window ending 30 days before each date, so an error of a few days does not affect it.
+
+**Costs in the ORB study:**
+- The measured half-spreads at the trigger, stop and close minutes are recorded per trade.
+- Slippage beyond the touch is a separate assumption: 1 bp base, 5 bp stress.
+- Without historical quotes, the per-side cost falls back to the assumed 10 bp (25 bp stress), and results
+  are labelled **"cost assumed, not measured"**. They cannot PASS.

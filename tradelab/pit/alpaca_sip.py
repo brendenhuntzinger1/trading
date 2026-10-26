@@ -1,14 +1,17 @@
-"""Minimal Alpaca market-data client (historical stock bars, trades, quotes) and
+"""Minimal Alpaca market-data client (historical stock bars, trades, quotes, asset master) and
 entitlement checks. Paper-account credentials only; never logged or printed.
 
 Credentials come from the environment (see docs/CREDENTIALS_SETUP.md):
-  TRADELAB_PAPER_APCA_API_KEY_ID, TRADELAB_PAPER_APCA_API_SECRET_KEY
-Nothing in this module can place an order.
+  TRADELAB_PAPER_APCA_API_KEY_ID, TRADELAB_PAPER_APCA_API_SECRET_KEY, TRADELAB_PAPER_APCA_BASE_URL (optional)
+Nothing in this module can place an order: every request is a GET, and `_get` refuses any URL outside an
+explicit allow-list of read-only market-data / reference endpoints (orders, positions, watchlists and account
+configuration are rejected before any network call).
 """
 from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -22,6 +25,24 @@ LIVE_URL = "https://api.alpaca.markets/v2"          # used ONLY to confirm a pap
 IEX_EXCHANGE = "V"                                   # Alpaca exchange code for IEX
 
 Transport = Callable[[str, dict], tuple[int, dict]]
+
+# Read-only endpoints this client may call. Anything else raises ForbiddenEndpoint before a request is made.
+ALLOWED_PREFIXES = (
+    f"{DATA_URL}/bars?", f"{DATA_URL}/quotes?", f"{DATA_URL}/trades?",
+    f"{PAPER_URL}/assets", f"{PAPER_URL}/account", f"{LIVE_URL}/account", f"{PAPER_URL}/calendar",
+)
+FORBIDDEN_FRAGMENTS = ("/orders", "/positions", "/watchlists", "/account/configurations", "/account/activities")
+SIP_MIN_AGE = timedelta(minutes=16)                  # free plan: SIP history must end >= 15 minutes ago
+
+
+class ForbiddenEndpoint(PermissionError):
+    """Raised for any URL that is not a read-only market-data / reference endpoint."""
+
+
+def check_endpoint(url: str) -> None:
+    path = urllib.parse.urlsplit(url).path
+    if any(f in path for f in FORBIDDEN_FRAGMENTS) or not url.startswith(ALLOWED_PREFIXES):
+        raise ForbiddenEndpoint(f"refusing non-read-only endpoint: {urllib.parse.urlsplit(url).netloc}{path}")
 
 
 def http_get(url: str, headers: dict) -> tuple[int, dict]:
@@ -43,6 +64,11 @@ class AlpacaData:
     secret: str
     transport: Transport = http_get
     calls: int = field(default=0)
+    min_interval: float = 0.0          # seconds between calls (from_env: 200/min free-plan limit, with margin)
+    retries: int = 5                   # on 429 and 5xx, exponential backoff
+    sleep: Callable[[float], None] = time.sleep
+    clock: Callable[[], float] = time.monotonic
+    _last: float = field(default=-1e18)
 
     def __repr__(self):
         return "AlpacaData(key_id=<redacted>, secret=<redacted>)"
@@ -54,14 +80,29 @@ class AlpacaData:
             raise RuntimeError("TRADELAB_PAPER_APCA_API_KEY_ID / _SECRET_KEY not set (see docs/CREDENTIALS_SETUP.md)")
         if any(n.startswith("TRADELAB_LIVE_") for n in os.environ):
             raise RuntimeError("live credentials present in a research process; refusing")
-        return cls(k, s, transport)
+        base = os.environ.get("TRADELAB_PAPER_APCA_BASE_URL", "https://paper-api.alpaca.markets").rstrip("/")
+        if base.removesuffix("/v2") != PAPER_URL.removesuffix("/v2"):
+            raise RuntimeError("TRADELAB_PAPER_APCA_BASE_URL must be the paper host (https://paper-api.alpaca.markets)")
+        return cls(k, s, transport, min_interval=0.31)
 
     def _headers(self) -> dict:
         return {"APCA-API-KEY-ID": self.key_id, "APCA-API-SECRET-KEY": self.secret}
 
     def _get(self, url: str) -> tuple[int, dict]:
-        self.calls += 1
-        return self.transport(url, self._headers())
+        check_endpoint(url)
+        status, body = 0, {}
+        for attempt in range(self.retries + 1):
+            wait = self._last + self.min_interval - self.clock()
+            if wait > 0:
+                self.sleep(wait)
+            self._last = self.clock()
+            self.calls += 1
+            status, body = self.transport(url, self._headers())
+            if status != 429 and status < 500:
+                return status, body
+            if attempt < self.retries:
+                self.sleep(min(60.0, 2.0 ** attempt))
+        return status, body
 
     def _paged(self, kind: str, symbol: str, params: dict, max_pages: int = 1000) -> tuple[int, list, dict]:
         """GET /v2/stocks/{kind} with pagination; returns (status, rows, last_body)."""
@@ -77,15 +118,70 @@ class AlpacaData:
                 break
         return status, rows, body
 
-    def bars(self, symbol, start, end, timeframe="1Min", feed="sip", adjustment="raw"):
-        return self._paged("bars", symbol, {"timeframe": timeframe, "start": _iso(start), "end": _iso(end),
-                                            "feed": feed, "adjustment": adjustment})
+    def bars(self, symbol, start, end, timeframe="1Min", feed="sip", adjustment="raw", asof: str | None = None):
+        q = {"timeframe": timeframe, "start": _iso(start), "end": _iso(end), "feed": feed, "adjustment": adjustment}
+        if asof is not None:
+            q["asof"] = asof                         # "-" disables symbol mapping; a date maps renamed symbols
+        return self._paged("bars", symbol, q)
 
     def trades(self, symbol, start, end, feed="sip"):
         return self._paged("trades", symbol, {"start": _iso(start), "end": _iso(end), "feed": feed})
 
     def quotes(self, symbol, start, end, feed="sip"):
         return self._paged("quotes", symbol, {"start": _iso(start), "end": _iso(end), "feed": feed})
+
+
+    def bars_multi(self, symbols: list[str], start, end, timeframe="1Min", feed="sip", adjustment="raw",
+                   max_pages: int = 10000) -> tuple[int, dict[str, list]]:
+        """Several symbols per request (Alpaca's limit of 10,000 points is across symbols); pages merged."""
+        out: dict[str, list] = {}
+        token, status = None, 0
+        for _ in range(max_pages):
+            q = {"symbols": ",".join(symbols), "timeframe": timeframe, "start": _iso(start), "end": _iso(end),
+                 "feed": feed, "adjustment": adjustment, "limit": 10000, **({"page_token": token} if token else {})}
+            status, body = self._get(f"{DATA_URL}/bars?{urllib.parse.urlencode(q)}")
+            if status != 200:
+                return status, out
+            for sym, rows in (body.get("bars") or {}).items():
+                out.setdefault(sym, []).extend(rows)
+            token = body.get("next_page_token")
+            if not token:
+                break
+        return status, out
+
+    def assets(self, status: str | None = None, asset_class: str = "us_equity") -> tuple[int, list]:
+        """Asset master. Without `status` Alpaca returns every status, including inactive (source F)."""
+        q = {"asset_class": asset_class, **({"status": status} if status else {})}
+        st, body = self._get(f"{PAPER_URL}/assets?{urllib.parse.urlencode(q)}")
+        return st, (body if isinstance(body, list) else [])
+
+
+def require_old_enough(end: datetime, now: datetime | None = None) -> None:
+    """Free-plan SIP history must end >= 15 minutes ago; also guarantees a request never reaches data that
+    could not have been known at `end` + 15 minutes."""
+    now = now or datetime.now(timezone.utc)
+    if end > now - SIP_MIN_AGE:
+        raise ValueError(f"SIP request end {end.isoformat()} is less than {SIP_MIN_AGE} old")
+
+
+def available_bars(rows: list[dict], as_of: datetime, bar_minutes: int = 1) -> list[dict]:
+    """As-of filter: bars are stamped at their START, so a bar is known only once start + length <= as_of."""
+    return [r for r in rows if parse_ts(r["t"]) + timedelta(minutes=bar_minutes) <= as_of]
+
+
+def available_quotes(rows: list[dict], as_of: datetime) -> list[dict]:
+    return [r for r in rows if parse_ts(r["t"]) <= as_of]
+
+
+def parse_ts(s: str) -> datetime:
+    """RFC-3339 with up to nanosecond precision -> aware UTC datetime (microseconds; sub-microsecond dropped)."""
+    s = s.replace("Z", "+00:00")
+    if "." in s:
+        head, rest = s.split(".", 1)
+        frac = "".join(ch for ch in rest if ch.isdigit())
+        tz = rest[len(frac):]
+        s = f"{head}.{frac[:6].ljust(6, '0')}{tz}"
+    return datetime.fromisoformat(s).astimezone(timezone.utc)
 
 
 def _iso(t) -> str:
