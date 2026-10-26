@@ -1,0 +1,42 @@
+{
+ "dev": {
+  "qualifiers": {
+   "B0": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C1": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": true,
+    "qualified": false
+   },
+   "C2": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": true,
+    "qualified": false
+   },
+   "C3": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C4": {
+    "D1": false,
+    "D2": true,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   }
+  }
+ },
+ "stopped": "Stage B: no configuration dev-qualified; validation and final unread. Earnings drift is weak in 2020-22 (consistent with Martineau 2022): 8,648 eligible events (6,885 EPS beats); gross excess over the exposure-matched equal-weight control -0.1..+1.7 bp/day, every interval includes 0 (best C4 mid-caps +1.7 [-1.2, +4.6]; per position-day 9.8 vs control 5.8 bp). Net positive only for the 20-day hold (C2 +4.7 bp/day) but not distinguishable from holding the universe (+1.2 [-2.6, +4.9]). Capacity cap (20 x 5%) skipped many events (B0 1,774 of 3,297), first-come by headline time. Event timing and verdict parsing spot-checked (4 events correct). Lesson: the strongest residual is in mid-caps and on the price reaction (EAR) rather than the headline beat."
+}
