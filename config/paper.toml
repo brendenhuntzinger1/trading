@@ -1,0 +1,30 @@
+# Paper-trading configuration. Live trading uses a separate file and credentials.
+mode = "paper"
+venue = "coinbase"
+capital = 1000.0
+strategies = ["ensemble_vol40", "fixed_allocation", "buy_hold", "breakout_20_atr3_vol40"]
+operating_cost_per_day = 0.0   # daily job on GitHub Actions free tier; set if a VPS or LLM costs apply
+
+[risk]
+max_position_weight = 0.50
+max_gross_exposure = 1.00
+max_cluster_exposure = 0.80
+daily_loss_limit = 0.03
+max_drawdown_limit = 0.25
+reduce_on_max_drawdown = 0.0
+max_orders_per_day = 12
+max_turnover_30d = 3.0
+max_open_orders = 4
+max_order_notional = 300.0
+min_order_notional = 1.0
+max_spread_bps = 20.0
+max_expected_slippage_bps = 50.0
+max_order_vs_depth = 0.10
+depth_band_bps = 25.0
+stale_data_s = 120.0
+max_rejections_1h = 3
+abnormal_move_1h = 0.08
+abnormal_vol_multiple = 3.0
+recon_tolerance_frac = 0.005
+recon_tolerance_abs = 2.0
+block_entries_on_event_flags = false

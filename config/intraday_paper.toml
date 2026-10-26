@@ -1,0 +1,45 @@
+# EXPERIMENTAL - Intraday PAPER engine. Nothing here is live-eligible (tradelab/governance/status.py).
+# Intraday PAPER engine. Setups run here to gather prospective evidence; none has
+# demonstrated an advantage. Fills are simulated with the cost models in
+# INTRADAY_HYPOTHESES.md. No live credentials, no live order path.
+mode = "paper"
+capital = 1000.0
+
+[crypto]
+# C1 and C2 were REJECTED on the untouched test (INTRADAY_CRYPTO.md). They run in paper only to exercise
+# the engine's live path (data, sizing, exits, restarts). They are not candidates and cannot become live.
+symbols = ["BTC-USD", "ETH-USD", "SOL-USD"]
+setups = ["C1", "C2"]
+history_days = 70
+
+[crypto_risk]
+market = "crypto"
+max_positions = 3
+max_weight = 0.25
+max_gross = 0.75
+risk_per_trade = 0.01
+daily_loss_limit = 0.03
+max_entries_per_day = 6
+max_bar_age_s = 900.0
+
+[stocks]
+# S1, S2-on-stocks and S2-ETF are all REJECTED (S2-ETF failed its out-of-universe replication, S2X).
+# The S2-ETF paper run is kept only to exercise the engine's live stock path; it is not a candidate.
+# SPY is the gap reference and is never traded by S2.
+setups = ["S2"]
+universe = ["SPY", "XLB", "XLE", "XLF", "XLI", "XLK", "XLP", "XLU", "XLV", "XLY", "XLRE", "XLC", "QQQ", "IWM", "DIA"]
+
+[stocks_risk]
+market = "stocks"
+max_positions = 5
+max_weight = 0.20
+max_gross = 1.00
+risk_per_trade = 0.01
+daily_loss_limit = 0.02
+max_entries_per_day = 10
+min_price = 10.0
+min_dollar_volume = 50000000.0
+no_entries_last_minutes = 15
+flatten_at_close = true
+pdt_max_day_trades_5d = 0
+max_bar_age_s = 900.0

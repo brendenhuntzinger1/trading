@@ -1,0 +1,45 @@
+{
+ "note": "Edited only by a reviewed commit. Rollback = git revert. The service refuses to run a strategy whose code hash differs from this file.",
+ "champion": {
+  "name": "ensemble_vol40",
+  "version": "74d5bfcfda"
+ },
+ "benchmarks": [
+  {
+   "name": "fixed_allocation",
+   "version": "65305f79fa"
+  },
+  {
+   "name": "buy_hold",
+   "version": "12f6141316"
+  }
+ ],
+ "challengers": [
+  {
+   "name": "breakout_20_atr3_vol40",
+   "version": "4af28df376",
+   "status": "shadow",
+   "evidence": "RESEARCH.md: passed validation, FAILED pre-registered 2024-2026 test and 1/3 holdouts"
+  }
+ ],
+ "promotion_criteria": {
+  "min_paper_days": 90,
+  "min_prob_sharpe_better": 0.9,
+  "max_drawdown_worse_by": 0.0,
+  "max_turnover_ratio": 1.5,
+  "max_breaker_incidents": 0
+ },
+ "research_data_sha": "ac508c42e580a0f9",
+ "history": [
+  {
+   "date": "2026-10-25",
+   "change": "fixed_allocation moved to tradelab.strategies.fixed (same rule, 0.33 constant); version 98a9ab9967 -> 755f850c0d. Added breakout shadow challenger.",
+   "reviewed_by": "PENDING OWNER REVIEW"
+  },
+  {
+   "date": "2026-10-25",
+   "change": "Fingerprint now also covers StrategySpec.__call__ (independent review finding). No strategy logic changed; all versions re-hashed: ensemble_vol40 d15a69f5c4->74d5bfcfda, fixed_allocation 755f850c0d->65305f79fa, buy_hold 899fef1a8c->12f6141316, breakout_20_atr3_vol40 169fdddc92->4af28df376",
+   "reviewed_by": "PENDING OWNER REVIEW"
+  }
+ ]
+}

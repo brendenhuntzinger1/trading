@@ -1,0 +1,158 @@
+[
+ {
+  "strategy": "S1 default",
+  "T_days": 304,
+  "SR_annual_net": -2.57,
+  "SR_annual_90ci": [
+   -4.13,
+   -1.01
+  ],
+  "skew": 0.33,
+  "kurtosis": 4.9,
+  "PSR_vs_0 (=DSR with N=1)": 0.003,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.22,
+   6.61
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   1.48,
+   4.71
+  ]
+ },
+ {
+  "strategy": "S1 long/short",
+  "T_days": 304,
+  "SR_annual_net": -1.62,
+  "SR_annual_90ci": [
+   -3.14,
+   -0.1
+  ],
+  "skew": 0.13,
+  "kurtosis": 7.6,
+  "PSR_vs_0 (=DSR with N=1)": 0.04,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.22,
+   6.61
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   1.5,
+   4.8
+  ]
+ },
+ {
+  "strategy": "S2 stocks+ETFs",
+  "T_days": 1515,
+  "SR_annual_net": -0.14,
+  "SR_annual_90ci": [
+   -0.82,
+   0.53
+  ],
+  "skew": 1.06,
+  "kurtosis": 13.1,
+  "PSR_vs_0 (=DSR with N=1)": 0.362,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.22,
+   6.61
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   0.66,
+   3.86
+  ]
+ },
+ {
+  "strategy": "S2 ETF-only",
+  "T_days": 1512,
+  "SR_annual_net": 0.24,
+  "SR_annual_90ci": [
+   -0.41,
+   0.89
+  ],
+  "skew": 5.13,
+  "kurtosis": 176.5,
+  "PSR_vs_0 (=DSR with N=1)": 0.729,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.22,
+   6.61
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   0.63,
+   4.37
+  ]
+ },
+ {
+  "strategy": "C1 maker",
+  "T_days": 1010,
+  "SR_annual_net": -4.14,
+  "SR_annual_90ci": [
+   -4.63,
+   -3.65
+  ],
+  "skew": -6.11,
+  "kurtosis": 49.5,
+  "PSR_vs_0 (=DSR with N=1)": 0.0,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.88,
+   7.95
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   1.18,
+   5.86
+  ]
+ },
+ {
+  "strategy": "C2",
+  "T_days": 1016,
+  "SR_annual_net": -1.17,
+  "SR_annual_90ci": [
+   -2.33,
+   -0.01
+  ],
+  "skew": 4.62,
+  "kurtosis": 110.7,
+  "PSR_vs_0 (=DSR with N=1)": 0.048,
+  "DSR N=6 var_low": 0.0,
+  "DSR N=6 var_dev": 0.0,
+  "DSR N=22 var_low": 0.0,
+  "DSR N=22 var_dev": 0.0,
+  "DSR N=91 var_low": 0.0,
+  "DSR N=91 var_dev": 0.0,
+  "SR0_annual N=91 (var_low / var_dev)": [
+   3.88,
+   7.95
+  ],
+  "annual SR needed for DSR>=0.95: N=1 / N=91 var_low": [
+   0.91,
+   5.19
+  ]
+ }
+]

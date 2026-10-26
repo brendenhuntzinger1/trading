@@ -1,0 +1,101 @@
+{
+ "S1_default_thr0.25_top5_all": {
+  "n_trades": 1427,
+  "mean_net": -0.0007967694423689838,
+  "mean_gross": 2.8330228165928015e-06,
+  "win_rate": 0.424667133847232,
+  "daily_sharpe_ann": -4.076133571807429,
+  "daily_sr_per_period": -0.25677227956390236,
+  "sum_daily_pnl": -0.227397998852108,
+  "first": "2023-11-27",
+  "last": "2025-01-24"
+ },
+ "S1_thr0.50_top5_all": {
+  "n_trades": 1426,
+  "mean_net": -0.0008019343164513875,
+  "mean_gross": -2.3359844050184922e-06,
+  "win_rate": 0.42426367461430575,
+  "daily_sharpe_ann": -4.1070237665642315,
+  "daily_sr_per_period": -0.2587181789276369,
+  "sum_daily_pnl": -0.22871166705193574,
+  "first": "2023-11-27",
+  "last": "2025-01-24"
+ },
+ "S1_thr0.25_index_etfs": {
+  "n_trades": 441,
+  "mean_net": -0.0008873689735492007,
+  "mean_gross": -8.783900973898978e-05,
+  "win_rate": 0.2947845804988662,
+  "daily_sharpe_ann": -5.261218025300039,
+  "daily_sr_per_period": -0.331425583053196,
+  "sum_daily_pnl": -0.07826594346703951,
+  "first": "2023-11-27",
+  "last": "2025-01-24"
+ },
+ "S1_thr0.25_spy_only": {
+  "n_trades": 101,
+  "mean_net": -0.0008589299633936597,
+  "mean_gross": -5.93772415479166e-05,
+  "win_rate": 0.25742574257425743,
+  "daily_sharpe_ann": -4.268702562685873,
+  "daily_sr_per_period": -0.2689029857564506,
+  "sum_daily_pnl": -0.01735038526055193,
+  "first": "2023-11-27",
+  "last": "2025-01-24"
+ },
+ "S1_longshort_thr0.25_top5_all": {
+  "n_trades": 1440,
+  "mean_net": -0.0008096083470238491,
+  "mean_gross": -9.945826888963104e-06,
+  "win_rate": 0.4222222222222222,
+  "daily_sharpe_ann": -4.472662266751202,
+  "daily_sr_per_period": -0.28175123943347896,
+  "sum_daily_pnl": -0.23316720394286852,
+  "first": "2023-11-27",
+  "last": "2025-01-24"
+ },
+ "S2_default_thr1_top5_stocks+sector": {
+  "n_trades": 10940,
+  "mean_net": 0.001969065051038134,
+  "mean_gross": 0.00277088084781791,
+  "win_rate": 0.5283363802559415,
+  "daily_sharpe_ann": 1.1435420725337306,
+  "daily_sr_per_period": 0.07203637946818182,
+  "sum_daily_pnl": 4.308314331671437,
+  "first": "2000-01-03",
+  "last": "2015-12-31"
+ },
+ "S2_thr2_top5_stocks+sector": {
+  "n_trades": 4107,
+  "mean_net": 0.002646963120366213,
+  "mean_gross": 0.003449321398345809,
+  "win_rate": 0.5125395665936207,
+  "daily_sharpe_ann": 0.7454660538143943,
+  "daily_sr_per_period": 0.04695994736270429,
+  "sum_daily_pnl": 2.1742155070688076,
+  "first": "2000-01-03",
+  "last": "2015-12-31"
+ },
+ "S2_thr1_top3_stocks+sector": {
+  "n_trades": 8206,
+  "mean_net": 0.0020089351781728084,
+  "mean_gross": 0.002810782880625995,
+  "win_rate": 0.5315622715086522,
+  "daily_sharpe_ann": 1.2028808615838174,
+  "daily_sr_per_period": 0.07577437182356879,
+  "sum_daily_pnl": 3.2970644144172137,
+  "first": "2000-01-03",
+  "last": "2015-12-31"
+ },
+ "S2_etf_only_thr1_top5": {
+  "n_trades": 512,
+  "mean_net": 0.0015558855992187646,
+  "mean_gross": 0.002357370753244252,
+  "win_rate": 0.544921875,
+  "daily_sharpe_ann": 0.19073216293838774,
+  "daily_sr_per_period": 0.012014996908486297,
+  "sum_daily_pnl": 0.1593226853600015,
+  "first": "2000-01-03",
+  "last": "2015-12-31"
+ }
+}

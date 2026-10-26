@@ -1,0 +1,46 @@
+{
+ "S1_default_thr0.25_top5_all": {
+  "n_trades": 724,
+  "mean_net": -0.001035139664841054,
+  "mean_gross": -0.0002357279530594845,
+  "win_rate": 0.4143646408839779,
+  "daily_sharpe_ann": -4.449557942765254,
+  "daily_sr_per_period": -0.28029580382688174,
+  "sum_daily_pnl": -0.14988822346898462,
+  "first": "2025-01-27",
+  "last": "2025-08-25"
+ },
+ "S1_longshort_thr0.25_top5_all": {
+  "n_trades": 725,
+  "mean_net": -0.0010231945720432086,
+  "mean_gross": -0.00022369211079511356,
+  "win_rate": 0.4303448275862069,
+  "daily_sharpe_ann": -3.492568084436557,
+  "daily_sr_per_period": -0.2200111092471516,
+  "sum_daily_pnl": -0.14836321294626525,
+  "first": "2025-01-27",
+  "last": "2025-08-25"
+ },
+ "S2_default_thr1_top5_stocks+sector": {
+  "n_trades": 3488,
+  "mean_net": -0.0001731518228422365,
+  "mean_gross": 0.0006269496861520983,
+  "win_rate": 0.5083142201834863,
+  "daily_sharpe_ann": -0.13978059593305114,
+  "daily_sr_per_period": -0.008805349879791901,
+  "sum_daily_pnl": -0.12079071161474417,
+  "first": "2016-01-04",
+  "last": "2020-12-31"
+ },
+ "S2_etf_only_thr1_top5": {
+  "n_trades": 227,
+  "mean_net": 0.0006376903791003943,
+  "mean_gross": 0.001438440756516795,
+  "win_rate": 0.4801762114537445,
+  "daily_sharpe_ann": 0.1393164357669522,
+  "daily_sr_per_period": 0.008776110537696658,
+  "sum_daily_pnl": 0.0289511432111579,
+  "first": "2016-01-04",
+  "last": "2020-12-31"
+ }
+}

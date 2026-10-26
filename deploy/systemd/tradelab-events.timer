@@ -1,0 +1,10 @@
+[Unit]
+Description=Poll event sources every 10 minutes (first-seen timestamps depend on it)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

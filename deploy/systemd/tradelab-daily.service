@@ -1,0 +1,14 @@
+[Unit]
+Description=tradelab daily paper cycle and dashboard
+
+[Service]
+Type=oneshot
+User=tradelab
+WorkingDirectory=/opt/tradelab
+Environment=TRADELAB_MODE=paper
+ExecStart=/opt/tradelab/.venv/bin/python -m tradelab.service.daily --config config/paper.toml
+ExecStartPost=/opt/tradelab/.venv/bin/python -m tradelab.dashboard.build
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/tradelab/data

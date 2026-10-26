@@ -1,0 +1,54 @@
+{
+ "gate": {
+  "cost_1.25%": 0.000268588482895904,
+  "miss_20%": 0.08423967837930535
+ },
+ "selector_trailing": {
+  "cost_1.25%": 0.03639538491972871
+ },
+ "selector_regime": {
+  "cost_1.25%": -0.06128496489972857
+ },
+ "baseline": {
+  "cost_1.25%": 0.03236409073598123,
+  "miss_20%": 0.10878233733912657
+ },
+ "gate_vs_baseline": {
+  "gate": {
+   "CAGR": 0.10012866028438694,
+   "sharpe": 0.5531054855653862,
+   "maxDD": -0.2462680850722706,
+   "vol": 0.21357433064566986,
+   "sr_daily": 0.02895086428607993,
+   "exposure": 0.32152610484917366,
+   "orders_per_yr": 74.91731517509727
+  },
+  "baseline": {
+   "CAGR": 0.11880782368279474,
+   "sharpe": 0.5987599126347927,
+   "maxDD": -0.29841292377659034,
+   "vol": 0.23232189645010753,
+   "sr_daily": 0.03134052621610769,
+   "exposure": 0.39944926037321726,
+   "orders_per_yr": 113.2636186770428
+  },
+  "bootstrap": {
+   "p05": {
+    "dSharpe_gate_minus_baseline": -0.3382,
+    "dCAGR_gate_minus_baseline": -0.1044
+   },
+   "median": {
+    "dSharpe_gate_minus_baseline": -0.0402,
+    "dCAGR_gate_minus_baseline": -0.0161
+   },
+   "p95": {
+    "dSharpe_gate_minus_baseline": 0.2497,
+    "dCAGR_gate_minus_baseline": 0.053
+   },
+   "P(>0)": {
+    "dSharpe_gate_minus_baseline": 0.4105,
+    "dCAGR_gate_minus_baseline": 0.3625
+   }
+  }
+ }
+}

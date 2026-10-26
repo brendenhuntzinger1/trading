@@ -1,0 +1,94 @@
+C1 C1_k4_maker {
+ "n_trades": 212,
+ "gross_mean": 0.00027358569796093505,
+ "gross_median": 0.004409357803456748,
+ "round_trip_cost_mean": 0.0106,
+ "net_mean": -0.010326414302039065,
+ "E1_lower95": -0.011708342697507165,
+ "sharpe_daily": -4.108629918216597,
+ "stress_net_mean": -0.013326414302039066,
+ "stress_sharpe": -4.361844352471612,
+ "subperiod_pnl": [
+  -0.2147710126367463,
+  -0.17350591953557748,
+  -0.1590230258357466
+ ],
+ "placebo_p": 0.5384615384615384,
+ "DSR": 0.0,
+ "n_trials": 98,
+ "trial_sr_var": 0.010008776374089545,
+ "win_rate": 0.1792452830188679,
+ "total_weighted_pnl": -0.5472999580080704,
+ "E": {
+  "E1": false,
+  "E2": false,
+  "E3": false,
+  "E4": false,
+  "E5": false,
+  "E6": false,
+  "E7": true
+ },
+ "all_pass": false,
+ "exit_reasons": {
+  "target": 107,
+  "stop": 105
+ },
+ "per_symbol": {
+  "count": {
+   "BTC-USD": 76,
+   "ETH-USD": 76,
+   "SOL-USD": 60
+  },
+  "mean": {
+   "BTC-USD": -0.010126014518241617,
+   "ETH-USD": -0.009893090360617912,
+   "SOL-USD": -0.011129131020649292
+  }
+ }
+}
+C2 C2_m1.5 {
+ "n_trades": 74,
+ "gross_mean": 0.0035282860980232014,
+ "gross_median": -0.003829526133381944,
+ "round_trip_cost_mean": 0.013200000000000002,
+ "net_mean": -0.009671713901976802,
+ "E1_lower95": -0.016884856933926603,
+ "sharpe_daily": -1.165973508984146,
+ "stress_net_mean": -0.012671713901976796,
+ "stress_sharpe": -1.4961443411787787,
+ "subperiod_pnl": [
+  -0.029624929022003317,
+  -0.055875113489924966,
+  -0.09360463362069539
+ ],
+ "placebo_p": 0.11388611388611389,
+ "DSR": 0.0,
+ "n_trials": 98,
+ "trial_sr_var": 0.010008776374089545,
+ "win_rate": 0.3108108108108108,
+ "total_weighted_pnl": -0.17910467613262368,
+ "E": {
+  "E1": false,
+  "E2": false,
+  "E3": false,
+  "E4": false,
+  "E5": false,
+  "E6": false,
+  "E7": false
+ },
+ "all_pass": false,
+ "exit_reasons": {
+  "time": 48,
+  "stop": 26
+ },
+ "per_symbol": {
+  "count": {
+   "BTC-USD": 39,
+   "ETH-USD": 35
+  },
+  "mean": {
+   "BTC-USD": -0.012795245330043423,
+   "ETH-USD": -0.006191207453559705
+  }
+ }
+}

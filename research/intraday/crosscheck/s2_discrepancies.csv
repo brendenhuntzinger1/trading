@@ -1,0 +1,27 @@
+side,session,symbol,research_signal,net_ret,engine_reason,cause
+research_only,2022-05-09,TSLA,-0.01856,-0.05974,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-05-20,VZ,-0.01095,0.00918,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-06-03,NVDA,-0.01408,-0.01976,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-08-09,EMR,-0.02413,-0.01333,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-09-13,CRM,-0.02232,-0.00175,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-10-20,ABT,-0.01493,-0.01436,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-11-11,BMY,-0.01841,-0.02818,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-11-14,INTU,-0.01494,-0.00677,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-12-02,LRCX,-0.01418,0.01456,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-12-15,NOW,-0.01147,-0.01943,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-12-19,HD,-0.0124,-0.00759,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-12-21,PANW,-0.01349,-0.00693,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2022-12-30,NVDA,-0.01112,0.01872,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2023-01-24,XOM,-0.02756,0.04176,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2023-02-03,QCOM,-0.02207,0.02861,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2023-02-24,AMD,-0.012,0.00357,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2023-03-20,TSLA,-0.01346,0.02821,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2023-03-27,CRM,-0.01199,0.01158,engine never received the signal,crowded out by sub-$10 PLTR ranked before filtering
+research_only,2025-02-26,AAPL,-0.01381,-0.01704,engine never received the signal,crowded out by GEV/SNDK
+research_only,2025-03-04,GEV,-0.02526,0.02296,engine never received the signal,crowded out by GEV/SNDK
+research_only,2025-03-05,TMUS,-0.01346,0.00582,engine never received the signal,crowded out by GEV/SNDK
+engine_only,2024-04-04,GEV,,-0.07387,"research traded 4 that day: ['BMY', 'GOOG', 'GOOGL', 'XOM']","new listing, no 20-day liquidity history (NaN treated as liquid)"
+engine_only,2025-02-26,SNDK,,0.00851,"research traded 5 that day: ['AAPL', 'AMGN', 'MMM', 'TMUS', 'UNH']","new listing, no 20-day liquidity history (NaN treated as liquid)"
+engine_only,2025-02-27,SNDK,,-0.01991,"research traded 4 that day: ['CRM', 'DHR', 'GM', 'NEE']","new listing, no 20-day liquidity history (NaN treated as liquid)"
+engine_only,2025-03-04,SNDK,,0.04202,"research traded 5 that day: ['ANET', 'C', 'GEV', 'PLTR', 'TSLA']","new listing, no 20-day liquidity history (NaN treated as liquid)"
+engine_only,2025-03-05,SNDK,,0.01747,"research traded 5 that day: ['COP', 'MRK', 'TMUS', 'XLE', 'XOM']","new listing, no 20-day liquidity history (NaN treated as liquid)"

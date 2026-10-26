@@ -1,0 +1,42 @@
+51 holdout coins eligible on at least one test day
+AAVE-USD 3 signals 3 trades
+ADA-USD 26 signals 20 trades
+AVAX-USD 20 signals 17 trades
+AVNT-USD 1 signals 1 trades
+BCH-USD 1 signals 1 trades
+BONK-USD 16 signals 14 trades
+DOGE-USD 66 signals 51 trades
+DOT-USD 1 signals 1 trades
+FARTCOIN-USD 9 signals 7 trades
+FET-USD 5 signals 4 trades
+HBAR-USD 16 signals 12 trades
+HYPE-USD 4 signals 1 trades
+INJ-USD 2 signals 2 trades
+JASMY-USD 4 signals 4 trades
+LINK-USD 46 signals 32 trades
+LTC-USD 16 signals 9 trades
+MATIC-USD 2 signals 2 trades
+NEAR-USD 1 signals 1 trades
+ONDO-USD 10 signals 9 trades
+PENGU-USD 6 signals 5 trades
+PEPE-USD 11 signals 8 trades
+PUMP-USD 2 signals 2 trades
+RNDR-USD 7 signals 6 trades
+SEI-USD 2 signals 2 trades
+SHIB-USD 26 signals 23 trades
+SUI-USD 25 signals 21 trades
+TAO-USD 3 signals 3 trades
+TRUMP-USD 1 signals 1 trades
+XLM-USD 6 signals 5 trades
+XRP-USD 87 signals 67 trades
+ZEC-USD 10 signals 8 trades
+{
+ "config": "C1_k4_maker",
+ "coins_traded": 31,
+ "n": 342,
+ "gross_mean": 7.60602884777978e-05,
+ "net_mean": -0.0105239397115222,
+ "net_lower95": -0.01294800644244669,
+ "sharpe": -2.3743345106969582,
+ "win_rate": 0.41812865497076024
+}

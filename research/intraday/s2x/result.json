@@ -1,0 +1,88 @@
+{
+ "primary_equity": {
+  "label": "primary_equity",
+  "trades": 4692,
+  "days_traded": 1791,
+  "symbols_traded": 29,
+  "gross_bp": -2.7,
+  "gross_90ci_bp": [
+   -8.9,
+   3.9
+  ],
+  "gross_95_upper_bp": 4.8,
+  "gross_signal_replicates (90% CI > 0)": false,
+  "net_bp_base8": -10.7,
+  "net_lower5_bp": -16.9,
+  "net_bp_open13": -15.7,
+  "net_bp_stress24": -26.7,
+  "sharpe_annual_net": -0.73,
+  "thirds": [
+   -0.1189,
+   -0.4061,
+   -0.1359
+  ],
+  "placebo_p": 0.862,
+  "placebo_mean_gross_bp": -1.0,
+  "DSR_null_var_N92": 0.0,
+  "criteria": {
+   "E1 net lower 5% > 0": false,
+   "E2 Sharpe >= 0.5": "False",
+   "E3 stress & open-spread net > 0": "False",
+   "E4 >=2 of 3 thirds > 0": false,
+   "E5 placebo p < 0.05": false,
+   "E6 DSR >= 0.95": false,
+   "E7 trades >= 100": true
+  },
+  "verdict": "REJECT (no useful effect)"
+ },
+ "secondary_bond_commodity": {
+  "label": "secondary_bond_commodity",
+  "trades": 1952,
+  "days_traded": 1121,
+  "symbols_traded": 7,
+  "gross_bp": -9.3,
+  "gross_90ci_bp": [
+   -15.3,
+   -3.7
+  ],
+  "gross_95_upper_bp": -2.9,
+  "gross_signal_replicates (90% CI > 0)": false,
+  "net_bp_base8": -17.3,
+  "net_lower5_bp": -23.3,
+  "net_bp_open13": -22.3,
+  "net_bp_stress24": -33.3,
+  "sharpe_annual_net": -1.49,
+  "thirds": [
+   -0.1073,
+   -0.2322,
+   -0.157
+  ],
+  "placebo_p": 0.954,
+  "placebo_mean_gross_bp": -6.5,
+  "DSR_null_var_N92": 0.0,
+  "criteria": {
+   "E1 net lower 5% > 0": false,
+   "E2 Sharpe >= 0.5": "False",
+   "E3 stress & open-spread net > 0": "False",
+   "E4 >=2 of 3 thirds > 0": false,
+   "E5 placebo p < 0.05": false,
+   "E6 DSR >= 0.95": false,
+   "E7 trades >= 100": true
+  },
+  "verdict": "REJECT (no useful effect)"
+ },
+ "pooled_with_seen_S2_ETF (not a pass criterion)": {
+  "trades": 5240,
+  "gross_bp": -1.1,
+  "gross_90ci_bp": [
+   -7.3,
+   5.3
+  ],
+  "net_bp": -9.1,
+  "net_90ci_bp": [
+   -15.3,
+   -2.7
+  ]
+ },
+ "data_fetched_at": "2026-10-25T23:27:59.741260+00:00"
+}

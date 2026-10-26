@@ -1,0 +1,18 @@
+{
+ "C1": {
+  "config": "C1_k4_maker",
+  "gross_mean": 0.00027358569796093505,
+  "gross_lower95": -0.0011083426975071662,
+  "gross_upper95": 0.0016690632037918997,
+  "placebo_p_zero_cost": 0.5384615384615384,
+  "break_even_cost_per_side": 0.00013679284898046753
+ },
+ "C2": {
+  "config": "C2_m1.5",
+  "gross_mean": 0.0035282860980232014,
+  "gross_lower95": -0.003684856933926601,
+  "gross_upper95": 0.011854170727779969,
+  "placebo_p_zero_cost": 0.11388611388611389,
+  "break_even_cost_per_side": 0.0017641430490116007
+ }
+}

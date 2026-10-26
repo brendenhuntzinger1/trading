@@ -1,0 +1,12 @@
+[Unit]
+Description=tradelab event ingestion pass
+
+[Service]
+Type=oneshot
+User=tradelab
+WorkingDirectory=/opt/tradelab
+ExecStart=/opt/tradelab/.venv/bin/python scripts/events_ingest.py --fill-outcomes
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/tradelab/data

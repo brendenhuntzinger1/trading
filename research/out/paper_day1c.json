@@ -1,0 +1,64 @@
+{
+ "at": "2026-10-25T18:38:01.950327+00:00",
+ "config_hash": "d861dd46065a",
+ "accounts": {
+  "paper-ensemble_vol40": {
+   "equity": 996.74,
+   "targets": {
+    "BTC-USD": 0.25,
+    "ETH-USD": 0.25
+   },
+   "orders": [],
+   "breakers": {}
+  },
+  "paper-fixed_allocation": {
+   "equity": 997.87,
+   "targets": {
+    "BTC-USD": 0.165,
+    "ETH-USD": 0.165
+   },
+   "orders": [],
+   "breakers": {}
+  },
+  "paper-buy_hold": {
+   "equity": 996.13,
+   "targets": {
+    "BTC-USD": 0.5,
+    "ETH-USD": 0.5
+   },
+   "orders": [
+    [
+     "BTC-USD",
+     "filled",
+     300.0,
+     1.8
+    ],
+    [
+     "ETH-USD",
+     "filled",
+     300.0,
+     1.8
+    ]
+   ],
+   "breakers": {}
+  },
+  "paper-breakout_20_atr3_vol40": {
+   "equity": 998.2,
+   "targets": {
+    "BTC-USD": 0.5,
+    "ETH-USD": 0.0
+   },
+   "orders": [
+    [
+     "BTC-USD",
+     "filled",
+     300.0,
+     1.8
+    ]
+   ],
+   "breakers": {}
+  }
+ },
+ "event_flags": [],
+ "notes": []
+}

@@ -1,0 +1,22 @@
+# Always-on market monitor (paper). Install on the host as a dedicated, unprivileged user.
+[Unit]
+Description=tradelab live market monitor (paper)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=tradelab
+WorkingDirectory=/opt/tradelab
+Environment=TRADELAB_MODE=paper
+ExecStart=/opt/tradelab/.venv/bin/python -m tradelab.service.monitor
+Restart=always
+RestartSec=5
+# hardening: no new privileges, read-only system, writable data dir only
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/tradelab/data
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

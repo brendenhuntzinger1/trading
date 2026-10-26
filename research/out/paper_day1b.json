@@ -1,0 +1,58 @@
+{
+ "at": "2026-10-25T18:37:11.693654+00:00",
+ "config_hash": "d861dd46065a",
+ "accounts": {
+  "paper-ensemble_vol40": {
+   "equity": 996.79,
+   "targets": {
+    "BTC-USD": 0.25,
+    "ETH-USD": 0.25
+   },
+   "orders": [],
+   "breakers": {}
+  },
+  "paper-fixed_allocation": {
+   "equity": 997.9,
+   "targets": {},
+   "orders": [],
+   "breakers": {
+    "model_failure": "strategy output missing/invalid"
+   }
+  },
+  "paper-buy_hold": {
+   "equity": 996.19,
+   "targets": {
+    "BTC-USD": 0.5,
+    "ETH-USD": 0.5
+   },
+   "orders": [
+    [
+     "BTC-USD",
+     "filled",
+     300.0,
+     1.8
+    ],
+    [
+     "ETH-USD",
+     "filled",
+     300.0,
+     1.8
+    ]
+   ],
+   "breakers": {}
+  },
+  "paper-breakout_20_atr3_vol40": {
+   "equity": 1000.0,
+   "targets": {},
+   "orders": [],
+   "breakers": {
+    "model_failure": "strategy output missing/invalid"
+   }
+  }
+ },
+ "event_flags": [],
+ "notes": [
+  "fixed_allocation: code version c3094bbccf is not in config/strategies.lock; not trading it",
+  "breakout_20_atr3_vol40: code version 169fdddc92 is not in config/strategies.lock; not trading it"
+ ]
+}

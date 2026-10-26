@@ -1,0 +1,22 @@
+# Intraday stocks engine, PAPER only (simulated fills). Needs an always-on host:
+# GitHub Actions cannot run continuous intraday loops (6h job cap, >=5 min schedule, delays).
+[Unit]
+Description=tradelab intraday stocks engine (paper)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=tradelab
+WorkingDirectory=/opt/tradelab
+Environment=TRADELAB_MODE=paper
+ExecStart=/opt/tradelab/.venv/bin/python -m tradelab.intraday.live_stocks
+Restart=always
+RestartSec=10
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/tradelab/data
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

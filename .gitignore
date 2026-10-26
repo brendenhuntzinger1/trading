@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+data/*
+!data/README.md
+!data/SHA256SUMS
+research/intraday/stocks/out/*trades*.csv
+research/intraday/s2x/*.csv
+research/intraday/decision/out/*S1*.csv
+research/intraday/decision/out/*S2*.csv
+*.tmp
+.pytest_cache/
+.env
+*.pem

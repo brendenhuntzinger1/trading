@@ -1,0 +1,52 @@
+family,params,CAGR,sharpe,maxDD,vol,sr_daily,exposure,orders_per_yr
+fixed,"{""weight"": 0.33}",0.221,0.854,-0.469,0.28,0.045,0.33,93.186
+breakout,"{""entry_n"": 20, ""stop_atr"": 2.0}",0.434,1.504,-0.193,0.263,0.079,0.211,47.467
+breakout,"{""entry_n"": 20, ""stop_atr"": 3.0}",0.655,1.554,-0.325,0.368,0.081,0.316,47.218
+breakout,"{""entry_n"": 20, ""stop_atr"": 4.0}",0.558,1.369,-0.353,0.375,0.072,0.354,53.214
+breakout,"{""entry_n"": 50, ""stop_atr"": 2.0}",0.272,1.188,-0.187,0.223,0.062,0.146,34.976
+breakout,"{""entry_n"": 50, ""stop_atr"": 3.0}",0.448,1.323,-0.293,0.318,0.069,0.232,35.476
+breakout,"{""entry_n"": 50, ""stop_atr"": 4.0}",0.441,1.198,-0.356,0.358,0.063,0.27,40.722
+breakout,"{""entry_n"": 100, ""stop_atr"": 2.0}",0.201,1.041,-0.143,0.194,0.055,0.111,30.729
+breakout,"{""entry_n"": 100, ""stop_atr"": 3.0}",0.351,1.196,-0.218,0.286,0.063,0.188,31.728
+breakout,"{""entry_n"": 100, ""stop_atr"": 4.0}",0.317,1.045,-0.264,0.309,0.055,0.217,38.723
+meanrev,"{""trend_n"": 100, ""entry"": 5.0, ""max_hold"": 5}",0.011,0.258,-0.084,0.046,0.014,0.011,11.742
+meanrev,"{""trend_n"": 100, ""entry"": 5.0, ""max_hold"": 10}",0.017,0.348,-0.076,0.051,0.018,0.012,11.242
+meanrev,"{""trend_n"": 100, ""entry"": 10.0, ""max_hold"": 5}",-0.012,-0.106,-0.196,0.083,-0.006,0.03,31.229
+meanrev,"{""trend_n"": 100, ""entry"": 10.0, ""max_hold"": 10}",0.002,0.071,-0.171,0.087,0.004,0.031,30.729
+meanrev,"{""trend_n"": 100, ""entry"": 20.0, ""max_hold"": 5}",-0.057,-0.462,-0.294,0.114,-0.024,0.058,57.461
+meanrev,"{""trend_n"": 100, ""entry"": 20.0, ""max_hold"": 10}",-0.024,-0.144,-0.206,0.119,-0.008,0.061,56.461
+meanrev,"{""trend_n"": 200, ""entry"": 5.0, ""max_hold"": 5}",-0.027,-0.41,-0.161,0.062,-0.021,0.015,15.739
+meanrev,"{""trend_n"": 200, ""entry"": 5.0, ""max_hold"": 10}",-0.024,-0.338,-0.151,0.066,-0.018,0.015,15.489
+meanrev,"{""trend_n"": 200, ""entry"": 10.0, ""max_hold"": 5}",-0.057,-0.503,-0.25,0.106,-0.026,0.036,36.975
+meanrev,"{""trend_n"": 200, ""entry"": 10.0, ""max_hold"": 10}",-0.039,-0.301,-0.195,0.111,-0.016,0.038,36.475
+meanrev,"{""trend_n"": 200, ""entry"": 20.0, ""max_hold"": 5}",-0.087,-0.587,-0.373,0.138,-0.031,0.067,68.203
+meanrev,"{""trend_n"": 200, ""entry"": 20.0, ""max_hold"": 10}",-0.069,-0.421,-0.33,0.145,-0.022,0.07,66.205
+rotation,"{""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": true}",0.525,0.892,-0.816,1.066,0.047,0.496,21.735
+rotation,"{""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": false}",0.967,1.121,-0.785,1.222,0.059,0.741,29.73
+rotation,"{""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": true}",-0.302,0.16,-0.895,1.029,0.008,0.52,12.242
+rotation,"{""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": false}",-0.17,0.384,-0.851,1.115,0.02,0.769,16.739
+rotation,"{""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": true}",0.283,0.704,-0.678,0.746,0.037,0.44,121.916
+rotation,"{""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": false}",0.469,0.872,-0.682,0.831,0.046,0.616,152.146
+rotation,"{""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": true}",0.035,0.458,-0.766,0.83,0.024,0.462,96.434
+rotation,"{""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": false}",0.359,0.788,-0.675,0.888,0.041,0.633,117.17
+rotation,"{""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": true}",-0.223,0.207,-0.904,0.966,0.011,0.525,19.736
+rotation,"{""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": false}",-0.059,0.492,-0.821,1.129,0.026,0.693,22.235
+rotation,"{""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": true}",-0.431,-0.127,-0.953,0.953,-0.007,0.511,9.244
+rotation,"{""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": false}",-0.296,0.155,-0.887,1.024,0.008,0.63,10.243
+rotation,"{""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": true}",-0.038,0.314,-0.79,0.723,0.016,0.488,108.925
+rotation,"{""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": false}",0.112,0.562,-0.74,0.851,0.029,0.605,127.163
+rotation,"{""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": true}",-0.256,0.044,-0.826,0.8,0.002,0.495,86.94
+rotation,"{""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": false}",-0.18,0.188,-0.797,0.829,0.01,0.574,95.435
+selector_trailing,"{""margin"": 0.0}",0.62,1.687,-0.202,0.316,0.088,0.395,
+selector_trailing,"{""margin"": 0.3}",0.62,1.687,-0.202,0.316,0.088,0.395,
+selector_regime,"{""min_hold"": 20}",0.289,0.979,-0.184,0.309,0.051,0.285,
+selector_regime,"{""min_hold"": 60}",0.244,0.963,-0.166,0.262,0.05,0.257,
+gate,"{""horizon"": 20, ""z"": 1.0}",0.03,0.299,-0.117,0.125,0.016,0.056,47.934
+gate,"{""horizon"": 20, ""z"": 1.645}",-0.008,-0.057,-0.119,0.08,-0.003,0.026,21.471
+breakout_wf,"{""grid"": [{""entry_n"": 20, ""stop_atr"": 2.0}, {""entry_n"": 20, ""stop_atr"": 3.0}, {""entry_n"": 20, ""stop_atr"": 4.0}, {""entry_n"": 50, ""stop_atr"": 2.0}, {""entry_n"": 50, ""stop_atr"": 3.0}, {""entry_n"": 50, ""stop_atr"": 4.0}, {""entry_n"": 100, ""stop_atr"": 2.0}, {""entry_n"": 100, ""stop_atr"": 3.0}, {""entry_n"": 100, ""stop_atr"": 4.0}]}",0.454,1.582,-0.159,0.258,0.083,0.21,49.432
+meanrev_wf,"{""grid"": [{""trend_n"": 100, ""entry"": 5.0, ""max_hold"": 5}, {""trend_n"": 100, ""entry"": 5.0, ""max_hold"": 10}, {""trend_n"": 100, ""entry"": 10.0, ""max_hold"": 5}, {""trend_n"": 100, ""entry"": 10.0, ""max_hold"": 10}, {""trend_n"": 100, ""entry"": 20.0, ""max_hold"": 5}, {""trend_n"": 100, ""entry"": 20.0, ""max_hold"": 10}, {""trend_n"": 200, ""entry"": 5.0, ""max_hold"": 5}, {""trend_n"": 200, ""entry"": 5.0, ""max_hold"": 10}, {""trend_n"": 200, ""entry"": 10.0, ""max_hold"": 5}, {""trend_n"": 200, ""entry"": 10.0, ""max_hold"": 10}, {""trend_n"": 200, ""entry"": 20.0, ""max_hold"": 5}, {""trend_n"": 200, ""entry"": 20.0, ""max_hold"": 10}]}",-0.007,-0.101,-0.084,0.057,-0.005,0.016,14.48
+rotation_wf,"{""grid"": [{""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": true}, {""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": false}, {""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": true}, {""lookback"": 30, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": false}, {""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": true}, {""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": false}, {""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": true}, {""lookback"": 30, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": false}, {""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": true}, {""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 7, ""market_filter"": false}, {""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": true}, {""lookback"": 90, ""top_k"": 1, ""rebalance_days"": 28, ""market_filter"": false}, {""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": true}, {""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 7, ""market_filter"": false}, {""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": true}, {""lookback"": 90, ""top_k"": 3, ""rebalance_days"": 28, ""market_filter"": false}]}",0.124,0.656,-0.724,1.046,0.034,0.846,200.725
+calendar,"{""events"": [""FOMC"", ""CPI""], ""days_before"": 1, ""scale"": 0.0}",0.206,0.846,-0.309,0.262,0.044,0.261,141.653
+calendar,"{""events"": [""FOMC"", ""CPI""], ""days_before"": 1, ""scale"": 0.5}",0.281,1.071,-0.313,0.264,0.056,0.269,143.402
+calendar,"{""events"": [""FOMC"", ""CPI""], ""days_before"": 2, ""scale"": 0.0}",0.223,0.912,-0.26,0.257,0.048,0.245,135.657
+calendar,"{""events"": [""FOMC"", ""CPI""], ""days_before"": 2, ""scale"": 0.5}",0.289,1.106,-0.284,0.26,0.058,0.261,142.153

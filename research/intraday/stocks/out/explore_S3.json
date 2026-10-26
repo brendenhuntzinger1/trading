@@ -1,0 +1,11 @@
+{
+ "label": "EXPLORATORY ONLY - cannot pass (60 days of 5m data)",
+ "n_trades": 451,
+ "mean_gross": -0.000892606944116984,
+ "mean_net": -0.0018912150331282596,
+ "win_rate": 0.30155210643015523,
+ "sum_daily_pnl": -0.09149755418543343,
+ "daily_sharpe_ann_unreliable": -7.222117438236048,
+ "first": "2026-08-20",
+ "last": "2026-10-23"
+}

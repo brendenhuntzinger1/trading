@@ -1,0 +1,12 @@
+{
+ "built_at": "20261026T0012Z",
+ "core_files": 279,
+ "data_files": 4124,
+ "excluded": [
+  ".git",
+  ".pytest_cache",
+  ".venv",
+  "__pycache__"
+ ],
+ "credentials": "none present; paper mode only"
+}

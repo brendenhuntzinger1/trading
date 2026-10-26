@@ -1,0 +1,54 @@
+# Daily PAPER cycle for the daily-bar strategies. Public market data only: this
+# workflow has no exchange credentials and cannot place real orders.
+# GitHub may delay or occasionally skip scheduled runs; the audit measured that a
+# fill up to 12h late costs ~1.4%/yr CAGR, and the runner is idempotent per day,
+# so a late or repeated run is safe. Intraday monitoring needs an always-on host.
+name: paper-daily
+# The schedule is OFF by default so nothing runs or commits to this repository on its own.
+# To enable it, uncomment the two schedule lines below.
+on:
+  # schedule:
+  #   - cron: "17 0 * * *"      # 00:17 UTC, after the daily candle closes
+  workflow_dispatch:
+concurrency:
+  group: paper-daily
+  cancel-in-progress: false
+permissions:
+  contents: write               # to commit the journal to the paper-state branch
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore journal from paper-state branch
+        run: |
+          git fetch origin paper-state --depth=1 || true
+          if git rev-parse --verify -q origin/paper-state >/dev/null; then
+            git checkout origin/paper-state -- data/journal_paper.db data/paper_venue data/paper data/events/events.sqlite || true
+          fi
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Tests must pass before any paper decision
+        run: python -m pytest -q
+      - name: Event catch-up (first-seen times are coarse here; the always-on host polls every 10 min)
+        run: python scripts/events_ingest.py --fill-outcomes || echo "event ingestion failed; cycle continues without flags"
+      - name: Paper cycle
+        env:
+          TRADELAB_MODE: paper
+        run: python -m tradelab.service.daily --config config/paper.toml | tee cycle.json
+      - name: Dashboard
+        run: python -m tradelab.dashboard.build
+      - name: Save journal to paper-state branch
+        run: |
+          git config user.name "tradelab-bot"
+          git config user.email "tradelab-bot@users.noreply.github.com"
+          mkdir -p /tmp/state && cp -r data/journal_paper.db data/paper_venue data/paper data/dashboard cycle.json /tmp/state/ && mkdir -p /tmp/state/events && cp data/events/events.sqlite /tmp/state/events/ || true
+          git fetch origin paper-state || true
+          git checkout -B paper-state origin/paper-state 2>/dev/null || git checkout --orphan paper-state
+          git rm -rq --cached . 2>/dev/null || true
+          mkdir -p data && cp -r /tmp/state/* data/ && mv data/cycle.json "data/cycle-$(date -u +%F).json"
+          git add -f data
+          git commit -qm "paper cycle $(date -u +%FT%TZ)" && git push origin paper-state

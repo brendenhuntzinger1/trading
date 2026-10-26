@@ -1,0 +1,41 @@
+{
+ "fixed": {
+  "weight": 0.33
+ },
+ "breakout": {
+  "entry_n": 20,
+  "stop_atr": 3.0
+ },
+ "meanrev": {
+  "trend_n": 100,
+  "entry": 5.0,
+  "max_hold": 10
+ },
+ "rotation": {
+  "lookback": 30,
+  "top_k": 1,
+  "rebalance_days": 7,
+  "market_filter": false
+ },
+ "selector_trailing": {
+  "margin": 0.0
+ },
+ "selector_regime": {
+  "min_hold": 20
+ },
+ "gate": {
+  "horizon": 20,
+  "z": 1.0
+ },
+ "breakout_wf": {},
+ "meanrev_wf": {},
+ "rotation_wf": {},
+ "calendar": {
+  "events": [
+   "FOMC",
+   "CPI"
+  ],
+  "days_before": 2,
+  "scale": 0.5
+ }
+}

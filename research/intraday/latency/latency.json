@@ -1,0 +1,40 @@
+{
+ "measured_at": "2026-10-25T23:21:58.376366+00:00",
+ "host": "cloud container behind an egress proxy (not a trading host)",
+ "data_arrival_ws_trades": {
+  "n": 348,
+  "p50_ms": 69.1,
+  "p95_ms": 108.0,
+  "max_ms": 122.0
+ },
+ "bar_ready_after_bar_end_rest": {
+  "n": 2,
+  "p50_ms": 116376.2,
+  "p95_ms": 116376.2,
+  "max_ms": 116376.2
+ },
+ "feature_calc_C1_C2_70d_3_symbols": {
+  "n": 5,
+  "p50_ms": 16.0,
+  "p95_ms": 18.8,
+  "max_ms": 18.8
+ },
+ "decision_engine_process_bar": {
+  "n": 300,
+  "p50_ms": 0.0,
+  "p95_ms": 0.1,
+  "max_ms": 0.4
+ },
+ "decision_to_submit": {
+  "n": 5,
+  "p50_ms": 113.3,
+  "p95_ms": 212.2,
+  "max_ms": 212.2
+ },
+ "submit_to_ack_paper_incl_REST_book_fetch": {
+  "n": 5,
+  "p50_ms": 304.0,
+  "p95_ms": 621.0,
+  "max_ms": 621.0
+ }
+}

@@ -1,0 +1,125 @@
+{
+ "note": "Backtest, not trading results. Frozen configurations run once on 2024-01-01 to 2026-10-24 after pre-registration. 73 configurations tried in total; DSR = deflated Sharpe ratio (0.95 would be significant). Costs 0.66% per side. 'Fixed same exposure' is the passive benchmark each strategy had to beat.",
+ "headers": [
+  "Strategy",
+  "CAGR",
+  "Sharpe",
+  "Max DD",
+  "Fixed same exposure CAGR / Sharpe",
+  "Validation",
+  "Test",
+  "DSR"
+ ],
+ "rows": [
+  [
+   "fixed",
+   "7.3%",
+   "0.48",
+   "-24%",
+   "7.3% / 0.48",
+   "n/a",
+   "benchmark",
+   "0.04"
+  ],
+  [
+   "breakout",
+   "8.2%",
+   "0.42",
+   "-33%",
+   "9.4% / 0.48",
+   "PASS",
+   "FAIL",
+   "0.03"
+  ],
+  [
+   "meanrev",
+   "0.1%",
+   "0.04",
+   "-5%",
+   "0.7% / 0.50",
+   "FAIL",
+   "FAIL",
+   "0.01"
+  ],
+  [
+   "rotation",
+   "-89.7%",
+   "-1.02",
+   "-100%",
+   "14.8% / 0.52",
+   "FAIL",
+   "FAIL",
+   "0.00"
+  ],
+  [
+   "selector_trailing",
+   "-0.9%",
+   "0.05",
+   "-36%",
+   "7.7% / 0.48",
+   "FAIL",
+   "FAIL",
+   "0.01"
+  ],
+  [
+   "selector_regime",
+   "0.7%",
+   "0.15",
+   "-37%",
+   "9.3% / 0.48",
+   "FAIL",
+   "FAIL",
+   "0.01"
+  ],
+  [
+   "gate",
+   "10.0%",
+   "0.55",
+   "-25%",
+   "7.2% / 0.48",
+   "PASS",
+   "PASS",
+   "0.05"
+  ],
+  [
+   "breakout_wf",
+   "8.2%",
+   "0.42",
+   "-33%",
+   "9.4% / 0.48",
+   "PASS",
+   "FAIL",
+   "0.03"
+  ],
+  [
+   "meanrev_wf",
+   "0.1%",
+   "0.04",
+   "-5%",
+   "0.7% / 0.50",
+   "FAIL",
+   "FAIL",
+   "0.01"
+  ],
+  [
+   "rotation_wf",
+   "-64.4%",
+   "-0.43",
+   "-97%",
+   "13.9% / 0.51",
+   "FAIL",
+   "FAIL",
+   "0.00"
+  ],
+  [
+   "calendar",
+   "5.6%",
+   "0.36",
+   "-31%",
+   "8.0% / 0.48",
+   "FAIL",
+   "FAIL",
+   "0.02"
+  ]
+ ]
+}
