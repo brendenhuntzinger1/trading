@@ -1,0 +1,671 @@
+{
+ "generated_at": "2026-10-26T02:56:15+00:00",
+ "paper_key": {
+  "paper_host_status": 200,
+  "paper_account_status": "ACTIVE",
+  "live_host_status": 401,
+  "live_host_rejects_key": true,
+  "is_paper_key": true
+ },
+ "gates": {
+  "B7_1_sip_access": {
+   "pass": true,
+   "sessions": {
+    "2016-03-01": {
+     "bars_status": 200,
+     "bars": 391,
+     "quotes_status": 200,
+     "quotes": 4771,
+     "message": null
+    },
+    "2020-03-02": {
+     "bars_status": 200,
+     "bars": 391,
+     "quotes_status": 200,
+     "quotes": 12225,
+     "message": null
+    },
+    "2024-06-03": {
+     "bars_status": 200,
+     "bars": 391,
+     "quotes_status": 200,
+     "quotes": 6319,
+     "message": null
+    },
+    "2026-10-23": {
+     "bars_status": 200,
+     "bars": 391,
+     "quotes_status": 200,
+     "quotes": 5172,
+     "message": null
+    }
+   },
+   "entitlement": {
+    "symbol": "SPY",
+    "session_open": "2026-10-23T13:30:00Z",
+    "session_close": "2026-10-23T20:00:00Z",
+    "sip_bars": {
+     "status": 200,
+     "n": 391,
+     "volume": 29415324,
+     "message": null
+    },
+    "iex_bars": {
+     "status": 200,
+     "n": 390,
+     "volume": 1083888
+    },
+    "iex_share_of_sip_volume": 0.0368,
+    "quotes": {
+     "status": 200,
+     "n": 4760,
+     "exchanges": [
+      "A",
+      "B",
+      "C",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "N",
+      "P",
+      "T",
+      "U",
+      "V",
+      "X",
+      "Z"
+     ],
+     "message": null
+    },
+    "trades": {
+     "status": 200,
+     "n": 750,
+     "exchanges": [
+      "A",
+      "D",
+      "F",
+      "H",
+      "J",
+      "K",
+      "N",
+      "P",
+      "T",
+      "U",
+      "V",
+      "X",
+      "Y",
+      "Z"
+     ],
+     "tapes": [
+      "B"
+     ]
+    },
+    "verdict": "sip",
+    "api_calls": 15
+   },
+   "note": "free plan: SIP history must end >= 15 minutes ago (source E); every request here is older"
+  },
+  "B7_2_timestamps": {
+   "pass": true,
+   "days": {
+    "2024-07-15": {
+     "pass": true,
+     "open_bar_present": true,
+     "open_bar_et": "09:30",
+     "bars_outside_0400_2000_et": 0,
+     "quotes": 2905,
+     "quotes_monotonic": true,
+     "quotes_within_window": true,
+     "nanosecond_timestamps": true,
+     "quote_fields": [
+      "ap",
+      "as",
+      "ax",
+      "bp",
+      "bs",
+      "bx",
+      "c",
+      "t",
+      "z"
+     ]
+    },
+    "2024-01-16": {
+     "pass": true,
+     "open_bar_present": true,
+     "open_bar_et": "09:30",
+     "bars_outside_0400_2000_et": 0,
+     "quotes": 3798,
+     "quotes_monotonic": true,
+     "quotes_within_window": true,
+     "nanosecond_timestamps": true,
+     "quote_fields": [
+      "ap",
+      "as",
+      "ax",
+      "bp",
+      "bs",
+      "bx",
+      "c",
+      "t",
+      "z"
+     ]
+    }
+   },
+   "note": "quote field 't' is the only timestamp returned; whether it is the SIP or participant time is not documented (record fields above)"
+  },
+  "B7_3_coverage": {
+   "pass": true,
+   "assets": 16107,
+   "inactive_assets": 2882,
+   "sample_stocks": 200,
+   "sample_symbols": [
+    "AAAU",
+    "ACGL",
+    "ADI",
+    "AEE",
+    "AGNC",
+    "AI",
+    "ALGM",
+    "ALK",
+    "AM",
+    "AMCR",
+    "AMD",
+    "APA",
+    "ARKG",
+    "ARKK",
+    "ARQT",
+    "ATI",
+    "AXTA",
+    "AZN",
+    "B",
+    "BA",
+    "BDX",
+    "BILI",
+    "BITO",
+    "BORR",
+    "BRK.B",
+    "BTI",
+    "BYND",
+    "CADE",
+    "CAVA",
+    "CC",
+    "CHD",
+    "CHGG",
+    "CHWY",
+    "CNC",
+    "CNQ",
+    "COHR",
+    "COLD",
+    "CRK",
+    "CRM",
+    "CRSP",
+    "CSCO",
+    "CVX",
+    "DAN",
+    "DBX",
+    "DHI",
+    "DHR",
+    "DK",
+    "EPD",
+    "EWG",
+    "EWJ",
+    "EXTR",
+    "F",
+    "FEZ",
+    "FIGS",
+    "FLNC",
+    "FMC",
+    "FNB",
+    "FND",
+    "FPE",
+    "FRO",
+    "GFL",
+    "GLPI",
+    "GNRC",
+    "GOOS",
+    "GS",
+    "GT",
+    "HAL",
+    "HD",
+    "HLMN",
+    "HP",
+    "HR",
+    "HTHT",
+    "HYLB",
+    "ICE",
+    "ICLN",
+    "IEF",
+    "IFF",
+    "INMD",
+    "INVH",
+    "IUSB",
+    "IXUS",
+    "JBGS",
+    "JDST",
+    "KBE",
+    "KD",
+    "KDP",
+    "KKR",
+    "KRC",
+    "KWEB",
+    "LABU",
+    "LAZR",
+    "LBTYK",
+    "LLY",
+    "LNT",
+    "LOW",
+    "MCD",
+    "MCHI",
+    "MCHP",
+    "MGM",
+    "MGY",
+    "MKC",
+    "MOMO",
+    "MPC",
+    "MPLX",
+    "MRVL",
+    "MS",
+    "MSOS",
+    "MTB",
+    "MUB",
+    "MUR",
+    "NDAQ",
+    "NEM",
+    "NNN",
+    "NTR",
+    "NU",
+    "NUGT",
+    "NVO",
+    "OHI",
+    "OWL",
+    "PAAS",
+    "PBR",
+    "PCAR",
+    "PEP",
+    "PFG",
+    "PG",
+    "PINS",
+    "PLNT",
+    "PM",
+    "PPG",
+    "PSEC",
+    "PSLV",
+    "QYLD",
+    "RBLX",
+    "RDN",
+    "RES",
+    "RIG",
+    "RIO",
+    "RIVN",
+    "ROIV",
+    "RWT",
+    "RXRX",
+    "SBH",
+    "SDOW",
+    "SDS",
+    "SITC",
+    "SKIN",
+    "SLG",
+    "SLV",
+    "SMH",
+    "SPAB",
+    "SPOT",
+    "SPSM",
+    "SPY",
+    "SRE",
+    "SSNC",
+    "SSO",
+    "STEM",
+    "STLA",
+    "STLD",
+    "STM",
+    "STWD",
+    "SUZ",
+    "T",
+    "TEAM",
+    "TEL",
+    "TLT",
+    "TQQQ",
+    "TROX",
+    "TSM",
+    "TT",
+    "TTE",
+    "UAL",
+    "UGI",
+    "UPS",
+    "UUP",
+    "UUUU",
+    "UVIX",
+    "UVXY",
+    "VCLT",
+    "VEA",
+    "VFC",
+    "VKTX",
+    "VLO",
+    "VLY",
+    "VRT",
+    "VT",
+    "VTR",
+    "VVV",
+    "VXX",
+    "VYM",
+    "VZ",
+    "WSC",
+    "WT",
+    "WY",
+    "XRAY",
+    "XRX",
+    "XYL",
+    "YETI",
+    "YINN",
+    "ZION"
+   ],
+   "symbols_screened": 3000,
+   "stock_sessions": 1000,
+   "coverage": 1.0,
+   "delisted_with_bars": 13,
+   "delisted": {
+    "TWTR": {
+     "last_trading_day": "2022-10-27",
+     "confidence": "high: acquisition closed 2022-10-27",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "XLNX": {
+     "last_trading_day": "2022-02-11",
+     "confidence": "high: acquired by AMD 2022-02-14",
+     "status": 200,
+     "daily_bars": 22
+    },
+    "ATVI": {
+     "last_trading_day": "2023-10-12",
+     "confidence": "high: acquired by Microsoft 2023-10-13",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "VMW": {
+     "last_trading_day": "2023-11-21",
+     "confidence": "high: acquired by Broadcom 2023-11-22",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "SIVB": {
+     "last_trading_day": "2023-03-09",
+     "confidence": "medium: halted 2023-03-10, later delisted",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "FRC": {
+     "last_trading_day": "2023-04-28",
+     "confidence": "medium: bank seized 2023-05-01",
+     "status": 200,
+     "daily_bars": 23
+    },
+    "BBBY": {
+     "last_trading_day": "2023-05-02",
+     "confidence": "low: Nasdaq delisting around early May 2023",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "CTXS": {
+     "last_trading_day": "2022-09-29",
+     "confidence": "medium: taken private 2022-09-30",
+     "status": 200,
+     "daily_bars": 22
+    },
+    "CERN": {
+     "last_trading_day": "2022-06-07",
+     "confidence": "medium: acquired by Oracle 2022-06-08",
+     "status": 200,
+     "daily_bars": 20
+    },
+    "SGEN": {
+     "last_trading_day": "2023-12-13",
+     "confidence": "medium: acquired by Pfizer 2023-12-14",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "HZNP": {
+     "last_trading_day": "2023-10-05",
+     "confidence": "medium: acquired by Amgen 2023-10-06",
+     "status": 200,
+     "daily_bars": 21
+    },
+    "SPLK": {
+     "last_trading_day": "2024-03-15",
+     "confidence": "medium: acquired by Cisco 2024-03-18",
+     "status": 200,
+     "daily_bars": 22
+    },
+    "DISCA": {
+     "last_trading_day": "2022-04-08",
+     "confidence": "low: merged into WBD April 2022",
+     "status": 200,
+     "daily_bars": 22
+    }
+   }
+  },
+  "B7_4_spreads": {
+   "pass": true,
+   "in_play_stock_days": 30,
+   "candidates_tried": 81,
+   "stock_days": [
+    {
+     "symbol": "PBR",
+     "day": "2023-02-16",
+     "rv": 1.0464019147710384
+    },
+    {
+     "symbol": "MSOS",
+     "day": "2023-04-06",
+     "rv": 4.390888350870658
+    },
+    {
+     "symbol": "HD",
+     "day": "2023-05-16",
+     "rv": 9.086226106898305
+    },
+    {
+     "symbol": "SKIN",
+     "day": "2023-06-16",
+     "rv": 3.2622912833942683
+    },
+    {
+     "symbol": "IUSB",
+     "day": "2023-03-07",
+     "rv": 1.1144035758085604
+    },
+    {
+     "symbol": "CVX",
+     "day": "2023-07-19",
+     "rv": 1.0115056465078482
+    },
+    {
+     "symbol": "CHWY",
+     "day": "2023-06-02",
+     "rv": 1.0838868860684723
+    },
+    {
+     "symbol": "DHI",
+     "day": "2023-10-13",
+     "rv": 1.2112360512135558
+    },
+    {
+     "symbol": "STWD",
+     "day": "2023-09-06",
+     "rv": 1.7468110031239155
+    },
+    {
+     "symbol": "PSEC",
+     "day": "2023-02-13",
+     "rv": 1.4353279252851199
+    },
+    {
+     "symbol": "MUR",
+     "day": "2023-05-25",
+     "rv": 1.3884235490015515
+    },
+    {
+     "symbol": "LNT",
+     "day": "2023-03-01",
+     "rv": 1.22568845775794
+    },
+    {
+     "symbol": "DK",
+     "day": "2023-07-31",
+     "rv": 2.8914229715583866
+    },
+    {
+     "symbol": "HR",
+     "day": "2023-02-27",
+     "rv": 1.0325763351214996
+    },
+    {
+     "symbol": "RES",
+     "day": "2023-05-30",
+     "rv": 1.5107101539036845
+    },
+    {
+     "symbol": "KDP",
+     "day": "2023-02-28",
+     "rv": 10.41554089506173
+    },
+    {
+     "symbol": "MKC",
+     "day": "2023-06-16",
+     "rv": 9.671937238828292
+    },
+    {
+     "symbol": "NTR",
+     "day": "2023-10-31",
+     "rv": 1.834886268344835
+    },
+    {
+     "symbol": "LLY",
+     "day": "2023-02-16",
+     "rv": 1.1183465128118106
+    },
+    {
+     "symbol": "CC",
+     "day": "2023-06-07",
+     "rv": 1.2707912580891896
+    },
+    {
+     "symbol": "VRT",
+     "day": "2023-10-12",
+     "rv": 1.033264383556733
+    },
+    {
+     "symbol": "MTB",
+     "day": "2023-12-14",
+     "rv": 4.4023717803459474
+    },
+    {
+     "symbol": "VFC",
+     "day": "2023-02-10",
+     "rv": 1.9470696768316806
+    },
+    {
+     "symbol": "CRK",
+     "day": "2023-10-04",
+     "rv": 1.4534078994807444
+    },
+    {
+     "symbol": "CNC",
+     "day": "2023-09-06",
+     "rv": 4.577131084213237
+    },
+    {
+     "symbol": "B",
+     "day": "2023-02-28",
+     "rv": 1.0411915366163733
+    },
+    {
+     "symbol": "NVO",
+     "day": "2023-03-15",
+     "rv": 1.4796589614494138
+    },
+    {
+     "symbol": "VLO",
+     "day": "2023-05-05",
+     "rv": 1.2251611159310587
+    },
+    {
+     "symbol": "BYND",
+     "day": "2023-07-06",
+     "rv": 1.839441880265147
+    },
+    {
+     "symbol": "CRM",
+     "day": "2023-06-02",
+     "rv": 1.467496714315384
+    }
+   ],
+   "entry_window_0935_1030": {
+    "kind": "MEASURED quoted half-spread (no slippage included)",
+    "n_minutes": 1680,
+    "status_counts": {
+     "ok": 1678,
+     "stale": 0,
+     "none": 0,
+     "crossed_or_locked": 2,
+     "invalid": 0
+    },
+    "share_unusable": 0.0011904761904761862,
+    "median_bp": 4.0206876521744785,
+    "p90_bp": 10.302425965935116,
+    "mean_bp": 5.939484003382533,
+    "max_bp": 75.61436672967871
+   },
+   "close_1559": {
+    "kind": "MEASURED quoted half-spread (no slippage included)",
+    "n_minutes": 30,
+    "status_counts": {
+     "ok": 30,
+     "stale": 0,
+     "none": 0,
+     "crossed_or_locked": 0,
+     "invalid": 0
+    },
+    "share_unusable": 0.0,
+    "median_bp": 1.45544155408729,
+    "p90_bp": 6.617729026196199,
+    "mean_bp": 3.565500071460139,
+    "max_bp": 37.03703703703707
+   },
+   "note": "measured quoted half-spreads only; slippage beyond the touch stays an assumption (costs.py)"
+  },
+  "B7_5_corporate_actions": {
+   "pass": true,
+   "splits": {
+    "NVDA": {
+     "pass": true,
+     "split_effective": "2024-06-10",
+     "expected_ratio": 10.0,
+     "raw_over_adjusted_jump": 9.999834560344116,
+     "intraday_raw_last_close": 1208.6,
+     "daily_raw_close": 1208.88
+    },
+    "AAPL": {
+     "pass": true,
+     "split_effective": "2020-08-31",
+     "expected_ratio": 4.0,
+     "raw_over_adjusted_jump": 3.999919878214887,
+     "intraday_raw_last_close": 499.76,
+     "daily_raw_close": 499.23
+    },
+    "TSLA": {
+     "pass": true,
+     "split_effective": "2022-08-25",
+     "expected_ratio": 3.0,
+     "raw_over_adjusted_jump": 2.9999663412992255,
+     "intraday_raw_last_close": 890.2,
+     "daily_raw_close": 891.29
+    }
+   },
+   "note": "intraday bars are requested with adjustment=raw (the paper's unadjusted convention); daily filters use point-in-time split adjustment (tradelab/stocks/orb.py pit_adjust)"
+  }
+ },
+ "api_calls": 2288
+}
