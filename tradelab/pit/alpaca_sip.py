@@ -9,6 +9,7 @@ configuration are rejected before any network call).
 """
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import re
@@ -58,6 +59,10 @@ def http_get(url: str, headers: dict) -> tuple[int, dict]:
         except Exception:
             body = {}
         return e.code, body
+    except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.HTTPException, json.JSONDecodeError) as e:
+        # A dropped connection or proxy restart is transient: report it as a retryable 599 so the caller's
+        # backoff applies, instead of aborting an hours-long download (incident 16).
+        return 599, {"message": f"transport error: {type(e).__name__}"}
 
 
 TICKER = re.compile(r"^[A-Z]{1,5}([.][A-Z]{1,2})?$")
@@ -78,7 +83,7 @@ class AlpacaData:
     calls: int = field(default=0)
     rejected_symbols: set = field(default_factory=set)
     min_interval: float = 0.0          # seconds between calls (from_env: 200/min free-plan limit, with margin)
-    retries: int = 5                   # on 429 and 5xx, exponential backoff
+    retries: int = 8                   # on 429, 5xx and transport errors (599), exponential backoff capped at 60 s
     sleep: Callable[[float], None] = time.sleep
     clock: Callable[[], float] = time.monotonic
     _last: float = field(default=-1e18)

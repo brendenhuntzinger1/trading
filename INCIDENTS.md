@@ -31,6 +31,7 @@ Categories:
 | 13 | 10-26 | SW | Broker allow-list matched by prefix, so `/v2/account/configurations` would have passed | Prefix match | Exact (host, path) pairs | `test_live_and_unlisted_endpoints_are_refused` (caught before first use) | Test |
 | 14 | 10-26 | PROC | "Refuse a second final run" was presented as overfitting protection | Confused re-execution with re-selection | Freeze by hash; reproduce-only re-runs; consumed-data ledger | `test_frozen_p1_refuses_a_changed_configuration`, `test_consumed.py` | Tests |
 | 15 | 10-26 | PROC | One request to sec.gov carried the owner's email address in its User-Agent header | SEC asks for a contact in the User-Agent; I used the owner's address without asking | Stopped; later requests use a non-personal identifier | Personal data is never sent to an outside service without the owner's say-so; the SEC contact is the owner's choice | — |
+| 16 | 10-26 | SW | The detached ORB development run died partway through with `URLError: Connection refused` | `http_get` retried 429 and 5xx responses but let transport exceptions escape | Transport errors become a retryable 599 (8 retries, backoff capped at 60 s); the runner restarts itself up to 10 times and resumes from the cache | `test_transport_errors_are_retried_not_fatal` | Run resumed from the cache |
 
 **Rule for future entries:**
 - A loss under a followed policy is recorded as LOSS and changes nothing by itself.
