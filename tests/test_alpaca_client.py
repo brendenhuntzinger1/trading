@@ -97,3 +97,21 @@ def test_verify_script_without_credentials_exits_2_and_writes_nothing(tmp_path, 
     assert pv.main([], env={}, out_dir=tmp_path / "out", audit_doc=doc) == 2
     assert not (tmp_path / "out").exists() and not doc.exists()
     assert "Nothing was run" in capsys.readouterr().out
+
+
+def test_bars_multi_skips_non_tickers_and_drops_symbols_alpaca_rejects():
+    from tradelab.pit.alpaca_sip import AlpacaData, is_ticker
+    assert is_ticker("BRK.B") and is_ticker("SPY")
+    assert not is_ticker("021CVR014") and not is_ticker("TWTR_DELISTED")
+    sent = []
+
+    def transport(url, headers):
+        sent.append(url)
+        if "BADX" in url:
+            return 400, {"message": "invalid symbol: BADX"}
+        return 200, {"bars": {"SPY": [{"t": "2023-01-03T05:00:00Z", "o": 1, "h": 1, "l": 1, "c": 1, "v": 1}]}}
+
+    c = AlpacaData("k", "s", transport=transport)
+    st, out = c.bars_multi(["SPY", "BADX", "021CVR014"], "2023-01-01", "2023-01-05", timeframe="1Day")
+    assert st == 200 and list(out) == ["SPY"] and c.rejected_symbols == {"BADX"}
+    assert all("021CVR014" not in u for u in sent)

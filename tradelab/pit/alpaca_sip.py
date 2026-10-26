@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -20,6 +21,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Callable
 
 DATA_URL = "https://data.alpaca.markets/v2/stocks"
+CORP_ACTIONS_URL = "https://data.alpaca.markets/v1/corporate-actions"
 PAPER_URL = "https://paper-api.alpaca.markets/v2"
 LIVE_URL = "https://api.alpaca.markets/v2"          # used ONLY to confirm a paper key is rejected there
 IEX_EXCHANGE = "V"                                   # Alpaca exchange code for IEX
@@ -28,7 +30,7 @@ Transport = Callable[[str, dict], tuple[int, dict]]
 
 # Read-only endpoints this client may call. Anything else raises ForbiddenEndpoint before a request is made.
 ALLOWED_PREFIXES = (
-    f"{DATA_URL}/bars?", f"{DATA_URL}/quotes?", f"{DATA_URL}/trades?",
+    f"{DATA_URL}/bars?", f"{DATA_URL}/quotes?", f"{DATA_URL}/trades?", f"{CORP_ACTIONS_URL}?",
     f"{PAPER_URL}/assets", f"{PAPER_URL}/account", f"{LIVE_URL}/account", f"{PAPER_URL}/calendar",
 )
 FORBIDDEN_FRAGMENTS = ("/orders", "/positions", "/watchlists", "/account/configurations", "/account/activities")
@@ -58,12 +60,23 @@ def http_get(url: str, headers: dict) -> tuple[int, dict]:
         return e.code, body
 
 
+TICKER = re.compile(r"^[A-Z]{1,5}([.][A-Z]{1,2})?$")
+INVALID_SYMBOL = re.compile(r"invalid symbol: (\S+)")
+
+
+def is_ticker(s: str) -> bool:
+    """Exchange tickers only. The asset master also lists CUSIP-like codes (rights, CVRs, escrows) and
+    `<TICKER>_DELISTED` placeholders, which the market-data API rejects as symbols."""
+    return bool(TICKER.match(s))
+
+
 @dataclass(repr=False)
 class AlpacaData:
     key_id: str
     secret: str
     transport: Transport = http_get
     calls: int = field(default=0)
+    rejected_symbols: set = field(default_factory=set)
     min_interval: float = 0.0          # seconds between calls (from_env: 200/min free-plan limit, with margin)
     retries: int = 5                   # on 429 and 5xx, exponential backoff
     sleep: Callable[[float], None] = time.sleep
@@ -136,14 +149,42 @@ class AlpacaData:
         """Several symbols per request (Alpaca's limit of 10,000 points is across symbols); pages merged."""
         out: dict[str, list] = {}
         token, status = None, 0
+        symbols = [s for s in symbols if is_ticker(s)]
+        if not symbols:
+            return 200, out
         for _ in range(max_pages):
             q = {"symbols": ",".join(symbols), "timeframe": timeframe, "start": _iso(start), "end": _iso(end),
                  "feed": feed, "adjustment": adjustment, "limit": 10000, **({"page_token": token} if token else {})}
             status, body = self._get(f"{DATA_URL}/bars?{urllib.parse.urlencode(q)}")
+            bad = INVALID_SYMBOL.match(str((body or {}).get("message", ""))) if status == 400 and token is None else None
+            if bad and bad.group(1) in symbols:
+                # Alpaca rejects the whole request for one symbol it does not recognise: drop it and retry.
+                self.rejected_symbols.add(bad.group(1))
+                symbols = [s for s in symbols if s != bad.group(1)]
+                if not symbols:
+                    return 200, out
+                continue
             if status != 200:
                 return status, out
             for sym, rows in (body.get("bars") or {}).items():
                 out.setdefault(sym, []).extend(rows)
+            token = body.get("next_page_token")
+            if not token:
+                break
+        return status, out
+
+    def corporate_actions(self, types: list[str], start, end, max_pages: int = 1000) -> tuple[int, dict[str, list]]:
+        """Corporate actions by type (mergers, name changes, worthless removals, splits...), paged, read-only."""
+        out: dict[str, list] = {}
+        token, status = None, 0
+        for _ in range(max_pages):
+            q = {"types": ",".join(types), "start": str(start)[:10], "end": str(end)[:10], "limit": 1000,
+                 **({"page_token": token} if token else {})}
+            status, body = self._get(f"{CORP_ACTIONS_URL}?{urllib.parse.urlencode(q)}")
+            if status != 200:
+                return status, out
+            for kind, rows in (body.get("corporate_actions") or {}).items():
+                out.setdefault(kind, []).extend(rows)
             token = body.get("next_page_token")
             if not token:
                 break
