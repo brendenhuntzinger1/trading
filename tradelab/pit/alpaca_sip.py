@@ -23,6 +23,7 @@ from typing import Callable
 
 DATA_URL = "https://data.alpaca.markets/v2/stocks"
 CORP_ACTIONS_URL = "https://data.alpaca.markets/v1/corporate-actions"
+NEWS_URL = "https://data.alpaca.markets/v1beta1/news"           # Benzinga headlines, read-only
 PAPER_URL = "https://paper-api.alpaca.markets/v2"
 LIVE_URL = "https://api.alpaca.markets/v2"          # used ONLY to confirm a paper key is rejected there
 IEX_EXCHANGE = "V"                                   # Alpaca exchange code for IEX
@@ -31,7 +32,7 @@ Transport = Callable[[str, dict], tuple[int, dict]]
 
 # Read-only endpoints this client may call. Anything else raises ForbiddenEndpoint before a request is made.
 ALLOWED_PREFIXES = (
-    f"{DATA_URL}/bars?", f"{DATA_URL}/quotes?", f"{DATA_URL}/trades?", f"{CORP_ACTIONS_URL}?",
+    f"{DATA_URL}/bars?", f"{DATA_URL}/quotes?", f"{DATA_URL}/trades?", f"{CORP_ACTIONS_URL}?", f"{NEWS_URL}?",
     f"{PAPER_URL}/assets", f"{PAPER_URL}/account", f"{LIVE_URL}/account", f"{PAPER_URL}/calendar",
 )
 FORBIDDEN_FRAGMENTS = ("/orders", "/positions", "/watchlists", "/account/configurations", "/account/activities")
@@ -190,6 +191,22 @@ class AlpacaData:
                 return status, out
             for sym, rows in (body.get("bars") or {}).items():
                 out.setdefault(sym, []).extend(rows)
+            token = body.get("next_page_token")
+            if not token:
+                break
+        return status, out
+
+    def news(self, symbols: list[str], start, end, max_pages: int = 10000) -> tuple[int, list[dict]]:
+        """News headlines (id, headline, summary, symbols, created_at, source), oldest first, paged."""
+        out: list[dict] = []
+        token, status = None, 0
+        for _ in range(max_pages):
+            q = {"symbols": ",".join(symbols), "start": _iso(start), "end": _iso(end), "limit": 50, "sort": "asc",
+                 "include_content": "false", **({"page_token": token} if token else {})}
+            status, body = self._get(f"{NEWS_URL}?{urllib.parse.urlencode(q)}")
+            if status != 200:
+                return status, out
+            out.extend(body.get("news") or [])
             token = body.get("next_page_token")
             if not token:
                 break

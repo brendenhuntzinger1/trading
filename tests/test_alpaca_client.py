@@ -135,3 +135,15 @@ def test_transport_errors_are_retried_not_fatal(monkeypatch):
     c = AlpacaData("k", "s", transport=flaky, sleep=lambda s: None)
     st, _ = c._get("https://data.alpaca.markets/v2/stocks/bars?symbols=SPY")
     assert st == 200 and len(calls) == 3
+
+
+def test_news_is_a_read_only_data_endpoint_and_is_paged():
+    al.check_endpoint(f"{al.NEWS_URL}?symbols=AAPL&start=2024-01-01")
+    pages = iter([(200, {"news": [{"id": 1, "headline": "a", "symbols": ["AAPL"], "created_at": "2024-01-02T13:00:00Z"}],
+                         "next_page_token": "t"}),
+                  (200, {"news": [{"id": 2, "headline": "b", "symbols": ["AAPL"], "created_at": "2024-01-03T13:00:00Z"}],
+                         "next_page_token": None})])
+    c, calls, _ = _client(list(pages))
+    st, rows = c.news(["AAPL"], "2024-01-01", "2024-01-05")
+    assert st == 200 and [r["id"] for r in rows] == [1, 2] and len(calls) == 2
+    assert all(u.startswith(al.NEWS_URL) for u in calls)
