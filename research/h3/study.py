@@ -100,7 +100,12 @@ def _evaluate(h3: pd.DataFrame, basket: pd.DataFrame, ls: pd.DataFrame) -> dict:
     exp_bk = basket.groupby("day").weight.sum().reindex(days, fill_value=0.0)
     d_bk_matched = d_bk * (exp_h3 / exp_bk.replace(0, np.nan)).fillna(0.0)
     vs_basket = ev.paired_ci(d_h3, d_bk_matched)
-    out = {"H3-L": stats(h3, days), "H3-LS (labelled)": stats(ls, days) if len(ls) else None,
+    ls_out = None
+    if len(ls):                                  # labelled secondary: never frozen; borrow costs not modelled
+        ls_out = stats(ls, days)
+        ls_out["by_side"] = {k: stats(g, days) for k, g in (("long", ls[ls.side > 0]), ("short", ls[ls.side < 0]))
+                             if len(g)}
+    out = {"H3-L": stats(h3, days), "H3-LS (labelled)": ls_out,
            "basket": stats(basket, days), "vs_basket_matched_daily": vs_basket, "sessions": len(days)}
     s = out["H3-L"]
     trade_ci = s["net_per_trade_ci90"]["ci"]
@@ -120,7 +125,8 @@ def dev_check() -> dict:
     h3, basket = _equal([f["direction"] for f in frames]), _equal([f["basket"] for f in frames])
     if h3.empty:
         sys.exit("no development frames: run research/orb/dump_dev_frames.py first")
-    out = _evaluate(h3, basket, pd.DataFrame())
+    ls = _equal([pickle.loads(p.read_bytes())["direction"] for p in sorted(DEV_FRAMES.glob("dev_long_short_*_of_*.pkl"))])
+    out = _evaluate(h3, basket, ls)
     out["what"] = ("H3 Amendment 1 development check: ORB primary selection, 2020-01-02..2021-12-31, direction-only "
                    "corrected for incident 20 (no conditioning on a later breakout)")
     RESULTS.mkdir(parents=True, exist_ok=True)

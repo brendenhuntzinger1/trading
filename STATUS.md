@@ -1,10 +1,10 @@
 # Tradelab status (authoritative)
 
-**As of 2026-10-26 ~10:00 UTC.** Where any other document disagrees with this file, this file wins.
+**As of 2026-10-26 ~10:30 UTC.** Where any other document disagrees with this file, this file wins.
 - `main` is at the merge of [PR #1](https://github.com/brendenhuntzinger1/trading/pull/1), commit `14c2a32`,
   merged 03:18 UTC under the owner's conditions. All scheduled paper workflows run from it.
-- Research since the merge (ORB result, H3) is on branch `claude/prediction-track` and is not yet on `main`.
-  None of it changes what runs.
+- Research since the merge (ORB result, H3, incident 20) is in draft
+  [PR #3](https://github.com/brendenhuntzinger1/trading/pull/3). None of it changes what runs.
 
 **Mode:** paper only (`mode = "paper"` in both configs).
 - No strategy is live-eligible (`tradelab/governance/status.py`).
@@ -59,17 +59,16 @@ All run with public data only, write simulated state to `paper-state`, and canno
 - **REJECTED:**
   - S1, S2, S2-ETF, S2X, C1, C2, daily breakout.
   - **P1a/P1b:** the 8 tested configurations failed (`P1_REPORT.md`, `P1_METHODS_AND_AUDIT.md`). Frozen.
-  - **ORB, 2026-10-26, in development (2020–21):** 4,048 trades, gross −9.2 bp and net −35 bp per trade.
+  - **ORB, 2026-10-26, in development (2020–21):** 4,058 trades, gross −9.2 bp and net −35 bp per trade.
     It loses to its placebo and to direction-only, and failed the sanity gate (−0.22R against the paper's
     +0.08R). Stopped under B16, so its validation and final windows are unread.
 - **INCONCLUSIVE:** the daily ensemble.
-- **IN PROGRESS: H3, first-candle continuation** (`H3_PREREGISTRATION.md`). It is ORB's direction-only
-  benchmark, which looked strong in development (+60 bp net per trade).
-  - Registered before any 2022–26 data for it was read.
-  - Validation 2022–23 is running now.
-  - The final window (2024–26) is read only if H3-L qualifies.
-- **Research budget:** H3 is the third and last hypothesis allowed by `RESEARCH_BUDGET.md`. If it fails, the
-  budget rule applies: stop intraday research, keep the platform and benchmarks, and say so plainly.
+  - **H3, 2026-10-26, in development (2020–21, corrected):** 4,956 trades, gross −2.4 bp and net −24 bp
+    per trade [−38, −10]; both years negative. Its motivating +60 bp was a look-ahead artifact of the harness
+    (incident 20, fixed with a test). Failed Amendment 1's development gate, so validation and final are unread.
+- **Research budget: spent** (P1, ORB, H3: all rejected). Per `RESEARCH_BUDGET.md`: stop intraday research,
+  keep the platform and benchmarks, and recommend no trading, unless you reopen it with a new information
+  source.
 
 ## Assumed, not verified
 - **Coinbase fees:** a 0.60% taker fee is assumed. Your account tier would verify it.
@@ -85,8 +84,8 @@ All run with public data only, write simulated state to `paper-state`, and canno
 ## Decisions waiting on you
 - **Rotate the Alpaca paper key** pasted in chat. If you want workflows to use broker paper fills, store the
   new key as an environment secret (`docs/CREDENTIALS_SETUP.md`). Never in chat.
-- **After H3:** whether to authorise any further research budget. Under the current budget, the answer
-  defaults to stop.
+- **Close the intraday research track** (recommended; the budget is spent), or reopen it with a new
+  information source (`MORNING_REPORT.md` §G).
 - Coinbase fee tier, which you read from your account. It is not a secret.
 
 ## Rules (reconciled)

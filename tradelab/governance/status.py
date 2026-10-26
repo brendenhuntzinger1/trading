@@ -43,8 +43,12 @@ REGISTRY: dict[str, Entry] = {
                     "Paper run kept only to exercise the engine; not a candidate"),
     "S2X": Entry(Status.REJECTED, "none", "29 untouched ETFs 2016-2026: gross -2.7bp [-8.9, 3.9]; placebo p 0.86"),
     "ORB": Entry(Status.REJECTED, "none", "pre-registered (prereg_orb + Amendments 1-5). Development 2020-21 on SIP data with measured "
-                 "spreads: primary 4,048 trades, gross -9 bp, net -35 bp per trade; loses to placebo and to direction-only; sanity "
-                 "gate failed (-0.22R vs paper +0.08R). Stopped after development (B16); validation and final windows unread"),
+                 "spreads: primary 4,058 trades, gross -9 bp, net -35 bp per trade; loses to placebo; does not beat direction-only "
+                 "(corrected for incident 20); sanity gate failed (-0.22R vs paper +0.08R). Stopped after development (B16); "
+                 "validation and final windows unread"),
+    "H3": Entry(Status.REJECTED, "none", "pre-registered (prereg_h3 + Amendment 1). Its motivating evidence was a look-ahead "
+                "artifact (incident 20). Corrected development 2020-21: H3-L 4,956 trades, gross -2 bp, net -24 bp per trade "
+                "[-38, -10], both years negative. Failed the A1 development gate; validation and final windows unread"),
     "S3": Entry(Status.UNTESTABLE, "none", "needs multi-year 5-minute data"),
     # intraday crypto (INTRADAY_CRYPTO.md) - updated when results are final
     "C1": Entry(Status.REJECTED, "experimental", "E1-E6 fail; gross +0.03%/trade vs 1.06% round trip; holdout coins also fail. "

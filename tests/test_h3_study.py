@@ -70,3 +70,13 @@ def test_dev_check_uses_the_validation_qualifiers_on_2020_21_frames(iso):
     assert out["qualifiers"]["qualified"] is False             # eight fixture days cover one year, not two
     with pytest.raises(SystemExit, match="UNREAD"):
         h3.validation()
+
+
+def test_dev_check_reports_the_labelled_long_short_variant_when_its_frames_exist(iso):
+    out = orb_study.run_period(Fixture(n_days=8), "dev", ["primary", "long_short"], placebo_reps=0)["configs"]
+    h3.DEV_FRAMES.mkdir()
+    (h3.DEV_FRAMES / "dev_primary_0_of_1.pkl").write_bytes(pickle.dumps(out["primary"]["_frames"]))
+    (h3.DEV_FRAMES / "dev_long_short_0_of_1.pkl").write_bytes(pickle.dumps(out["long_short"]["_frames"]))
+    ls = h3.dev_check()["H3-LS (labelled)"]
+    assert ls["trades"] == len(out["long_short"]["_frames"]["direction"])
+    assert set(ls["by_side"]) == {"long", "short"}

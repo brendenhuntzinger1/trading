@@ -1,0 +1,181 @@
+{
+ "H3-L": {
+  "trades": 4956,
+  "gross_bp": -2.3801352777587903,
+  "cost_bp": 22.981674932456993,
+  "net_bp": -24.412472052067724,
+  "net_spread_bp": -22.347843561675585,
+  "median_net_bp": -25.18684536748297,
+  "hit_rate": 0.4523809523809524,
+  "measured_spread_share": 0.9931396287328491,
+  "net_per_trade_ci90": {
+   "mean": -0.0024412472052067723,
+   "ci": [
+    -0.0038172585913014063,
+    -0.0010033772110431374
+   ],
+   "n": 4922,
+   "level": 0.9
+  },
+  "net_bp_without_top5pct": -97.6248691077477,
+  "by_year_net_bp": {
+   "2020": -13.093616343491432,
+   "2021": -35.53979192673579
+  },
+  "top10_symbols_share": -0.43224551579824266,
+  "top10_days_share": -0.6205205854808871,
+  "portfolio_net": {
+   "mean_daily": -0.0011896850241611614,
+   "sharpe": -1.6514399807339661,
+   "max_drawdown": -0.488658530083388,
+   "total_return": -0.469627491833739
+  }
+ },
+ "H3-LS (labelled)": {
+  "trades": 10007,
+  "gross_bp": 17.100442014343404,
+  "cost_bp": 23.050457583758305,
+  "net_bp": -7.015596907532066,
+  "net_spread_bp": -4.9484814846066385,
+  "median_net_bp": -10.758227384866652,
+  "hit_rate": 0.4785650044968522,
+  "measured_spread_share": 0.9919056660337764,
+  "net_per_trade_ci90": {
+   "mean": -0.0007015596907532065,
+   "ci": [
+    -0.0016830690957936399,
+    0.00024130359914760108
+   ],
+   "n": 9926,
+   "level": 0.9
+  },
+  "net_bp_without_top5pct": -80.70831735839813,
+  "by_year_net_bp": {
+   "2020": -17.318706782374495,
+   "2021": 3.2626312368820813
+  },
+  "top10_symbols_share": -1.2472688110055128,
+  "top10_days_share": -1.055319469262957,
+  "portfolio_net": {
+   "mean_daily": -0.000689473414892706,
+   "sharpe": -0.7975787620194399,
+   "max_drawdown": -0.41478007722338883,
+   "total_return": -0.32695187402615944
+  },
+  "by_side": {
+   "long": {
+    "trades": 4956,
+    "gross_bp": -2.3801352777587903,
+    "cost_bp": 22.981674932456993,
+    "net_bp": -24.412472052067724,
+    "net_spread_bp": -22.347843561675585,
+    "median_net_bp": -25.18684536748297,
+    "hit_rate": 0.4523809523809524,
+    "measured_spread_share": 0.9931396287328491,
+    "net_per_trade_ci90": {
+     "mean": -0.0024412472052067723,
+     "ci": [
+      -0.0038172585913014063,
+      -0.0010033772110431374
+     ],
+     "n": 4922,
+     "level": 0.9
+    },
+    "net_bp_without_top5pct": -97.6248691077477,
+    "by_year_net_bp": {
+     "2020": -13.093616343491432,
+     "2021": -35.53979192673579
+    },
+    "top10_symbols_share": -0.43224551579824266,
+    "top10_days_share": -0.6205205854808871,
+    "portfolio_net": {
+     "mean_daily": -0.0011896850241611614,
+     "sharpe": -1.6514399807339661,
+     "max_drawdown": -0.488658530083388,
+     "total_return": -0.469627491833739
+    }
+   },
+   "short": {
+    "trades": 5051,
+    "gross_bp": 36.21462555416889,
+    "cost_bp": 23.118113101285292,
+    "net_bp": 10.09619754918345,
+    "net_spread_bp": 12.165759151551102,
+    "median_net_bp": 6.370415898174016,
+    "hit_rate": 0.5042565828548802,
+    "measured_spread_share": 0.9906949118986339,
+    "net_per_trade_ci90": {
+     "mean": 0.001009619754918345,
+     "ci": [
+      -0.000645011221268042,
+      0.002684908188352675
+     ],
+     "n": 5004,
+     "level": 0.9
+    },
+    "net_bp_without_top5pct": -63.554293183054625,
+    "by_year_net_bp": {
+     "2020": -21.414543361983025,
+     "2021": 41.987043899567865
+    },
+    "top10_symbols_share": 1.0470561570374026,
+    "top10_days_share": 1.3991599846753078,
+    "portfolio_net": {
+     "mean_daily": 0.0005002116092684555,
+     "sharpe": 0.6492229280824743,
+     "max_drawdown": -0.3094193187440982,
+     "total_return": 0.239554163277665
+    }
+   }
+  }
+ },
+ "basket": {
+  "trades": 10099,
+  "gross_bp": -19.228745675101425,
+  "cost_bp": 23.03188470920971,
+  "net_bp": -40.56496435375468,
+  "net_spread_bp": -38.497847548991395,
+  "median_net_bp": -32.050651659107935,
+  "hit_rate": 0.4433112189325676,
+  "measured_spread_share": 0.99148430537677,
+  "net_per_trade_ci90": {
+   "mean": -0.004056496435375468,
+   "ci": [
+    -0.005260288238716296,
+    -0.002828686651555085
+   ],
+   "n": 10013,
+   "level": 0.9
+  },
+  "net_bp_without_top5pct": -113.62072251770253,
+  "by_year_net_bp": {
+   "2020": -19.27627554733052,
+   "2021": -61.77301418742724
+  },
+  "top10_symbols_share": -0.14133876403349893,
+  "top10_days_share": -0.25881253801898635,
+  "portfolio_net": {
+   "mean_daily": -0.004021554337367779,
+   "sharpe": -3.285840418625024,
+   "max_drawdown": -0.8881544296508633,
+   "total_return": -0.8812564044432434
+  }
+ },
+ "vs_basket_matched_daily": {
+  "mean_diff": 0.0007393791639842788,
+  "ci": [
+   0.00028517121547020133,
+   0.001178053271781156
+  ],
+  "level": 0.9
+ },
+ "sessions": 505,
+ "qualifiers": {
+  "net_lower_bound_gt_0": false,
+  "beats_basket_matched": true,
+  "both_years_positive": false,
+  "positive_without_top5pct": false,
+  "qualified": false
+ },
+ "what": "H3 Amendment 1 development check: ORB primary selection, 2020-01-02..2021-12-31, direction-only corrected for incident 20 (no conditioning on a later breakout)"
+}
