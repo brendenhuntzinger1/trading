@@ -1,0 +1,135 @@
+{
+ "what": "Alpaca PAPER round trip (simulated money, Alpaca-simulated fills)",
+ "symbol": "BTC/USD",
+ "usd": 10.0,
+ "account_status": "ACTIVE",
+ "at": "20261026T030457Z",
+ "buy": {
+  "client_order_id": "rt-20261026T030457Z-buy",
+  "side": "buy",
+  "status": "filled",
+  "quote": {
+   "bp": 79618.492,
+   "ap": 79641.8,
+   "t": "2026-10-26T03:04:57.794737893Z"
+  },
+  "quoted_half_spread_bps": 1.4635160910043126,
+  "filled_qty": "0.000123087",
+  "filled_avg_price": 79667.568753727,
+  "slippage_vs_mid_bps": 4.69957115575184,
+  "submit_to_ack_ms": 368.7422275543213,
+  "decide_to_terminal_ms": 519.8893547058105,
+  "submitted_at": "2026-10-26T03:04:58.536794115Z",
+  "filled_at": "2026-10-26T03:04:58.538477085Z",
+  "broker_order_id": "1c2cd769-09f1-4ca3-803d-969743d0e88a"
+ },
+ "duplicate_resend_returned_existing": true,
+ "position_qty_after_buy": 0.000122778,
+ "fee_or_rounding_qty": 3.0899999999998637e-07,
+ "sell": {
+  "client_order_id": "rt-20261026T030457Z-sell",
+  "side": "sell",
+  "status": "filled",
+  "quote": {
+   "bp": 79627.3,
+   "ap": 79649.81,
+   "t": "2026-10-26T03:04:58.137486953Z"
+  },
+  "quoted_half_spread_bps": 1.4132601979025587,
+  "filled_qty": "0.000122778",
+  "filled_avg_price": 79630.146,
+  "slippage_vs_mid_bps": 1.0558956023247348,
+  "submit_to_ack_ms": 419.3875789642334,
+  "decide_to_terminal_ms": 541.508674621582,
+  "submitted_at": "2026-10-26T03:04:59.503355987Z",
+  "filled_at": "2026-10-26T03:04:59.5052227Z",
+  "broker_order_id": "a37c7200-7c87-48ea-b46e-85cef1bd8e55"
+ },
+ "position_qty_after_sell": 0.0,
+ "requests": [
+  {
+   "method": "GET",
+   "path": "/v2/account",
+   "status": 200,
+   "ms": 129.3
+  },
+  {
+   "method": "GET",
+   "path": "/v1beta3/crypto/us/latest/quotes",
+   "status": 200,
+   "ms": 379.1
+  },
+  {
+   "method": "GET",
+   "path": "/v2/orders:by_client_order_id",
+   "status": 404,
+   "ms": 124.6
+  },
+  {
+   "method": "GET",
+   "path": "/v2/positions",
+   "status": 200,
+   "ms": 122.4
+  },
+  {
+   "method": "POST",
+   "path": "/v2/orders",
+   "status": 200,
+   "ms": 121.7
+  },
+  {
+   "method": "GET",
+   "path": "/v2/orders:by_client_order_id",
+   "status": 200,
+   "ms": 151.1
+  },
+  {
+   "method": "GET",
+   "path": "/v2/orders:by_client_order_id",
+   "status": 200,
+   "ms": 133.5
+  },
+  {
+   "method": "GET",
+   "path": "/v2/positions",
+   "status": 200,
+   "ms": 127.8
+  },
+  {
+   "method": "GET",
+   "path": "/v1beta3/crypto/us/latest/quotes",
+   "status": 200,
+   "ms": 136.9
+  },
+  {
+   "method": "GET",
+   "path": "/v2/orders:by_client_order_id",
+   "status": 404,
+   "ms": 124.3
+  },
+  {
+   "method": "GET",
+   "path": "/v2/positions",
+   "status": 200,
+   "ms": 133.9
+  },
+  {
+   "method": "POST",
+   "path": "/v2/orders",
+   "status": 200,
+   "ms": 161.1
+  },
+  {
+   "method": "GET",
+   "path": "/v2/orders:by_client_order_id",
+   "status": 200,
+   "ms": 122.1
+  },
+  {
+   "method": "GET",
+   "path": "/v2/positions",
+   "status": 200,
+   "ms": 119.9
+  }
+ ]
+}

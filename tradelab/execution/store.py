@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS fills (
 CREATE TABLE IF NOT EXISTS equity (
   at TEXT, mode TEXT, account TEXT, equity REAL, cash REAL, positions TEXT, marks TEXT,
   operating_cost REAL DEFAULT 0, PRIMARY KEY (at, mode, account));
+CREATE UNIQUE INDEX IF NOT EXISTS equity_one_mark_per_day ON equity (mode, account, substr(at, 1, 10));
 CREATE TABLE IF NOT EXISTS breaker_log (at TEXT, mode TEXT, account TEXT, breaker TEXT, detail TEXT, actions TEXT);
 CREATE TABLE IF NOT EXISTS latency (client_id TEXT PRIMARY KEY, decided_to_submit_ms REAL, submit_to_ack_ms REAL,
   ack_to_first_fill_ms REAL, slippage_bps REAL);
@@ -55,6 +56,13 @@ class Store:
             self.db.executescript("ALTER TABLE decisions RENAME TO decisions_v1;")
             self.db.executescript(SCHEMA)
             self.db.executescript("INSERT INTO decisions SELECT * FROM decisions_v1; DROP TABLE decisions_v1;")
+        # Journals created before 2026-10-26 could hold several equity marks for one UTC day (same-day re-runs).
+        # Performance metrics treat each mark as one day, and the dashboard sums operating cost over marks, so
+        # keep only the first mark of each day: it is the scheduled one; later same-day runs are catch-ups.
+        if self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='equity'").fetchone():
+            self.db.execute("DELETE FROM equity WHERE EXISTS (SELECT 1 FROM equity e2 WHERE e2.mode = equity.mode "
+                            "AND e2.account = equity.account AND substr(e2.at, 1, 10) = substr(equity.at, 1, 10) "
+                            "AND e2.at < equity.at)")
 
     # decisions -----------------------------------------------------------
     def decision(self, **row) -> None:
@@ -132,9 +140,12 @@ class Store:
         return cash, {a: q for a, q in pos.items() if abs(q) > 1e-12}
 
     # marks, breakers, latency -------------------------------------------
-    def mark(self, at, account, equity, cash, positions, marks, operating_cost=0.0):
-        self.db.execute("INSERT OR REPLACE INTO equity VALUES (?,?,?,?,?,?,?,?)",
-                        (_iso(at), self.mode, account, equity, cash, json.dumps(positions), json.dumps(marks), operating_cost))
+    def mark(self, at, account, equity, cash, positions, marks, operating_cost=0.0) -> bool:
+        """One mark per account per UTC day: the first successful mark of the day wins, so a same-day re-run or
+        catch-up run never adds a second point to the performance series. Returns False if one already existed."""
+        cur = self.db.execute("INSERT OR IGNORE INTO equity VALUES (?,?,?,?,?,?,?,?)",
+                              (_iso(at), self.mode, account, equity, cash, json.dumps(positions), json.dumps(marks), operating_cost))
+        return cur.rowcount == 1
 
     def breaker(self, at, account, breaker, detail, actions):
         self.db.execute("INSERT INTO breaker_log VALUES (?,?,?,?,?,?)",

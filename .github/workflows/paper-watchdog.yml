@@ -1,0 +1,44 @@
+# Missed-run watchdog for the scheduled paper workflows. Reads heartbeats from the paper-state branch and
+# raises an alert (only to a destination approved in config/alerts.toml) when a workflow has not succeeded
+# within its limit. It cannot detect its own absence: GitHub also disables schedules in a repository with no
+# activity for 60 days and emails the owner when it does.
+name: paper-watchdog
+on:
+  schedule:
+    - cron: "41 */3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.lock
+      - name: Read heartbeats from paper-state
+        run: |
+          mkdir -p /tmp/hb
+          if git ls-remote --exit-code --heads origin paper-state >/dev/null; then
+            git fetch -q origin +refs/heads/paper-state:refs/remotes/origin/paper-state --depth=1
+            git archive origin/paper-state data/heartbeat 2>/dev/null | tar -x -C /tmp/hb || true
+          fi
+      - name: Check and alert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m tradelab.ops.watchdog check --heartbeats /tmp/hb/data/heartbeat | tee /tmp/status.jsonl
+          while IFS= read -r line; do
+            wf=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['workflow'])" "$line")
+            st=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['status'])" "$line")
+            why=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['reason'])" "$line")
+            if [ "$st" = missed ]; then
+              scripts/paper_alert.sh open "missed-run:$wf" "$wf missed its schedule" "$why"
+            else
+              scripts/paper_alert.sh resolve "missed-run:$wf" "Running again: $why"
+            fi
+          done < /tmp/status.jsonl

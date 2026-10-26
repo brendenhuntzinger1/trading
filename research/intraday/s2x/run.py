@@ -105,7 +105,29 @@ def evaluate(t, data, pool, label):
             "DSR_null_var_N92": round(dsr, 3), "criteria": E, "verdict": verdict}
 
 
+def reproduce():
+    """Deterministic reproduction of the frozen test from archived data. Not a new evaluation: it fits
+    nothing, changes nothing and is logged as a reproduction. Exits non-zero on any difference."""
+    for s in PRIMARY + SECONDARY + ["SPY"]:
+        if not (DATA / f"{s}.csv").exists():
+            raise SystemExit(f"archived data missing for {s}; restore the data archive first (data/README.md)")
+    data = {s: fetch(s) for s in PRIMARY + SECONDARY + ["SPY"]}
+    recorded = json.loads((OUT / "result.json").read_text())
+    diffs = []
+    for label, uni in (("primary_equity", PRIMARY), ("secondary_bond_commodity", SECONDARY)):
+        now = evaluate(run(uni, data, STOCK_AT_OPEN), data, uni, label)
+        for k in ("trades", "gross_bp", "gross_90ci_bp", "net_bp_base8", "sharpe_annual_net", "placebo_p", "verdict"):
+            if json.dumps(now[k], default=str) != json.dumps(recorded[label][k], default=str):
+                diffs.append((label, k, recorded[label][k], now[k]))
+    record("reproduction", "s2x_test_reproduction", {"prereg": "prereg_s2x"}, f"{START}..{END}",
+           "deterministic reproduction of a frozen test (no fitting, no new evaluation)", metrics={"differences": len(diffs)})
+    print("REPRODUCED IDENTICALLY" if not diffs else f"DIFFERENCES: {diffs}")
+    raise SystemExit(1 if diffs else 0)
+
+
 if __name__ == "__main__":
+    if "--reproduce" in sys.argv:
+        reproduce()
     if DONE.exists():
         raise SystemExit(f"S2X test already ran at {json.loads(DONE.read_text())['at']}; refusing to run twice")
     DONE.write_text(json.dumps({"at": datetime.now(timezone.utc).isoformat(), "status": "started"}))

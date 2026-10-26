@@ -124,6 +124,29 @@ def equity_chart(series: dict[str, list[tuple[str, float]]], capital: float) -> 
     return "".join(out)
 
 
+def evidence_sources_section() -> str:
+    """Four kinds of evidence, never mixed: backtests, our simulated fills, broker paper fills, live."""
+    rows = []
+    j = ROOT / "data" / "intraday" / "intraday_paper.db"
+    if j.exists():
+        db = sqlite3.connect(j)
+        for acct, n, net, first, last in db.execute(
+                "SELECT account, COUNT(*), COALESCE(SUM(gross_pnl - cost), 0), MIN(entry_time), MAX(exit_time) "
+                "FROM intraday_trades GROUP BY account"):
+            rows.append([E(acct), "Simulated fills (tradelab model)", str(n), money(net, True), E((first or "–")[:10]), E((last or "–")[:10])])
+        marks = db.execute("SELECT account, MAX(at) FROM intraday_equity GROUP BY account").fetchall()
+        for acct, at in marks:
+            if not any(acct in r[0] for r in rows):
+                rows.append([E(acct), "Simulated fills (tradelab model)", "0", money(0.0, True), "–", E((at or "–")[:16])])
+    rows.append(["–", "Broker paper fills (e.g. Alpaca paper)", "0", "–", "–", "not connected"])
+    rows.append(["–", "Live trading", "0", "–", "–", "disabled: no live adapter exists"])
+    return f"""<section><h2>Evidence by source</h2>
+<p class="note">Backtests are historical simulations. Simulated fills are this system's own fill model on live prices.
+Broker paper fills come from a broker's paper engine. None of these establishes live execution quality, and
+none is real money. Strategy status: EVIDENCE_BOARD.md and tradelab/governance/status.py.</p>
+{table(["Account", "Source", "Closed trades", "Net P&L (simulated)", "First", "Last"], rows, numeric=(2, 3))}</section>"""
+
+
 def events_section(now: datetime) -> str:
     try:
         from datetime import timedelta
@@ -267,6 +290,7 @@ def build(journal: Path = ROOT / "data" / "journal_paper.db", config: Path = ROO
 <p class="note">{E(rr.get("note", ""))}</p>{table(rr["headers"], [[E(str(c)) for c in r] for r in rr["rows"]])}</section>"""
 
     events_html = events_section(now)
+    sources_html = evidence_sources_section()
 
     body = f"""
 <div class="wrap">
@@ -296,6 +320,7 @@ submit to acknowledgement {lat["s2a"] or 0:.0f} ms; average slippage vs mid {lat
 <section><h2>Decisions</h2><p class="note">Every considered trade, including rejected and skipped ones, with the reason, active breakers,
 strategy version, config hash and the last candle the decision used.</p>
 {table(["Time (UTC)", "Account", "Asset", "Weight now → target", "Outcome", "Notional", "Reasons", "Breakers", "Version", "Data as of"], dec_rows, numeric=(5,))}</section>
+{sources_html}
 {events_html}
 {research_html}
 {audit_html}

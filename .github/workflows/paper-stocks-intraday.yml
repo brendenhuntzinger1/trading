@@ -1,0 +1,48 @@
+# Stock intraday PAPER engine during US market hours (13:00-21:00 UTC covers both EST and EDT sessions).
+# The runner checks the NYSE calendar itself and does nothing when the market is closed.
+name: paper-stocks-intraday
+on:
+  schedule:
+    - cron: "7,37 13-21 * * 1-5"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write               # alerts, only if a destination is approved in config/alerts.toml
+concurrency:
+  group: paper-state            # shared by every paper workflow: state writes never interleave
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.lock
+      - name: Restore paper state
+        id: restore
+        run: scripts/paper_state.sh restore
+      - name: Run (PAPER, simulated fills)
+        env:
+          TRADELAB_MODE: paper
+        run: python -m tradelab.intraday.live_stocks --once
+      - name: Heartbeat
+        run: python -m tradelab.ops.watchdog beat paper-stocks-intraday --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - name: Save paper state
+        # Keep fills recorded before a crash, but never save over the stored state when it was not restored first.
+        if: always() && steps.restore.outcome == 'success'
+        run: scripts/paper_state.sh save "stocks intraday $(date -u +%FT%TZ)"
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          scripts/paper_alert.sh open "failed:paper-stocks-intraday" "paper-stocks-intraday failed" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - name: Clear failure alert
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          scripts/paper_alert.sh resolve "failed:paper-stocks-intraday" "Recovered: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"

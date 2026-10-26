@@ -1,0 +1,36 @@
+[
+ {
+  "label": "C1",
+  "engine_trades": 212,
+  "research_trades": 212,
+  "matched": 212,
+  "match_rate_vs_research": 1.0,
+  "engine_mean_net_pct": -1.0238,
+  "research_mean_net_pct": -1.0326,
+  "matched_mean_net_eng_pct": -1.0238,
+  "matched_mean_net_res_pct": -1.0326,
+  "matched_net_corr": 0.9763,
+  "matched_same_exit_reason": 0.9906,
+  "engine_only": [],
+  "research_only": [],
+  "n_engine_only": 0,
+  "n_research_only": 0
+ },
+ {
+  "label": "C2",
+  "engine_trades": 74,
+  "research_trades": 74,
+  "matched": 74,
+  "match_rate_vs_research": 1.0,
+  "engine_mean_net_pct": -0.9676,
+  "research_mean_net_pct": -0.9672,
+  "matched_mean_net_eng_pct": -0.9676,
+  "matched_mean_net_res_pct": -0.9672,
+  "matched_net_corr": 1.0,
+  "matched_same_exit_reason": 1.0,
+  "engine_only": [],
+  "research_only": [],
+  "n_engine_only": 0,
+  "n_research_only": 0
+ }
+]

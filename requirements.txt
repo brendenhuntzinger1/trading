@@ -3,3 +3,6 @@ pandas==3.1.0
 pytest==9.1.1
 websockets==17.3
 exchange_calendars==4.13.2
+scikit-learn>=1.9
+scipy>=1.18
+pyyaml>=6

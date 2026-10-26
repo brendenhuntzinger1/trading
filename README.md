@@ -5,6 +5,8 @@ A trading research and paper-trading system for crypto (Coinbase) and US stocks/
 live-eligible (`tradelab/governance/status.py`).**
 
 Start here:
+- `STATUS.md`: **authoritative current status** (what is verified, unverified, research only, absent, blocked)
+- `P1_REPORT.md`: crypto cross-sectional prediction study (rejected), with `P1_PREREGISTRATION.md`
 - `EVIDENCE_BOARD.md`: one-table status of every strategy (software / historical / forward / live-eligible)
 - `RESEARCH_AUDIT.md`, `DECISION_QUALITY.md`, `LATENCY.md`, `INTELLIGENCE_POLICY.md`, `RESEARCH_BUDGET.md`
 - `ORB_PREREGISTRATION.md`, `S2X_PREREGISTRATION.md`, `docs/ALPACA_DATA_AUDIT.md`, `docs/CREDENTIALS_SETUP.md`

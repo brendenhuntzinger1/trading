@@ -1,0 +1,47 @@
+[
+ {
+  "label": "S2 default (stocks + sector ETFs)",
+  "engine_trades": 5732,
+  "research_trades": 5732,
+  "matched": 5732,
+  "match_rate_vs_research": 1.0,
+  "engine_mean_net": -0.00017828421876477956,
+  "research_mean_net": -0.00017819512120409044,
+  "matched_mean_net_eng": -0.00017828421876477956,
+  "matched_mean_net_res": -0.00017819512120409044,
+  "matched_net_corr": 1.0,
+  "matched_entry_px_max_abs_diff_pct": 0.0,
+  "examples_engine_only": [],
+  "examples_research_only": []
+ },
+ {
+  "label": "S2 ETF-only",
+  "engine_trades": 548,
+  "research_trades": 548,
+  "matched": 548,
+  "match_rate_vs_research": 1.0,
+  "engine_mean_net": 0.00046217129172975227,
+  "research_mean_net": 0.0004619403215690592,
+  "matched_mean_net_eng": 0.00046217129172975227,
+  "matched_mean_net_res": 0.0004619403215690592,
+  "matched_net_corr": 1.0,
+  "matched_entry_px_max_abs_diff_pct": 0.0,
+  "examples_engine_only": [],
+  "examples_research_only": []
+ },
+ {
+  "label": "S1 default",
+  "engine_trades": 1445,
+  "research_trades": 1445,
+  "matched": 1445,
+  "match_rate_vs_research": 1.0,
+  "engine_mean_net": -0.0005889803089826208,
+  "research_mean_net": -0.000602905204488301,
+  "matched_mean_net_eng": -0.0005889803089826208,
+  "matched_mean_net_res": -0.000602905204488301,
+  "matched_net_corr": 0.9951279114766253,
+  "matched_entry_px_max_abs_diff_pct": 0.0,
+  "examples_engine_only": [],
+  "examples_research_only": []
+ }
+]

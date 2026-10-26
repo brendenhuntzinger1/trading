@@ -1,5 +1,6 @@
 exchange_calendars==4.13.2
 iniconfig==2.3.1
+joblib==1.6.0
 korean_lunar_calendar==0.4.0
 numpy==2.5.4
 packaging==26.3
@@ -9,7 +10,11 @@ Pygments==2.21.0
 pyluach==2.3.0
 pytest==9.1.1
 python-dateutil==3.0.0
+PyYAML==6.0.3
+scikit-learn==1.9.1
+scipy==1.18.1
 six==1.17.0
+threadpoolctl==3.7.0
 toolz==1.2.0
 tzdata==2026.5
 websockets==17.3

@@ -162,3 +162,208 @@ before validation.
 2. Confirmed historical **SIP** access for that account. If only IEX is available, stop.
 3. A delisted-coverage check.
 4. Disk for the reduced dataset (< 5 GB per the download plan in docs/ALPACA_DATA_AUDIT.md).
+
+---
+
+# Amendment 1 (2026-10-26): reconciliation and finalisation, before any ORB data was obtained
+
+**Seen beforehand:**
+- the paper;
+- this project's earlier stock studies (S1, S2, S2X, the exploratory S3 on Yahoo 5-minute bars);
+- the P1 crypto results.
+
+**Not seen:** no consolidated minute bar or quote has been downloaded; no ORB trade has been simulated on any
+data. The original text above stays registered (`prereg_orb`). The sections below **supersede** it where they
+conflict.
+
+## B1. Prior exposure, corrected ("untouched" is withdrawn)
+- The 2024-01-02 → 2026-07-24 window has **never been evaluated for the ORB signal**.
+- It is not untouched data:
+  - S1, S2 and S2X examined US stocks and ETFs over the same dates, at daily or hourly resolution, with other
+    signals;
+  - the paper's authors chose their rules on 2016–2023.
+
+  It is called the **"final historical window (opened once for ORB)"**.
+- The excluded S3 window (2026-07-27 → 2026-10-23) stays excluded.
+- **Only prospective paper results (from deployment) are unseen evidence.**
+
+## B2. Costs: measured spread, assumed slippage, kept separate
+- The 8 bp round trip quoted elsewhere (COSTS.md) is an **assumption** for S1/S2 (market-on-open in, MOC out).
+  It does **not** apply to ORB, which enters on an intraday stop, and it is **not verified**.
+- For each ORB trade, record **separately**:
+  1. the **measured quoted half-spread**: (ask − bid)/2/mid from the SIP NBBO quote in force at the trigger
+     minute, and at 15:59 for the exit;
+  2. the **assumed slippage beyond the touch**: 1 bp base, 5 bp stress;
+  3. the regulatory fees (SEC, verified; TAF, sourced but not re-checked).
+
+  Results are reported **gross**, **net of measured spread only**, and **net of spread + assumed slippage**.
+- If historical SIP quotes are unavailable on this account, the study runs with the assumed 10 bp per side
+  base (25 bp stress), labelled **"cost assumed, not measured"**. It cannot PASS on that basis; at best it is
+  INCONCLUSIVE.
+
+## B3. Benchmarks first, then the rule (order of reporting)
+All on the same selected stock-days, with the same 1× exposure cap and the same costs:
+1. **No trade:** 0.
+2. **SPY intraday:** SPY 09:35 → close, long. This is market exposure on those days.
+3. **In-play basket, long:** equal-weight long of the selected stocks, 09:35 → close, no stop. Passive
+   exposure to stocks in play.
+4. **Direction only:** the first-candle direction, entered at 09:35 at market, held to close, no stop. The
+   directional information without the breakout trigger.
+5. **Placebo** (unchanged): random side and random entry time from the realised distribution, same stop and exit.
+6. **The ORB rule:** breakout stop entry, 10% ATR stop, close exit.
+
+**Decomposition:**
+- the entry trigger's value = 6 vs 4 with the stop removed;
+- the stop's value = 6 vs 6 without the stop.
+
+Exits are **reported, never selected** on the final window.
+
+## B4. Decision-quality metrics (each benchmark and the rule)
+- Trade level:
+  - gross, net-of-spread and net-of-all per trade, in bp and R;
+  - hit rate; MAE/MFE;
+  - share stopped; time to stop.
+- **Abstention:** doji days, armed-but-not-triggered, and days with nothing selected. The forward returns of
+  stocks *not* traded, in the first-candle direction, are reported.
+- **Portfolio** (daily P&L at the 1× cap):
+  - Sharpe, max drawdown;
+  - beta and correlation to SPY;
+  - concentration: largest day, share of P&L from the top 1% and 5% of trades;
+  - turnover, average positions.
+- Results by year and by thirds. RV buckets (1–2, 2–5, 5–30, > 30).
+
+## B5. Selection discipline and reproduction
+- **Data is split as in §8.** The configuration is frozen by hash (rules, parameters, cost model, code path)
+  in the registry **before** the final window is read.
+- The final evaluation may be **re-run deterministically any number of times**.
+  - Every run is checked against the frozen hash.
+  - A run whose configuration differs from the frozen one is refused and recorded as a violation.
+  - Re-running is allowed; changing a rule or parameter after seeing the final window is what is prohibited.
+- **Consumed data** (`research/consumed_data.json`): once the final window is read, it is recorded as
+  consumed for "US stocks intraday ORB-family". No later study may use it for model or rule selection.
+- E6 uses N = the number of entries of kind "trial" or configurations counted in `research/registry.jsonl`
+  at the freeze, taken from the registry, not typed by hand.
+
+## B6. Predictive models are a separate, later registration
+No model is added to this study. A model (for example: P(trigger), or P(target before stop) from relative
+volume, gap, pre-market volume, earnings/news flags) may be registered **separately**, before its own data is
+seen, only if both hold:
+1. development shows ≥ 2,000 triggered trades;
+2. it names a plausible information advantage over the rule (information the rule ignores and that exists by
+   09:35).
+
+It is compared with the frozen rule on the same trades.
+
+## B7. Data verification gates (run before development, needs the Alpaca paper key)
+Results go to `docs/ALPACA_DATA_AUDIT.md`. If gates 1–3 fail, the study does not run.
+1. **SIP access:** historical 1-minute bars and NBBO quotes with `feed=sip` return data for 2016, 2020, 2024 and
+   last week; the free-tier 15-minute delay is documented.
+2. **Timestamps:**
+   - bar timestamps are bar **start** in UTC and convert to 09:30 ET on DST and non-DST days;
+   - quote timestamps are SIP participant or consolidated times;
+   - there are no bars outside 04:00–20:00 ET unless documented.
+3. **Coverage:**
+   - ≥ 95% of a random sample of 200 stocks meeting the filters have minute bars every session;
+   - the asset master lists inactive symbols;
+   - bars exist for ≥ 10 known delisted names on dates before their delisting.
+4. **Spreads at the intended times:**
+   - the quoted half-spread distribution at 09:35–10:30 ET and at 15:59 ET for a sample of in-play
+     stock-days;
+   - medians and the 90th percentile are reported;
+   - these are **measurements**, kept apart from the slippage assumption.
+5. **Corporate actions:** raw versus split-adjusted bars agree with the paper's unadjusted-intraday convention.
+
+## B8. Run order (each step recorded in the registry)
+1. Data gates.
+2. Development replication (sanity gate §8).
+3. Development: benchmarks first, then the rule and the ≤ 4 dev variants.
+4. Validation.
+5. Freeze.
+6. Final window, read once for selection purposes and re-runnable for reproduction.
+7. If PASS: ≥ 3 months and ≥ 60 trades of prospective paper trading (STATUS.md §Rules).
+
+Nothing here enables live trading.
+
+# Amendment 2 (2026-10-26, before any ORB data was obtained)
+
+## B9. The final window is read only if a configuration qualifies
+If no configuration meets its development and validation qualifiers, the study **stops after validation** and
+the final window stays **unread**. It remains available to a later, separately registered study. This
+replaces the P1 practice of reading the final window "for the record", which consumed data without being able
+to change any decision (`P1_METHODS_AND_AUDIT.md` §2).
+
+Qualifiers, fixed now:
+- Development: the rule's gross mean per trade at RV ≥ 1 passes the §8 sanity gate, and its net-of-spread
+  mean beats benchmarks 4 and 5 on paired daily P&L (90% CI of the difference > 0).
+- Validation: net mean per trade ≥ 0 under the base cost path.
+
+# Amendment 3 (2026-10-26, before any ORB data was obtained)
+
+Fixes four points the harness had to decide and the earlier text left open.
+
+## B10. Only the primary configuration can be frozen
+- The frozen candidate is **`primary`**: the paper's rules, long-only, RV ≥ 1, top 20, 1× exposure cap.
+- The other five configurations (long/short, and the dev variants RV ≥ 2 or 5 with top 20, RV ≥ 1 or 2 with
+  top 10) are **reported as sensitivity only**. They count toward E6's trial count, but they can never be
+  frozen or promoted from this study, whatever their development results.
+- This removes the last selection step from the study. If `primary` fails a qualifier, the study stops
+  (Amendment 2).
+
+## B11. Fixed implementation choices
+- **Sizing:** exposure freed by a position closed earlier in the day is **not** reused that day. Conservative.
+- **Placebo costs:** each placebo trade is charged its matching rule trade's measured cost and weight. Quotes
+  at random minutes would need too many requests.
+- **Relative-volume history:** a symbol missing from any of its 14 history days gets no RV and is excluded
+  that day.
+- **Corporate actions:** splits are detected from the raw/adjusted price ratio; spin-offs are not detected.
+  The share of trades on days with any corporate action in the following 30 days is reported.
+
+## B12. Trial count for E6
+E6 uses N = the `trial_count` baseline recorded in the registry at this amendment (100: the 92 earlier
+configurations plus P1's 8, as P1 used), plus the 6 ORB configurations: **N = 106**.
+
+# Amendment 4 (2026-10-26, after the data-access checks and before any ORB outcome was computed)
+
+**Seen beforehand:** the data-access results only. No ORB signal, trade or return has been computed.
+
+## B13. What the data checks found
+- **Consolidated (SIP) access works** on the paper key: minute bars, NBBO quotes from 15 exchanges, and
+  trades. IEX alone carried 3.7% of SPY's SIP volume on 2026-10-23.
+- **Bars exist for delisted tickers** when asked for by ticker (TWTR, SIVB, ATVI, BBBY all returned history).
+- **The asset master is not survivorship-free.**
+  - It lists 2,882 inactive symbols, but omits most of the names that disappeared.
+  - Of the tickers removed through mergers, it holds only 15% (2020), 36% (2021), 37% (2022), 12% (2023)
+    and 13% (2024).
+  - TWTR, SIVB, BBBY and ATVI are absent altogether.
+  - About 431 entries are CUSIP-like codes or `_DELISTED` placeholders.
+- **Alpaca's corporate-actions feed records mergers, renames and worthless removals from 2020**, but almost
+  nothing before: 2018 had none, 2019 had 36 records against roughly 800 a year afterwards.
+- **History follows the ticker.** A 2021 request for either FB or META returns Meta's prices.
+
+## B14. Universe, corrected
+The universe is the union of:
+- the asset master (active and inactive, exchange tickers only);
+- `_DELISTED` placeholders with the suffix stripped;
+- every exchange ticker in the corporate-actions feed (merger targets, old and new names, worthless removals,
+  redemptions).
+
+On each day, a ticker whose 09:30 five-minute bar is identical in every field to another ticker's is dropped,
+so one company is counted once.
+
+**Residual bias, stated:**
+- Delistings not caused by a merger or rename, such as bankruptcies and moves to OTC trading (SIVB, BBBY),
+  are recovered only where Alpaca lists them.
+- Their share of in-play stock-days is reported in the development results.
+- Results are labelled **"universe partly survivorship-affected (non-merger delistings)"**.
+
+## B15. Periods, changed because 2016–2019 cannot be reconstructed
+| Phase | Old | New |
+|---|---|---|
+| Development | 2016-01-04 → 2019-12-31 | **2020-01-02 → 2021-12-31** |
+| Validation | 2020-01-02 → 2023-12-29 | **2022-01-03 → 2023-12-29** |
+| Final | 2024-01-02 → 2026-07-24 | unchanged |
+
+- Development and validation both lie inside the authors' 2016–2023 sample, so they replicate the paper; they
+  are not independent evidence.
+- The §8 sanity gate (development gross R against the paper's +0.08R) applies to the new development period.
+- Nothing else changes, in particular the trial set, the freeze rule (B10), and Amendment 2's stop rule.

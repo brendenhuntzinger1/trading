@@ -129,7 +129,7 @@ Phase-1 to phase-3 daily research used 73 configurations. These hypotheses add a
 
 Even a strategy that passes E1–E7 also needs all of the following:
 
-- at least 3 months of prospective paper trading, with
+- at least 3 months of prospective paper trading, with *(Forward-period rule reconciled 2026-10-26: STATUS.md §Rules.)*
   - at least 60 trades,
   - net results consistent with the backtest's 90% interval,
   - realised fills and slippage within the cost model;

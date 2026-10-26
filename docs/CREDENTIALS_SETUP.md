@@ -22,18 +22,50 @@ offered, add them as environment variables:
 
 | Variable | Value |
 |---|---|
-| `TRADELAB_PAPER_APCA_KEY_ID` | the paper key ID |
-| `TRADELAB_PAPER_APCA_SECRET_KEY` | the paper secret |
+| `TRADELAB_PAPER_APCA_API_KEY_ID` | the paper key ID |
+| `TRADELAB_PAPER_APCA_API_SECRET_KEY` | the paper secret |
 | `TRADELAB_PAPER_APCA_BASE_URL` | `https://paper-api.alpaca.markets` |
 
 A new session picks them up. The names start with `TRADELAB_PAPER_` on purpose:
 `tradelab/execution/secrets.py` refuses to start a paper process if any `TRADELAB_LIVE_*KEY`/`*SECRET` variable
 is present. Never create `TRADELAB_LIVE_*` variables.
 
+## 2b. Later only: GitHub repository secrets (for scheduled stock paper runs)
+
+Not needed for research. Only when a stock paper workflow is approved and merged:
+
+1. On GitHub: repository **Settings → Secrets and variables → Actions → New repository secret**.
+2. Add `TRADELAB_PAPER_APCA_API_KEY_ID` and `TRADELAB_PAPER_APCA_API_SECRET_KEY` with the same paper values.
+3. Workflows read them as `${{ secrets.TRADELAB_PAPER_APCA_API_KEY_ID }}`. GitHub masks them in logs and does
+   not pass them to workflows triggered from forks.
+
+Never add `TRADELAB_LIVE_*` secrets. Use the same rotation steps (§4) for both places.
+
+## 2c. Run the checks (in a new session, after the secrets exist)
+
+    .venv/bin/python scripts/pit_verify_alpaca.py --quick    # is it a paper key? historical SIP or IEX only?
+    .venv/bin/python scripts/pit_verify_alpaca.py            # data gates B7.1-B7.5 (about 15-40 minutes at 200 calls/min)
+    .venv/bin/python research/orb/study.py gates             # read the gate report; the study runs only if B7.1-B7.3 pass
+
+Without the secrets, the script prints a message and exits with code 2. It runs nothing and writes nothing.
+The full run writes:
+- `data/stocks/verify_<date>.json` (gitignored);
+- a summary table appended to `docs/ALPACA_DATA_AUDIT.md`.
+
+Neither contains the key.
+
 ## 3. How I will verify it is a paper key, without revealing it
 
-- I will call only `GET https://paper-api.alpaca.markets/v2/account` with the key in request headers, and report
-  just three things: the HTTP status, that the host is `paper-api`, and the account status field.
+- I will call `GET https://paper-api.alpaca.markets/v2/account` and `GET https://api.alpaca.markets/v2/account`
+  with the key in request headers, and report only:
+  - the two HTTP statuses;
+  - the paper account's status field.
+
+  A paper key must authenticate on the paper host and be rejected by the live host
+  (`verify_paper_key`). If it is not confirmed as a paper key, the data gates stop before any other request.
+- The client refuses, in code and before any request, every endpoint except market data (bars, quotes,
+  trades), the asset master, the calendar and the account status check. Orders, positions, watchlists and
+  account configuration are unreachable (`tradelab/pit/alpaca_sip.py`, `check_endpoint`; tested).
 - Alpaca states that paper and live keys are separate. I *expect* a live key to fail authentication on the
   paper host, but no official page I read says so. I will treat "authenticates on `paper-api`" as supporting
   evidence, not proof. The decisive control is that you create only a Paper Only account.
@@ -45,7 +77,7 @@ is present. Never create `TRADELAB_LIVE_*` variables.
 
 - Rotate every 90 days, or immediately after any suspected exposure:
   1. In the Alpaca dashboard, regenerate the key; the old key stops working.
-  2. Update both environment secrets.
+  2. Update the environment secrets, and the GitHub secrets if they exist.
   3. Start a new session.
 - Resetting a paper account also requires regenerating credentials (Alpaca FAQ).
 - To revoke permanently, delete the key in the dashboard, then remove both secrets.

@@ -133,3 +133,44 @@ All are lower bounds: they assume no retries and full 10,000-point pages.
 **Bottom line:** the ORB experiment needs **historical SIP** bars and, for costs, SIP quotes. If a free
 paper-only account is limited to IEX (G), the experiment cannot be run on Alpaca's free tier. The choice would
 then be the $99/month SIP plan or another provider, and that purchase needs your approval.
+
+## Data gates for the ORB study (ORB_PREREGISTRATION.md Amendment 1, B7). **Not run yet: no key**
+
+`scripts/pit_verify_alpaca.py` (logic in `tradelab/stocks/verify.py`) checks each gate against API responses,
+and appends a dated results table below. Until that table exists, every "unverified" item above stays unverified.
+
+| Gate | What is checked | Pass rule |
+|---|---|---|
+| B7.1 SIP access | **Paper key:** confirmed first. **Data:** SPY 1-minute SIP bars and one minute of SIP quotes on the first session of 2016-03, 2020-03 and 2024-06, and the latest session ≥ 2 days old. **Entitlement:** `verify_entitlement` exchange-code / volume test | All requests 200 with data; entitlement verdict `sip` |
+| B7.2 Timestamps | SPY on 2024-07-15 (DST) and 2024-01-16 (standard): bar at the session open exists and is 09:30 ET; no bars outside 04:00–20:00 ET. Quotes: inside the requested window, monotonic. Records whether timestamps carry nanoseconds and which quote fields exist | Both days pass |
+| B7.3 Coverage | **Asset master:** listed with inactive assets. **Stock sample:** 200 random stocks with median 2023 close > $5 and volume ≥ 1M, 5 random sessions each, need ≥ 1 regular-session minute bar. **Delisted:** 13 names with daily bars in the 30 days ending one month before their last trading day | Coverage ≥ 95%, inactive assets > 0, ≥ 10 delisted names with bars |
+| B7.4 Spreads (measured) | In-play stock-days (RV ≥ 1) drawn from the coverage sample. Quoted half-spread of the NBBO quote in force at the end of each minute 09:35–10:30 ET and at 15:59 ET. Median, p90 and the share of minutes with no usable quote | ≥ 20 in-play stock-days, < 20% unusable minutes. **A measurement, never mixed with the slippage assumption** |
+| B7.5 Corporate actions | NVDA 2024-06-10 (10:1), AAPL 2020-08-31 (4:1), TSLA 2022-08-25 (3:1): the raw/split-adjusted ratio jumps by the split ratio; the raw intraday last close matches the raw daily close | All three within 1% / 0.5% |
+
+**Delisting dates are from memory.** The confidence of each is listed in `tradelab/stocks/verify.py`. The check
+uses a window ending 30 days before each date, so an error of a few days does not affect it.
+
+**Costs in the ORB study:**
+- The measured half-spreads at the trigger, stop and close minutes are recorded per trade.
+- Slippage beyond the touch is a separate assumption: 1 bp base, 5 bp stress.
+- Without historical quotes, the per-side cost falls back to the assumed 10 bp (25 bp stress), and results
+  are labelled **"cost assumed, not measured"**. They cannot PASS.
+
+## Data-gate run 2026-10-26T02:56:15+00:00 (paper key; scripts/pit_verify_alpaca.py)
+
+| Gate | Pass | Key facts |
+|---|---|---|
+| B7_1_sip_access | yes | entitlement verdict sip |
+| B7_2_timestamps | yes | 2024-07-15: open 09:30, outside-hours bars 0; 2024-01-16: open 09:30, outside-hours bars 0 |
+| B7_3_coverage | yes | coverage 100.0% of 1000 stock-sessions; inactive assets 2882; delisted with bars 13/13 |
+| B7_4_spreads | yes | MEASURED half-spread 09:35-10:30 median 4.0206876521744785 bp, p90 10.302425965935116 bp; 15:59 median 1.45544155408729 bp (30 in-play stock-days) |
+| B7_5_corporate_actions | yes | NVDA: jump 9.999834560344116; AAPL: jump 3.999919878214887; TSLA: jump 2.9999663412992255 |
+
+**Survivorship finding from the same session (ORB Amendment 4):**
+- Gate B7.3 passes as written, because bars exist for all 13 delisted names when they are requested by ticker.
+- But the asset master *lists* only 12–37% of merger-delisted tickers per year, and none of TWTR, SIVB, BBBY
+  or ATVI.
+- The ORB universe therefore adds the tickers from Alpaca's corporate-actions feed, which covers 2020 onward
+  only, and drops same-company duplicates.
+- Development and validation moved to 2020–2023.
+- The full report is committed as `research/stocks/verify_2026-10-26.json`.
