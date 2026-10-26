@@ -59,7 +59,38 @@ Each software defect has a regression test, and three of them were confirmed on 
 **No ordinary trading losses were recorded, because nothing traded as a candidate.**
 
 ## F. Operational evidence (unattended, on GitHub Actions)
-OPS_PLACEHOLDER
+**Merged:** [PR #1](https://github.com/brendenhuntzinger1/trading/pull/1) merged into `main` at 03:18 UTC
+(`14c2a32`), after CI passed on the exact head and the no-live-path gate passed. Follow-up work is on
+`claude/prediction-track`.
+
+**Scheduled runs on `main`:** all successful, no failures.
+| Workflow | Runs observed | Notes |
+|---|---|---|
+| `paper-crypto-intraday` | Scheduled runs 2–8, 03:52 → 06:45 UTC ([latest](https://github.com/brendenhuntzinger1/trading/actions/runs/40281664533)), plus 1 manual run | Scheduled every 15 min, but GitHub ran it every 25–50 min (incident 18). C1/C2 are REJECTED; this is an engine exercise |
+| `paper-daily` | Scheduled run 6 at 06:52 ([run](https://github.com/brendenhuntzinger1/trading/actions/runs/40282418534)), the 06:17 slot about 35 min late; manual runs 2, 3, 5 earlier | Diagnostic strategies and benchmarks, not candidates |
+| `paper-watchdog` | Manual run 03:48; scheduled run 03:56 ([run](https://github.com/brendenhuntzinger1/trading/actions/runs/40266488692)) | Opened issue #2 (missed run) and closed it once the crypto job succeeded: alert delivery verified end to end |
+| `paper-stocks-intraday` | None yet: it runs only in market hours (first slot 13:07 UTC today) | Diagnostic S2 on ETFs |
+
+**State and safety:**
+- **Persisted state:** the `paper-state` branch holds the journal, the intraday journal and engine state,
+  and heartbeats for each workflow.
+- **Recovery and duplicate prevention:** verified on Actions earlier (manual run 3 restored run 2's state, 6
+  orders stayed 6). Duplicate equity marks were collapsed on the real journal (2 → 1 per day).
+- **Risk halts** survive a save and a restore (test).
+- **No live path:** every config is in paper mode; no workflow reads secrets; the only order-sending code is
+  the Alpaca *paper* adapter, which no workflow uses (`tests/test_no_live_path.py`).
+
+**Research compute (this cloud session, not Actions):**
+- The ORB download and computation ran in this session's container. **It was not unattended in the durable
+  sense.** The container was reclaimed twice while the session sat idle (incident 17).
+- Session-tracked tasks keep it alive but stop after 2 hours, and the harness asks that they not be
+  restarted. The run was finished by staying in an active session.
+- Every API result is cached on disk, so each interruption cost only time.
+
+**Unresolved:**
+- GitHub's scheduler runs the 15-minute job far less often than scheduled.
+- Real-time stock execution would need paid real-time consolidated data.
+- The paper broker adapter is not wired to any workflow: there are no repository secrets.
 
 ## G. Next action
 NEXT_PLACEHOLDER
