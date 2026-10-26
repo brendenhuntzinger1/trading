@@ -156,3 +156,15 @@ def test_dev_qualifiers_require_sanity_gate_and_both_benchmarks():
     q = study.dev_qualifiers(dev, {"pass": True})
     assert q["primary"]["qualified"] and not q["x"]["qualified"]
     assert not study.dev_qualifiers(dev, {"pass": False})["primary"]["qualified"]
+
+
+def test_only_primary_can_be_frozen():
+    """Amendment 3, B10: dev variants and long/short are sensitivity only, never frozen or promoted."""
+    for cfg in ("long_short", "dev_rv2_top20", "dev_rv5_top20", "dev_rv1_top10", "dev_rv2_top10"):
+        with pytest.raises(SystemExit, match="B10"):
+            study.phase_freeze(cfg)
+
+
+def test_trial_count_baseline_is_recorded():
+    from research.orb import evaluate as ev
+    assert ev.trial_count() >= 100

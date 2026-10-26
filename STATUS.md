@@ -65,15 +65,30 @@ All of them run with public data only, write simulated state to `paper-state`, a
 - **SIP data access** on the Alpaca paper account is unverified.
 - **Slippage for crypto alts:** BTC/ETH spreads were measured live once; alts were not.
 
-## Stock track
-- **ORB pre-registration:** reconciled and finalised (Amendments 1–2, registered before any ORB data). It is
-  benchmarks first; spread measured, slippage assumed; freeze-by-hash; the final window is read only if a
-  configuration qualifies.
-- **Tooling:** see the stock-track section below.
+## Stock track (everything possible without credentials is done)
+- **ORB pre-registration, finalised:** Amendments 1–3, registered before any ORB data. It is:
+  - benchmarks first (SPY, in-play basket, direction-only, placebo), then the rule;
+  - measured spread kept apart from assumed slippage; with no quotes the result is labelled "cost assumed"
+    and cannot PASS;
+  - frozen by hash, and **only the primary configuration can be frozen**;
+  - stopped after validation if nothing qualifies, leaving the final window unread;
+  - E6 trial count N = 106, read from the registry.
+- **Built and tested on fake API responses only. No stock data has been downloaded.**
+  - A read-only Alpaca data client: GET only; order, position and account-configuration endpoints refused;
+    the paper host enforced.
+  - Data gates B7.1–B7.5: SIP access, timestamps across DST, coverage including 13 delisted names, spreads at
+    09:35–10:30 and 15:59 ET, splits.
+  - A spread module (measured only), a cost module, and the ORB simulator.
+  - The study harness (gates → dev → validation → freeze → final), which calls the consumed-data guard.
+- **Known unknowns until real data arrives:**
+  - whether Alpaca quote timestamps are consolidated or exchange time;
+  - spin-offs are not detected;
+  - the delisting dates were written from memory (the gate's window tolerates a few days' error);
+  - the live-data path will likely need fixes on first real contact.
 
 ## Blocked on credentials: the exact next action
 1. You add an **Alpaca paper** key as environment secrets, following `docs/CREDENTIALS_SETUP.md`. Never in chat.
-2. I run the data gates (`docs/CREDENTIALS_SETUP.md` gives the command):
+2. I run `scripts/pit_verify_alpaca.py --quick`, then the full gates:
    - SIP bars and quotes;
    - timestamps;
    - instrument coverage, including delisted names;

@@ -356,12 +356,14 @@ def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dic
     else:
         out["qualifiers"] = validation_qualifiers(out)
     js = _write(phase, out)
-    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2"]},
+    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3"]},
            "..".join(PERIODS[phase]), f"ORB {phase}", metrics={"qualifiers": js["qualifiers"]})
     return js
 
 
 def phase_freeze(config: str) -> dict:
+    if config != "primary":     # Amendment 3, B10: the other configurations are sensitivity only
+        sys.exit(f"B10: only 'primary' can be frozen; '{config}' is reported as sensitivity and cannot be promoted")
     dev, val = _read("dev"), _read("validation")
     qd, qv = dev["qualifiers"].get(config, {}), val["qualifiers"].get(config, {})
     qualified = bool(qd.get("qualified")) and bool(qv.get("net_all_mean_ge_0"))

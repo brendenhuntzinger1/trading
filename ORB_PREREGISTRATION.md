@@ -296,3 +296,28 @@ Qualifiers, fixed now:
 - Development: the rule's gross mean per trade at RV ≥ 1 passes the §8 sanity gate, and its net-of-spread
   mean beats benchmarks 4 and 5 on paired daily P&L (90% CI of the difference > 0).
 - Validation: net mean per trade ≥ 0 under the base cost path.
+
+# Amendment 3 (2026-10-26, before any ORB data was obtained)
+
+Fixes four points the harness had to decide and the earlier text left open.
+
+## B10. Only the primary configuration can be frozen
+- The frozen candidate is **`primary`**: the paper's rules, long-only, RV ≥ 1, top 20, 1× exposure cap.
+- The other five configurations (long/short, and the dev variants RV ≥ 2 or 5 with top 20, RV ≥ 1 or 2 with
+  top 10) are **reported as sensitivity only**. They count toward E6's trial count, but they can never be
+  frozen or promoted from this study, whatever their development results.
+- This removes the last selection step from the study. If `primary` fails a qualifier, the study stops
+  (Amendment 2).
+
+## B11. Fixed implementation choices
+- **Sizing:** exposure freed by a position closed earlier in the day is **not** reused that day. Conservative.
+- **Placebo costs:** each placebo trade is charged its matching rule trade's measured cost and weight. Quotes
+  at random minutes would need too many requests.
+- **Relative-volume history:** a symbol missing from any of its 14 history days gets no RV and is excluded
+  that day.
+- **Corporate actions:** splits are detected from the raw/adjusted price ratio; spin-offs are not detected.
+  The share of trades on days with any corporate action in the following 30 days is reported.
+
+## B12. Trial count for E6
+E6 uses N = the `trial_count` baseline recorded in the registry at this amendment (100: the 92 earlier
+configurations plus P1's 8, as P1 used), plus the 6 ORB configurations: **N = 106**.
