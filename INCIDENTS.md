@@ -34,6 +34,7 @@ Categories:
 | 16 | 10-26 | SW | The detached ORB development run died partway through with `URLError: Connection refused` | `http_get` retried 429 and 5xx responses but let transport exceptions escape | Transport errors become a retryable 599 (8 retries, backoff capped at 60 s); the runner restarts itself up to 10 times and resumes from the cache | `test_transport_errors_are_retried_not_fatal` | Run resumed from the cache |
 | 17 | 10-26 | SW | Container restart (~04:10 UTC) killed the detached ORB development run and the 2021 prefetch | Cloud session containers restart; background processes do not survive, files on disk do | Idempotent relauncher (`ensure_orb.sh`) called by 20-minute self check-ins; every request result is cached on disk, so a restart loses at most about 20 minutes of progress | Check-in schedule; cache-backed resume | Relaunch at 04:30 resumed from the cache |
 | 18 | 10-26 | EXEC | GitHub Actions ran the 15-minute crypto schedule only at 03:52 and 04:25 (2 of about 5 slots) | GitHub's free scheduler delays and drops cron runs under load | None possible within Actions; the runner catches up on every missed bar, so no data is lost, but decisions run 30+ minutes late | Watchdog alerts if no success in 2 h. Real intraday trading needs an always-on host, not Actions | Observed on main |
+
 **Rule for future entries:**
 - A loss under a followed policy is recorded as LOSS and changes nothing by itself.
 - A rule changes only through a registered challenger, evaluated on data not used to design it.
