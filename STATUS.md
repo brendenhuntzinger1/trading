@@ -92,6 +92,11 @@ programme:
   - **H3, 2026-10-26, in development (2020–21, corrected):** 4,956 trades, gross −2.4 bp and net −24 bp
     per trade [−38, −10]; both years negative. Its motivating +60 bp was a look-ahead artifact of the harness
     (incident 20, fixed with a test). Failed Amendment 1's development gate, so validation and final are unread.
+- **Phase 2 (2026-10-26, owner-authorised expansion):**
+  - 7 families implemented, 37 configurations; all rejected in development; validation and final windows
+    unread.
+  - Closest: F7, the ML ranking traded at the close (net +7.4 bp/day, not significant).
+  - Report: `research/phase2/REPORT.md`.
 - **Research budget: spent** (P1, ORB, H3: all rejected). Per `RESEARCH_BUDGET.md`: stop intraday research,
   keep the platform and benchmarks, and recommend no trading, unless you reopen it with a new information
   source.
