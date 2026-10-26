@@ -1,81 +1,104 @@
 # Tradelab status (authoritative)
 
-**As of 2026-10-26, branch `claude/prediction-track`.** Code and results verified at commit `96924c0`. This file
-was added in the commit after it, along with P1_REPORT.md. Where any other document disagrees with this file,
-this file wins. Older documents carry a pointer here where they were stale.
+**As of 2026-10-26, branch `claude/prediction-track`, [PR #1](https://github.com/brendenhuntzinger1/trading/pull/1)
+(draft; merging not authorised).** Where any other document disagrees with this file, this file wins.
 
-**Mode:** paper only. `config/paper.toml` and `config/intraday_paper.toml` set `mode = "paper"`. No exchange or
-broker credentials are configured anywhere. No strategy is live-eligible (`tradelab/governance/status.py`). Real
-orders, purchases and subscriptions are not authorised.
+**Mode:** paper only (`mode = "paper"` in both configs). No broker or exchange credentials are configured. No
+strategy is live-eligible (`tradelab/governance/status.py`). Real orders, purchases and subscriptions are not
+authorised.
 
-## Objective, and where we are against it
-The objective is an autonomous system that finds opportunities and makes informed entry, hold, exit and no-trade
-decisions, intraday, in US stocks and crypto, with performance that survives costs.
+**Objective:** an autonomous trader that makes informed entry, hold, exit and no-trade decisions with an edge that
+survives costs. **The next proof point is one reproducible, economically meaningful signal after realistic
+costs.** We do not have one.
 
-**Not achieved.** No tested signal or model has a net edge after realistic costs on data it was not tuned on.
-The research and paper infrastructure needed to find one, and to recognise a false one, exists and is tested.
-
-## 1. Implemented and verified
-| Component | Evidence |
+## Verified
+| Item | Evidence |
 |---|---|
-| Test suite | **237 passed**: locally, and from a clean install of `requirements.lock` on 2026-10-26 |
-| Deterministic risk engine, order state machine, paper venue, journal | Unit and regression tests; decision path never imports an LLM or the network (`tests/test_decision_path_isolation.py`) |
-| Reproduction of central historical results | Audit, stock/crypto engine cross-checks, combined DSR, period tables and the S2X final test were recomputed from archived data and match exactly (`research/reproduce/`) |
-| Point-in-time Coinbase universe and hourly bars | 113 products, 3.89 M bars, 2021-01 → 2026-10; audit in `docs/DATA_AUDIT.md` |
-| Prediction research tools | Causal panel; purged walk-forward; PBO; calibration; block bootstrap (`tradelab/predict`, `tradelab/research/validation.py`) |
-| P1 study and verdict | `P1_REPORT.md`; every phase reproduces identically |
-| Paper state persistence script | Tested against a local remote: save → restore → save round trips, no-change skip, and failure when the remote is unreachable |
-| **Two manual daily paper cycles on GitHub Actions (restore verified)** | Run 40257231608 succeeded and saved `paper-state@6ce7e32`: 8 decisions, 6 simulated fills, 4 equity marks. Run 40257385219 restored that state and saved `f007904`: still 6 orders and 6 fills (the same UTC day traded nothing twice), 16 decisions, 8 equity marks. Run 40256991578 failed (scikit-learn/scipy missing from the lock file; now fixed) |
+| Test suite on the latest commit | See the "CI on the exact latest commit" line in the PR |
+| Central historical results reproduce | Audit, cross-checks, DSR, S2X and all P1 phases recompute identically |
+| P1 frozen | Config and code hash `research/p1/frozen_config.json`. Re-runs are reproduction-only; a changed configuration is refused (test) |
+| Consumed-data guard | `research/consumed_data.json`; selection windows overlapping consumed data raise (test) |
+| One equity mark per account per UTC day | Unique index plus migration (tests). Before: same-day re-runs added marks, and the dashboard summed operating cost over them |
+| Duplicate prevention | Same-day re-runs add no orders, fills or marks (test). Run 3 on Actions kept 6 orders and 6 fills |
+| State recovery | Save → fresh clone → restore round trip (test, and on Actions runs 2 → 3) |
+| Failed saves fail the job | Unreachable remote and a rejected push both exit non-zero (tests); never reported as "nothing to save" |
+| WAL-safe saves | Rows still in the SQLite write-ahead log are checkpointed before saving. The test fails without the fix |
+| Persistent risk halts | A latched breaker survives a state save and a restore on a fresh machine, and is still enforced (test) |
+| Missed-run detection | Heartbeats plus watchdog, market-hours aware (tests) |
 
-## 2. Implemented but not verified
-| Component | What is missing |
+## Implemented, not yet verified in operation
+| Item | Gap |
 |---|---|
-| **Scheduled** paper workflows (daily; crypto intraday every 15 min; stocks intraday every 30 min in market hours) | They exist only on this branch. GitHub runs schedules only from the default branch, so **no scheduled run has happened**. The intraday workflows cannot even be triggered manually until merged. **Continuous paper trading is not running and must not be claimed until scheduled runs are observed** |
-| Same-day re-runs | They append duplicate decision and equity-mark rows. Harmless to positions, but they double-count marks on the dashboard. To fix before relying on equity curves |
-| Alerts | **None configured.** By default GitHub emails failed scheduled-run notifications to whoever last edited the schedule; that has not been tested |
-| Intraday paper runners (`live_crypto`, `live_stocks`) | Unit-tested and run by hand before; never run on Actions. The stocks runner uses Yahoo prints, not consolidated quotes |
-| Dashboard "evidence by source" section | Built locally and on Actions; nobody has reviewed it |
-| Simulated vs broker fills | All fills are **simulated by tradelab**. Broker paper fills are not connected (no Alpaca paper key) |
+| Scheduled runs | None has happened: GitHub schedules run only from `main`, and merging is not authorised |
+| Alert delivery | Built and tested with a stub. **No destination is approved.** The proposed one is a GitHub issue in this repository (label `paper-alert`). Until approved, alerts go only to the run log and job summary |
+| Intraday paper workflows, watchdog | Cannot be dispatched before they exist on `main` |
+| Broker paper fills | Not connected. Every fill is **simulated by tradelab** |
 
-## 3. Research only (results, no deployable strategy)
-| Study | Status |
-|---|---|
-| S1, S2, S2-ETF, S2X (intraday stocks) | REJECTED. S2-ETF, once "inconclusive", failed its out-of-universe replication |
-| C1, C2 (intraday crypto) | REJECTED at retail costs |
-| Daily trend ensemble | INCONCLUSIVE; benchmark challenger only |
-| **P1a / P1b (crypto daily/weekly ranking, 2026-10-26)** | **REJECTED: no qualifying candidate.** Rank ICs −0.04…+0.06 against ~0.10 needed. Every configuration lost money net in development. PBO 0.43 / 0.54 |
+## What merging would activate (after approval)
+| Workflow | Schedule | Runs | What it is |
+|---|---|---|---|
+| `paper-daily` | 00:17 and 06:17 UTC | `ensemble_vol40`; `breakout_20_atr3_vol40` (shadow); `fixed_allocation`, `buy_hold` | **Diagnostic.** ensemble is INCONCLUSIVE (named "champion" in `strategies.lock` only because it is the incumbent), breakout is REJECTED, the other two are benchmarks. **No trading candidate** |
+| `paper-crypto-intraday` | every 15 min | C1, C2 on BTC/ETH/SOL | **Diagnostic engine exercise.** Both REJECTED |
+| `paper-stocks-intraday` | every 30 min in market hours | S2 on 15 ETFs (Yahoo prints) | **Diagnostic engine exercise.** REJECTED |
+| `paper-watchdog` | every 3 h | — | Monitoring |
+| `ci` | push / PR | tests | Already active |
 
-## 4. Planned but absent
-- **Prediction ledger:** append-only, timestamped forecasts recorded before outcomes. Designed (P1 Amendment
-  A7) but not built, because nothing qualified.
-- Exit research on fixed entries (time vs target vs volatility stop vs model-informed).
-- The required-skill check for **stocks** at ~8 bp costs; needs consolidated quotes.
-- The ORB study (pre-registered).
-- Equity event coverage (earnings, halts, filings) as a prospective dataset.
-- Drift monitors wired into the scheduled loop.
-- Real alerts.
+All of them run with public data only, write simulated state to `paper-state`, and cannot place real orders.
 
-## 5. Blocked
-| Blocker | Unblocks | Needs from you |
-|---|---|---|
-| No consolidated (SIP) stock quotes | Stock cost measurement, the stock required-skill check, ORB | An **Alpaca paper** key, set up as in `docs/CREDENTIALS_SETUP.md` (repository secrets; never pasted in chat). There is no read-only key type; a paper key cannot move money |
-| Coinbase fee unverified | Every crypto cost assumption | Your fee tier from the Coinbase fee page. It is not a secret |
-| Lower-cost crypto execution | Any intraday crypto work | A measured maker-fill or fee-tier cost; P1 shows retail taker cost is the binding constraint |
-| Scheduled paper runs | Prospective evidence | **Merge this PR** (or approve the merge) |
+## Research results (all failures preserved)
+- **REJECTED:** S1, S2, S2-ETF, S2X, C1, C2, breakout.
+- **P1a/P1b:** the **8 tested configurations** failed under their data, rules and assumed Coinbase costs. That
+  is not a verdict on price/volume models, top-3 portfolios or intraday crypto in general (`P1_REPORT.md`).
+- **The audit** (`P1_METHODS_AND_AUDIT.md`) covers:
+  - why the final window was read without a candidate (a design mistake, now banned by ORB B9);
+  - the data now consumed;
+  - how the break-even rank correlation was derived (a construction-specific diagnostic);
+  - what PBO does and does not mean.
+- **INCONCLUSIVE:** the daily ensemble.
+
+## Assumed, not verified
+- **Coinbase fees:** a 0.60% taker fee is assumed. Your account tier would verify it.
+- **Stock costs:**
+  - The 8 bp round trip (COSTS.md) is an **assumption** for market-on-open/MOC trading. It does not apply to ORB.
+  - ORB uses measured spreads when SIP quotes are available, otherwise an assumed 10 bp per side.
+  - Slippage beyond the touch is always an assumption: 1 bp base, 5 bp stress.
+- **SIP data access** on the Alpaca paper account is unverified.
+- **Slippage for crypto alts:** BTC/ETH spreads were measured live once; alts were not.
+
+## Stock track
+- **ORB pre-registration:** reconciled and finalised (Amendments 1–2, registered before any ORB data). It is
+  benchmarks first; spread measured, slippage assumed; freeze-by-hash; the final window is read only if a
+  configuration qualifies.
+- **Tooling:** see the stock-track section below.
+
+## Blocked on credentials: the exact next action
+1. You add an **Alpaca paper** key as environment secrets, following `docs/CREDENTIALS_SETUP.md`. Never in chat.
+2. I run the data gates (`docs/CREDENTIALS_SETUP.md` gives the command):
+   - SIP bars and quotes;
+   - timestamps;
+   - instrument coverage, including delisted names;
+   - spreads at 09:35–10:30 and 15:59 ET;
+   - corporate actions.
+3. If gates 1–3 pass: ORB development replication, then development and validation.
+4. The final window is read only if a configuration qualifies.
+
+## Decisions waiting on you
+- Approve an alert destination (proposed: a GitHub issue in this repository), or name another.
+- Merge authorisation, after the readiness items above.
+- Coinbase fee tier, which you read from your account. It is not a secret.
 
 ## Rules (reconciled)
 - **Forward period before any live-trial proposal:**
   - 6 months for strategies that trade daily or slower;
-  - otherwise the longer of 3 months and the time needed to reach the pre-registered trade count (≥ 60
-    trades for intraday).
-
-  This replaces the conflicting "3 months" in INTRADAY_* / RESEARCH_BUDGET and "6 months" in ARCHITECTURE /
-  RESEARCH.
-- **Evidence sources are always labelled separately:**
-  - historical backtest (Coinbase or Yahoo data, assumed costs);
-  - simulated paper fills (tradelab);
+  - otherwise the longer of 3 months and the time to reach the pre-registered trade count (≥ 60 trades
+    intraday).
+- **Evidence is labelled by source:**
+  - historical backtest (assumed costs unless measured);
+  - simulated paper fills;
   - broker paper fills (not connected);
   - live (disabled).
-- **The final historical window of any study is "opened once", never "untouched"**, when earlier studies
-  examined the same dates.
+- **Historical windows are labelled honestly.**
+  - A final window already examined is "opened once", never "untouched".
+  - Consumed windows may be re-run for reproduction, never used for selection.
+  - If nothing qualifies at validation, the final window is not read.
 - **Final order authorisation and hard risk limits are deterministic code.** No language model can change them.
