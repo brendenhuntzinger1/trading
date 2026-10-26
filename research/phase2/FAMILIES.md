@@ -331,9 +331,15 @@ configuration is a counted trial.
 - **Universe:** the F4 universe, the point-in-time top 500 by dollar volume as of *t*−1. Its 14:30–16:00 bars
   are cached.
 - **Decision at 15:30 ET** on session *t*:
-  - features are F6's families computed from daily bars through *t*−1, with the 15:30 price replacing *t*'s
-    close (gap = 15:30 price / open *t*... see below);
-  - every feature uses only data available at 15:30.
+  - features are F6's families computed from daily bars through *t*−1, plus *p* = the 15:30 price of *t*
+    (open of the 15:30 bar), all known at 15:30:
+    - r1 = *p* / close(*t*−1) − 1; r5 = *p* / close(*t*−5) − 1;
+    - gap = open(*t*) / close(*t*−1) − 1; intraday = *p* / open(*t*) − 1;
+    - r20, r60, r120 = *p* / close(*t*−k) − 1; dist52 = *p* / max close over the prior 252 sessions − 1;
+    - vol20 and range from daily bars through *t*−1;
+    - vol_ratio and log_dvol from daily volume through *t*−1;
+    - r1_mkt, r5_mkt and beta60 use SPY's 15:30 price the same way.
+  - Every feature uses only data available at 15:30. No other changes.
 - **Execution:**
   - buy at the close of *t* (15:59 closing-quote proxy = close of the 15:30 bar) and sell at the close of
     *t*+1;
