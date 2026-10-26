@@ -1,6 +1,6 @@
 # Evidence board
 
-Updated 2026-10-26. Gross and net are per trade on the untouched test period unless noted; intervals are
+Updated 2026-10-26 (P1 rows added). Operational status, including whether paper jobs actually ran: `STATUS.md`. Gross and net are per trade on the untouched test period unless noted; intervals are
 90% day-block bootstrap. Costs come from COSTS.md and are assumed, not measured.
 
 Four separate gates:
@@ -18,8 +18,10 @@ Four separate gates:
 | S3 / ORB: stocks in play continue the first 5-minute direction | **Untestable now**: needs SIP minute bars and quotes (unverified) | Paper (in-sample): +0.08R ≈ 2–5 bp | Likely < 0 at 20 bp | Pre-registered with power for a clear verdict | Not built | Unknown | n/a | No | Run after the paper key verifies SIP access; measure spreads |
 | C1: crypto crash rebound | Good for the signal; maker queue not modelled | +2.7 bp (−13, 19) | −103 bp | No useful effect; holdout coins also fail | Yes (212/212) | **No** | Paper run is engine exercise only | No | Closed |
 | C2: crypto 00–06 UTC momentum | Good for the signal | +35 bp (−31, 99) | −97 bp | Small drift not excluded; far below 132 bp cost; 74 trades | Yes (74/74) | **No** | Paper run is engine exercise only | No | Closed at retail fees |
-| Daily trend `ensemble_vol40` | Good | n/a (daily) | in-sample only | Lost to fixed allocation on holdout coins | Yes | **No** (inconclusive) | Paper running (2 days) | No | Keep as benchmark challenger |
-| Fixed allocation / buy & hold | Good | benchmark | benchmark | | Yes | n/a | Paper running | Not a strategy | Benchmarks |
+| Daily trend `ensemble_vol40` | Good | n/a (daily) | in-sample only | Lost to fixed allocation on holdout coins | Yes | **No** (inconclusive) | Not continuously paper-traded yet (STATUS.md) | No | Keep as benchmark challenger |
+| P1a: daily top-3 Coinbase coin ranking (B1, B2, ridge, logistic, GBT) | Good: point-in-time universe, hourly bars | Best rank IC −0.04…+0.06 vs ~0.10 needed | All configs < 0 net in development | Pre-registered + Amendment 1; PBO 0.43 | Yes (P1 tests) | **No**: no qualifying candidate | n/a | No | Closed at Coinbase retail costs |
+| P1b: weekly top-3 coin ranking (B1, ridge, GBT) | Good, but 122 dev weeks (low power) | ICs not distinguishable from 0 | Mostly < 0 | No model beat momentum in development; PBO 0.54 | Yes | **No**: no candidate | n/a | No | Closed |
+| Fixed allocation / buy & hold | Good | benchmark | benchmark | | Yes | n/a | Not continuously paper-traded yet | Not a strategy | Benchmarks |
 
 **Decision quality (exploratory, DECISION_QUALITY.md).** The system cannot yet:
 - separate setups from noise out of development data;

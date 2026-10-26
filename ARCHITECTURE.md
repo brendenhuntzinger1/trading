@@ -54,7 +54,7 @@ built and running in paper mode so it can earn its place with forward evidence, 
 
 A separate reviewer read the risk, execution and runner code without my conclusions and reported 11 defects,
 each reproduced with a script. Before the fixes, each of these had at least one failing regression test,
-which fails again if the fix is removed. All 155 tests pass now.
+which fails again if the fix is removed. (Current test count: STATUS.md.)
 
 | Finding | Severity | Fix |
 |---|---|---|
@@ -133,7 +133,7 @@ measured in tens of dollars a year.
 
 All of these, measured on paper trading after today (the only untouched data left):
 
-1. **Duration:** at least 6 months, and at least 90 days for the promotion check in `strategies.lock`.
+1. **Duration:** see the single forward-period rule in STATUS.md (6 months for daily-or-slower strategies), and at least 90 days for the promotion check in `strategies.lock`.
 2. **Performance:** the candidate beats `fixed_allocation` at matched exposure after fees, with
    P(Sharpe better) ≥ 0.90 on the paired block bootstrap. Otherwise, run `fixed_allocation` itself,
    which needs no timing skill.

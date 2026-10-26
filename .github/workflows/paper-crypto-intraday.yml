@@ -21,11 +21,13 @@ jobs:
           python-version: "3.13"
       - run: pip install -r requirements.lock
       - name: Restore paper state
+        id: restore
         run: scripts/paper_state.sh restore
       - name: Run (PAPER, simulated fills)
         env:
           TRADELAB_MODE: paper
         run: python -m tradelab.intraday.live_crypto --once
       - name: Save paper state
-        if: always()
+        # Keep fills recorded before a crash, but never save over the stored state when it was not restored first.
+        if: always() && steps.restore.outcome == 'success'
         run: scripts/paper_state.sh save "crypto intraday $(date -u +%FT%TZ)"

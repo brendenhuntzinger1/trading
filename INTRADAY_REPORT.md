@@ -1,5 +1,8 @@
 # Intraday research: combined report
 
+> **Superseded in part (2026-10-26).** "S2-ETF inconclusive" below is out of date: the pre-registered out-of-universe replication (S2X) found no useful effect, and S2-ETF is now REJECTED. The current status of every strategy is in `STATUS.md` and `EVIDENCE_BOARD.md`.
+
+
 Date: 2026-10-25. Paper mode only; no real orders exist or can be placed.
 Details: `INTRADAY_HYPOTHESES.md` (pre-registration), `INTRADAY_STOCKS.md`, `INTRADAY_CRYPTO.md`,
 `COSTS.md`, `DATA_LIMITS.md`, `docs/S1_TIMING.md`.
@@ -134,7 +137,7 @@ Nothing was re-tuned after a test result. No test was run twice.
 
 Even the best candidate fails E1–E3 and E6. If a future strategy passes, it still needs:
 
-1. at least 3 months of prospective paper trading with ≥ 60 trades, results inside the backtest's 90% interval;
+1. at least 3 months of prospective paper trading with ≥ 60 trades, results inside the backtest's 90% interval; *(Forward-period rule reconciled 2026-10-26: STATUS.md §Rules.)*
 2. fills measured against real quotes. The current paper runners simulate fills from bars, so they **cannot**
    validate execution; a broker paper API with real quotes, or tiny live orders, can;
 3. your account's actual fee tier and broker rules confirmed;

@@ -14,7 +14,7 @@ chance. Leverage, turnover and risk are never raised to reach an income target.
 | Calendar time | 8 weeks from approval |
 | Money | $0 by default. Up to **$99 for one month** of consolidated data (Alpaca Algo Trader Plus) only if the free SIP history is verified unavailable **and** you approve the purchase. Optional ~$6/mo host only once a candidate needs forward order-book data |
 | New hypotheses | At most **3**, each pre-registered, each with ≤ 6 development configurations (≤ 18 trials; N becomes ≤ 110) |
-| Forward paper period for any candidate | 3 months minimum before a live-trial proposal |
+| Forward paper period for any candidate | 3 months minimum before a live-trial proposal (rule: STATUS.md §Rules) |
 
 ## Order of work
 1. Verify paper-key SIP entitlement and quotes (credentials guide). Free.

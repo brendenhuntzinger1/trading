@@ -216,7 +216,7 @@ Settings: BTC-USD and ETH-USD as 50/50 independent sleeves, decision on the 00:0
 long-only spot, 2% rebalance band. **Rejected:** mean reversion, rotation (both variants), both
 selectors, the macro-calendar overlay.
 
-**Evidence a strategy needs before real money** (suggested): at least 6 months of paper trading
+**Evidence a strategy needs before real money** (suggested): at least 6 months of paper trading *(Forward-period rule reconciled 2026-10-26: STATUS.md §Rules.)*
 in which it beats `fixed_33` at the same exposure after fees, with realized slippage within the
 modelled 6 bp, and no risk-limit breach.
 
