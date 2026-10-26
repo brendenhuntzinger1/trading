@@ -66,7 +66,8 @@ All of them run with public data only, write simulated state to `paper-state`, a
 - **Slippage for crypto alts:** BTC/ETH spreads were measured live once; alts were not.
 
 ## Stock track (everything possible without credentials is done)
-- **ORB pre-registration, finalised:** Amendments 1–3, registered before any ORB data. It is:
+- **ORB: REJECTED in development (2026-10-26).** 4,048 trades, net −35 bp per trade; it loses to placebo and to direction-only. Stopped under B16, so validation and final are unread. Details in `MORNING_REPORT.md`.
+- **ORB pre-registration, finalised:** Amendments 1–5, registered before any ORB data. It is:
   - benchmarks first (SPY, in-play basket, direction-only, placebo), then the rule;
   - measured spread kept apart from assumed slippage; with no quotes the result is labelled "cost assumed"
     and cannot PASS;

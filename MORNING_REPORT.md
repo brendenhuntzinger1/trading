@@ -14,7 +14,7 @@ subscriptions or relaxed limits.
 | Study | Hypothesis | Configurations | Data | Result after costs | Status |
 |---|---|---|---|---|---|
 | P1a / P1b | Price/volume features rank liquid Coinbase coins well enough that the top 3 beat costs over a day or a week | 8 (B1 momentum, B2 reversal, ridge, logistic, GBT; weekly B1, ridge, GBT) | Coinbase point-in-time universe, 2021-03 → 2026-10 | Every configuration negative net in development. Rank IC −0.04…+0.06 against ~0.10 break-even for that construction. The daily candidate lost 0.21%/day in validation | **REJECTED** (`P1_REPORT.md`, `P1_METHODS_AND_AUDIT.md`); frozen by hash |
-| ORB (stocks in play) | A large opening imbalance (relative volume ≥ 1) persists through the session; buying the 5-minute breakout in the first candle's direction captures part of it | ORB_CONFIGS_PLACEHOLDER | Alpaca SIP minute bars and NBBO quotes; universe = asset master + corporate-action tickers; development 2020–2021 | ORB_RESULT_PLACEHOLDER | ORB_STATUS_PLACEHOLDER |
+| ORB (stocks in play) | A large opening imbalance (relative volume ≥ 1) persists through the session; buying the 5-minute breakout in the first candle's direction captures part of it | 6 (primary long-only; long/short; RV ≥ 2 or 5 with top 20; RV ≥ 1 or 2 with top 10). Benchmarks: SPY, in-play basket, direction-only, placebo (1,000 replications) | Alpaca SIP minute bars and NBBO quotes; universe = asset master + corporate-action tickers; development 2020–2021 | **Primary:** 4,048 trades over 505 sessions. Gross −9.2 bp, net −35.4 bp per trade (90% CI −41 to −29 bp); hit rate 10.7%. Loses to the placebo (+17.6 bp gross) and to direction-only. Sanity gate failed: −0.22R [−0.29, −0.15] against the paper's +0.08R. All five variants fail too | **REJECTED** in development. Stopped under B16; the validation (2022–23) and final (2024–26) windows are **unread** |
 | Earlier (S1, S2, S2-ETF, S2X, C1, C2, daily breakout) | Intraday momentum, gap reversal, crash rebound, time-of-day momentum, daily breakout | 92 in total | Yahoo stocks, Coinbase crypto | None cleared costs on untouched data | REJECTED (`EVIDENCE_BOARD.md`) |
 
 **Data facts established tonight** (measured, not assumed):
@@ -32,7 +32,28 @@ subscriptions or relaxed limits.
 OPPORTUNITIES_PLACEHOLDER
 
 ## D. Decision-quality findings
-DECISION_PLACEHOLDER
+ORB's registered decompositions separate the decisions. Numbers are from development (2020–2021) only, per
+trade, with 90% intervals from day-block bootstrap. **They describe the 2020–21 sample, not a capability.**
+
+| Decision | Comparison on the same opportunities | Result |
+|---|---|---|
+| **Selection** (which stocks) | In-play basket, long, every selected stock, against SPY | Basket gross −19 bp per trade, net Sharpe −3.3: being in play alone was not worth buying |
+| **Direction** (which side) | First-candle direction against the basket | Bullish first candle, long: gross +81 bp. Bearish first candle, short (not traded, long-only): +36 bp gross. Strong directional information *in this period*; audited below |
+| **Entry timing** | Breakout stop entry against entering at 09:35, both without a stop | Breakout entry **lost 98 bp per trade** [−131, −66]. Waiting for the breakout gave up most of the move |
+| **Exit / stop** | 10%-ATR stop against holding to the close, same entries | Stop changed results by −29 bp [−68, +9]. Not significant, and **biased against the stop** (next paragraph) |
+| **Abstention** | Stocks armed but never triggered | Their forward return in the signal direction was **−379 bp**, so not entering them avoided heavy losses. It doesn't rescue the rule, which loses on the trades it does take |
+| **Risk** | Portfolio at the 1× cap | Rule: −73% (2020) and −76% (2021). Beta to SPY 0.03 |
+
+**The execution-model finding behind the sanity-gate failure.**
+- The pre-registered fill rule says that if the entry minute's bar also touches the stop, the stop is
+  assumed hit first.
+- For a breakout, that bar's low usually comes *before* the price crosses the entry level. So the rule
+  stops out trades that in reality survived that minute.
+- That produced the 10.7% hit rate (the paper had 48%) and a 1-minute median time to the stop.
+- Resolving the order within the minute needs trade-by-trade timestamps, which the SIP trade feed has. Doing
+  so is the obvious simulator improvement.
+- **It does not change this verdict:** even without any stop, the breakout entry trails direction-only by
+  about 1 percentage point per trade.
 
 ## E. Learning record
 16 incidents are in `INCIDENTS.md` / `research/incidents.jsonl`, each categorised, with its root cause,
