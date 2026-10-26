@@ -168,3 +168,34 @@ def test_only_primary_can_be_frozen():
 def test_trial_count_baseline_is_recorded():
     from research.orb import evaluate as ev
     assert ev.trial_count() >= 100
+
+
+def test_universe_adds_delisted_tickers_and_dedupes_mapped_symbols(tmp_path):
+    """ORB Amendment 4: the asset master omits most delisted names; corporate actions add them back, and one
+    company reachable through two tickers (FB/META) is counted once."""
+    from research.orb.data import AlpacaSource
+
+    class FakeClient:
+        def assets(self):
+            return 200, [{"symbol": "META", "exchange": "NASDAQ", "status": "active"},
+                         {"symbol": "FB", "exchange": "BATS", "status": "active"},
+                         {"symbol": "TWTR_DELISTED", "exchange": "NYSE", "status": "inactive"},
+                         {"symbol": "021CVR014", "exchange": "NASDAQ", "status": "inactive"}]
+
+        def corporate_actions(self, types, start, end):
+            if start.startswith("2022"):
+                return 200, {"cash_mergers": [{"acquiree_symbol": "ATVI"}, {"acquiree_symbol": "007CVR020"}],
+                             "name_changes": [{"old_symbol": "FB", "new_symbol": "META"}]}
+            return 200, {}
+
+    src = AlpacaSource(FakeClient(), "2022-01-03", "2022-12-30", cache=tmp_path)
+    assert src.symbols() == ["ATVI", "FB", "META", "TWTR"]
+
+    idx = pd.date_range("2022-05-01", "2022-06-10", freq="B")
+    daily = pd.DataFrame({"open": 200.0, "high": 205.0, "low": 195.0, "close": 200.0, "volume": 3e6}, index=idx)
+    src._daily_raw = {"FB": daily, "META": daily}
+    src._daily_adj = {"FB": daily, "META": daily}
+    bar = {"t": "2022-06-01T13:30:00Z", "o": 200.0, "h": 202.0, "l": 199.0, "c": 201.5, "v": 900000}
+    src._or_bars = lambda day: {"FB": bar, "META": bar}
+    c = src.candidates("2022-06-01")
+    assert list(c.symbol) == ["FB"]

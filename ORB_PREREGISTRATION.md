@@ -321,3 +321,49 @@ Fixes four points the harness had to decide and the earlier text left open.
 ## B12. Trial count for E6
 E6 uses N = the `trial_count` baseline recorded in the registry at this amendment (100: the 92 earlier
 configurations plus P1's 8, as P1 used), plus the 6 ORB configurations: **N = 106**.
+
+# Amendment 4 (2026-10-26, after the data-access checks and before any ORB outcome was computed)
+
+**Seen beforehand:** the data-access results only. No ORB signal, trade or return has been computed.
+
+## B13. What the data checks found
+- **Consolidated (SIP) access works** on the paper key: minute bars, NBBO quotes from 15 exchanges, and
+  trades. IEX alone carried 3.7% of SPY's SIP volume on 2026-10-23.
+- **Bars exist for delisted tickers** when asked for by ticker (TWTR, SIVB, ATVI, BBBY all returned history).
+- **The asset master is not survivorship-free.**
+  - It lists 2,882 inactive symbols, but omits most of the names that disappeared.
+  - Of the tickers removed through mergers, it holds only 15% (2020), 36% (2021), 37% (2022), 12% (2023)
+    and 13% (2024).
+  - TWTR, SIVB, BBBY and ATVI are absent altogether.
+  - About 431 entries are CUSIP-like codes or `_DELISTED` placeholders.
+- **Alpaca's corporate-actions feed records mergers, renames and worthless removals from 2020**, but almost
+  nothing before: 2018 had none, 2019 had 36 records against roughly 800 a year afterwards.
+- **History follows the ticker.** A 2021 request for either FB or META returns Meta's prices.
+
+## B14. Universe, corrected
+The universe is the union of:
+- the asset master (active and inactive, exchange tickers only);
+- `_DELISTED` placeholders with the suffix stripped;
+- every exchange ticker in the corporate-actions feed (merger targets, old and new names, worthless removals,
+  redemptions).
+
+On each day, a ticker whose 09:30 five-minute bar is identical in every field to another ticker's is dropped,
+so one company is counted once.
+
+**Residual bias, stated:**
+- Delistings not caused by a merger or rename, such as bankruptcies and moves to OTC trading (SIVB, BBBY),
+  are recovered only where Alpaca lists them.
+- Their share of in-play stock-days is reported in the development results.
+- Results are labelled **"universe partly survivorship-affected (non-merger delistings)"**.
+
+## B15. Periods, changed because 2016–2019 cannot be reconstructed
+| Phase | Old | New |
+|---|---|---|
+| Development | 2016-01-04 → 2019-12-31 | **2020-01-02 → 2021-12-31** |
+| Validation | 2020-01-02 → 2023-12-29 | **2022-01-03 → 2023-12-29** |
+| Final | 2024-01-02 → 2026-07-24 | unchanged |
+
+- Development and validation both lie inside the authors' 2016–2023 sample, so they replicate the paper; they
+  are not independent evidence.
+- The §8 sanity gate (development gross R against the paper's +0.08R) applies to the new development period.
+- Nothing else changes, in particular the trial set, the freeze rule (B10), and Amendment 2's stop rule.

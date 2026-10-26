@@ -13,7 +13,7 @@ from typing import Protocol
 
 import pandas as pd
 
-from tradelab.pit.alpaca_sip import AlpacaData, require_old_enough
+from tradelab.pit.alpaca_sip import AlpacaData, is_ticker, require_old_enough
 from tradelab.stocks import orb
 from tradelab.stocks.spreads import HalfSpread, half_spread_at
 from tradelab.stocks.timeutil import bars_frame, quotes_frame, regular_minutes, session_bounds, session_days
@@ -80,7 +80,31 @@ class AlpacaSource:
                 raise RuntimeError(f"asset master request failed: HTTP {st}")
             got = [{"symbol": a["symbol"], "status": a.get("status"), "exchange": a.get("exchange")} for a in rows]
             self.cache.put("assets", "us_equity_all", got)
-        return sorted({a["symbol"] for a in got if a.get("exchange") in EXCHANGES})
+        master = {a["symbol"] for a in got if a.get("exchange") in EXCHANGES}
+        # The asset master omits most delisted names (ORB Amendment 4: it held only 12-37% of the tickers that
+        # disappeared through mergers each year). Add every ticker the corporate-actions feed shows leaving.
+        # Bars for such tickers exist and are served for the dates they traded under that symbol.
+        delisted = {x.removesuffix("_DELISTED") for x in master if x.endswith("_DELISTED")}
+        return sorted(x for x in master | delisted | self.corporate_action_tickers() if is_ticker(x))
+
+    def corporate_action_tickers(self) -> set[str]:
+        got = self.cache.get("assets", f"corporate_action_tickers_{self.start}_{self.end}")
+        if got is None:
+            types = ["cash_merger", "stock_merger", "stock_and_cash_merger", "name_change", "worthless_removal",
+                     "redemption"]
+            found: set[str] = set()
+            for year in range(int(self.start[:4]) - 1, int(self.end[:4]) + 2):
+                st, out = self.c.corporate_actions(types, f"{year}-01-01", f"{year}-12-31")
+                if st != 200:
+                    raise RuntimeError(f"corporate actions failed for {year}: HTTP {st}")
+                for rows in out.values():
+                    for r in rows:
+                        for k in ("acquiree_symbol", "old_symbol", "new_symbol", "symbol"):
+                            if is_ticker(str(r.get(k, ""))):
+                                found.add(r[k])
+            got = sorted(found)
+            self.cache.put("assets", f"corporate_action_tickers_{self.start}_{self.end}", got)
+        return set(got)
 
     def days(self, start: str, end: str) -> list[str]:
         return session_days(start, end)
@@ -141,8 +165,13 @@ class AlpacaSource:
         hist_days = [d for d in session_days((pd.Timestamp(day) - pd.Timedelta(days=40)).strftime("%Y-%m-%d"), day)
                      if d < day][-14:]
         hist = [self._or_bars(d) for d in hist_days]
-        rows = []
-        for s, b in today.items():
+        rows, seen = [], set()
+        for s, b in sorted(today.items()):
+            # One company under two tickers (old and new symbol both map to it) gives identical bars: keep one.
+            key = (b.get("o"), b.get("h"), b.get("l"), b.get("c"), b.get("v"))
+            if key in seen:
+                continue
+            seen.add(key)
             raw, adj = self._daily_raw.get(s), self._daily_adj.get(s)
             if raw is None or adj is None:
                 continue

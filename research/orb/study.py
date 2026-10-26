@@ -42,7 +42,7 @@ FROZEN = ROOT / "research" / "orb" / "frozen.json"
 VERIFY_DIR = ROOT / "data" / "stocks"
 SCOPE = "stocks.us.intraday.orb"
 CONSUMED_LEDGER = consumed.LEDGER
-PERIODS = {"dev": ("2016-01-04", "2019-12-31"), "validation": ("2020-01-02", "2023-12-29"),
+PERIODS = {"dev": ("2020-01-02", "2021-12-31"), "validation": ("2022-01-03", "2023-12-29"),   # Amendment 4
            "final": ("2024-01-02", "2026-07-24")}
 EXCLUDED = ("2026-07-27", "2026-10-23")              # exploratory S3 window (pre-registration §5, B1)
 PAPER_R = 0.08                                       # paper: +0.08R per trade at RV > 100%, net of commission
@@ -356,7 +356,7 @@ def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dic
     else:
         out["qualifiers"] = validation_qualifiers(out)
     js = _write(phase, out)
-    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3"]},
+    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3", "prereg_orb_amendment4"]},
            "..".join(PERIODS[phase]), f"ORB {phase}", metrics={"qualifiers": js["qualifiers"]})
     return js
 
