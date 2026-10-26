@@ -1,0 +1,42 @@
+{
+ "dev": {
+  "qualifiers": {
+   "B0": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C1": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C2": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C3": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C4": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   }
+  }
+ },
+ "stopped": "Stage B: no configuration dev-qualified; validation and final unread. No usable gross signal 2016-22: sign rule B0 -0.7 bp/trade gross (1,743 trades; corr 0.05 from magnitude, not sign); best variant C2 +0.8 bp gross < even a market-maker-level 0.5 bp round trip; costs not the binding constraint; no volatility-tercile pattern; every year negative net; implementation recomputed 5 sessions x 4 prices, 0 mismatches. Beating the always-long control (C1, C2, C4) comes only from trading less."
+}
