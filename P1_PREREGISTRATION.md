@@ -102,3 +102,197 @@ If none qualifies, the final phase still runs all configurations for the record,
 
 A pass would authorise only: freezing the model, 3+ months of forward paper trading, and reporting.
 Nothing here enables live trading.
+
+---
+
+# Amendment 1 (2026-10-26, before any model was fit or any P1 label was inspected)
+
+The original text above is kept unchanged and its hash stays registered (`prereg_p1`). The sections
+below **supersede** it where they conflict. They answer eight review points made before the run.
+Nothing below was chosen after looking at P1 outcomes.
+
+## A1. What P1 is, and what it is not
+P1 tests one narrow component of the objective: **can a cross-sectional score choose which liquid coins
+to hold for the next day or week better than holding them all, after Coinbase costs?** It is not the
+day-trading objective. Its entry/hold/exit/no-trade decisions are deliberately crude: enter the top 3,
+keep a coin while it stays in the top 3, otherwise exit, and abstain when the expected return does not cover
+costs. A pass makes a component worth a forward paper trial. It does not make an autonomous trader.
+
+## A2. Development stopping check (replaces "Free gate")
+Large dispersion between coins says nothing about whether winners can be *predicted*. Choosing the
+winners after the fact (an oracle) is only an upper bound. The check asks a narrower, falsifiable question:
+**on development data, how strong would a ranking signal have to be just to break even after turnover
+and costs?** If that strength is implausible, modelling at this horizon and cost is pointless.
+
+Per decision period t (daily for P1a, weekly for P1b), with E_t the eligible coins:
+- U_t = equal-weight mean forward return of E_t;
+- O_t = mean forward return of the 3 coins that turned out best, minus U_t (the oracle's gross
+  *selection* excess: the most any long-only top-3 selection could add over holding everything);
+- S_t(ρ) = gross selection excess of a **synthetic signal** with rank correlation ρ to the outcome:
+  - score = ρ·z + √(1−ρ²)·ε, where z is the normal score of the realised cross-sectional rank and ε is
+    independent noise;
+  - top 3 by score, averaged over 200 noise draws.
+
+  This uses the empirical, fat-tailed distribution and makes no Gaussian assumption.
+- C(τ) = cost per period = τ × round trip, where τ = Σ|Δw| / 2 is the one-way turnover per period
+  (τ = 1 means every position is replaced).
+
+The **required skill** ρ*(τ, cost) is the smallest ρ on a 0.01 grid with mean S_t(ρ) ≥ C(τ). It is
+reported for three turnover cases:
+- τ = 1, the full replacement a noisy signal produces;
+- τ = the realised turnover of B1 momentum under the A4 policy on development data. B1 is a persistent
+  rule with no fitting, so its turnover is what a slow signal would need;
+- τ = 0.25, an illustrative slow signal.
+
+All three cases are reported at every grid cost.
+
+**Stopping rule:** stop the horizon before any model comparison if ρ*(B1 turnover, base cost) > 0.15, or if
+the oracle bound is below the cost even at B1 turnover. Rank ICs above about 0.10, sustained over years
+out of sample, are rare in published cross-sectional work, so 0.15 is a deliberately generous ceiling.
+
+**What a stop would rule out:** long-only top-3 selection among Coinbase's liquid coins at this horizon and
+these assumed Coinbase taker costs, by any signal of realistic strength. That conclusion depends on the
+synthetic signal capturing selection excess the way a real one would. Real signals may do worse in the
+tails, which makes the check lenient and a stop robust.
+
+**What a stop would not rule out:**
+- lower costs (maker orders, fee tiers);
+- slower or longer-horizon policies;
+- market timing (in or out of crypto altogether, which is a no-trade decision versus the universe);
+- shorting;
+- event-driven or intraday approaches;
+- the possibility that the features carry information too small to trade here.
+
+**A pass means only that modelling is not hopeless.** It is not evidence of predictability.
+
+## A3. Venues and costs
+- Every historical result is a **Coinbase** result: Coinbase hourly prices, the Coinbase point-in-time
+  universe, Coinbase costs. Base: 1.32% round trip, made of an **assumed, unverified** 0.60% taker fee
+  plus 0.06% spread and slippage per side.
+- Grid: 2.52% (stress: a 1.20% taker tier plus slippage), 1.92%, 1.32% (base), 1.06%, 0.80% and 0.50%.
+  The values below base are **hypothetical lower Coinbase fee levels**, for sensitivity only.
+- No result is reported as Alpaca evidence. Alpaca's published fees fall near the low end of the grid,
+  but executable Alpaca profitability would need Alpaca's own instrument list, prices, spreads and fills,
+  none of which P1 uses.
+- Costs are charged on actual weight changes: |Δw| × round trip / 2.
+
+## A4. Decision policy (replaces "Decision policy"; the same for every score)
+At each decision time t:
+1. Rank the eligible coins by score; the target set is the top k = 3.
+2. **Abstain** (return-predicting models M1 and M3 only): a coin not currently held enters only if its
+   predicted return exceeds the round trip; a held coin stays only if its predicted return is > 0.
+   Unused slots are cash, which is the no-trade decision.
+3. **Hold:** a held coin that is still in the target set stays, with no trade and no cost.
+   **Exit:** a held coin that left the target set, or is no longer eligible, is sold at the decision price.
+   **Entry:** new target coins are bought at the decision price.
+4. Each filled slot carries 1/3 of capital. Long-only, no leverage.
+
+Prices: the decision price is the open of the bar starting at t, or the last close if that hour has no
+candle. A coin's period return is the last available close at or before t + horizon − 1 h, divided by
+the decision price.
+- An hour with no candle on Coinbase means no trades occurred, so the price is carried forward.
+- This **replaces** "a gap removes the sample". Dropping coins whose *future* window has gaps conditions
+  selection on the future, which is a look-ahead.
+- Barrier labels (M2's target) still require contiguous bars, and are used only for training and
+  calibration.
+- The number of carried-forward hours is reported.
+
+The **time-exit** variant from the original text, where every position closes after one horizon, is
+reported as a sensitivity. It is never used for selection.
+
+## A5. Comparators, at comparable risk
+Every phase reports, on the same periods and net of the same Coinbase costs:
+- **No trade:** cash, return 0.
+- **EW universe:** equal weight across all eligible coins, rebalanced each period, costs on actual turnover.
+- **Passive BTC:** buy and hold BTC-USD, one entry cost.
+- **B1 momentum top-3:** the simple-rule benchmark, under the same A4 policy.
+- **Matched random top-3:**
+  - a random score each period under the same A4 policy, with the same number of filled slots per
+    period as the strategy it is matched to;
+  - 500 draws;
+  - compared on **gross** return, so it isolates selection skill from turnover.
+
+**Risk comparison:**
+- volatility, beta and alpha against EW universe returns (r = α + β·r_EW), with a block-bootstrap CI on α;
+- Sharpe; maximum drawdown;
+- returns scaled to EW-universe volatility.
+
+**Does picking 3 coins add value, or only concentrate risk?** Answered by:
+- the alpha against EW;
+- the comparison with random 3-coin portfolios, which carry the same concentration with no skill.
+
+## A6. Dependence
+- Only one row per (decision time, coin) is used. Hourly bars are inputs, not samples.
+- P1a decisions are 24 h apart with 24 h holds, and P1b decisions are 168 h apart with 168 h holds, so
+  **labels do not overlap** across decisions.
+- Coins on the same date share market moves. **All inference runs on per-period portfolio returns**,
+  one number per day or week, or on per-period rank ICs:
+  - stationary block bootstrap;
+  - mean block 10 days for P1a and 4 weeks for P1b;
+  - 90% intervals.
+- The number of periods (the effective sample size) is reported, not the number of rows.
+- Folds are purged by label end with an embargo equal to the horizon. The final fit on dev + validation
+  drops rows whose labels end within one horizon of the final start.
+- P1b has about 175 development weeks, so it is low-powered and labelled as such.
+
+## A7. The final historical period is not untouched
+The overlap disclosure above stands: the final window's dates and coins were examined by the rotation and
+C1/C2 studies. "Final historical evaluation" means opened once for P1, never "unseen".
+- **Freeze:** before any prospective evaluation, the selected configuration is written to
+  `research/p1/frozen/`, refit on all data to 2026-10-24, with the model file, its SHA-256 and the commit.
+- **Prospective log:** predictions are appended to `research/p1/prospective/predictions.jsonl`, with the
+  decision time and the frozen model's hash, **before** the period's outcome exists. Outcomes are scored
+  only after the period ends. The log is append-only, and a test checks that no prediction is written
+  after its own decision time.
+- If no candidate qualifies, nothing is frozen for trading. Logging B1 and the EW universe forward may
+  continue as monitoring only.
+
+## A8. Reported decision quality (every configuration, every phase)
+- Net and gross return per period;
+- Sharpe and maximum drawdown;
+- turnover, exposure and abstention rate;
+- the cost grid;
+- results by year and by thirds;
+- per-coin concentration, and the share of P&L from the top 1% and top 5% of position-periods;
+- rank IC per period with a CI;
+- calibration:
+  - M2: Brier skill against the base rate, ECE, a reliability table;
+  - M1 and M3: decile reliability of predicted against realised return, and the realised-on-predicted slope;
+- **Abstention value** (M1, M3): the same model forced to fill all 3 slots, compared on the same periods,
+  and the forced version's returns on the periods the abstaining version skipped.
+
+## A9. Pass criteria (replaces "Pass, inconclusive, reject"; final phase, the candidate only, base Coinbase cost)
+**PASS** requires all of:
+1. per-period net return, 90% lower bound > 0;
+2. annualised Sharpe ≥ 0.5;
+3. ≥ 2 of 3 thirds positive;
+4. **alpha against the EW universe**, 90% lower bound > 0;
+5. gross return above the 95th percentile of matched random top-3;
+6. beats B1 on paired per-period net P&L (90% CI of the difference > 0);
+7. PBO ≤ 0.05 on the development trial matrix;
+8. deflated Sharpe ≥ 0.95 (N = 100 trials, null per-period SR variance 1/T);
+9. ≥ 100 position-entries;
+10. for M2: Brier skill > 0 and ECE ≤ 0.05.
+
+**REJECT (no useful effect):** the 95% upper bound of the candidate's gross selection excess per period
+(its gross return minus the EW universe) < its own cost per period at base cost.
+
+**INCONCLUSIVE:** anything else.
+
+A PASS authorises only: freezing the model, at least 3 months of prospective paper logging under A7, and a
+report. Nothing in P1 enables live trading.
+
+## A10. Implementation notes (fixed before any run)
+- **Selection excess** in A2 and A9 is exposure-matched: gross_t − (filled slots_t / 3) × EW gross_t.
+  A strategy sitting partly in cash is compared with the same fraction of the universe, so abstention is
+  neither rewarded in falling markets nor penalised in rising ones.
+- **Rebalancing:** a held position is reset to 1/3 each period, and the drift trade is charged.
+  Net per period = (1 − cost)(1 + gross) − 1.
+- **Development comparisons** (all configurations, comparators, PBO) use only periods covered by the
+  out-of-fold test blocks, so every configuration is scored on identical periods. The A2 check uses all
+  development periods.
+- **Folds** are built over decision periods, not rows, so a date is never split across folds.
+  A training row needs label_end < first test period − one horizon.
+- **Annualisation:** √365 per day for P1a, √52 per week for P1b.
+- **Random seeds** are fixed (noise 11, random portfolios 13, bootstrap 3), and gradient-boosting
+  random_state = 0.

@@ -1,0 +1,1018 @@
+{
+ "comparators": {
+  "btc_buy_hold": {
+   "max_drawdown": -0.28214138,
+   "mean": 0.00176708,
+   "sharpe": 1.30072692,
+   "total_return": 0.68735734,
+   "vol_ann": 0.49586554
+  },
+  "ew_universe": {
+   "max_drawdown": -0.68414143,
+   "mean": 0.00029596,
+   "mean_coins": 18.76712329,
+   "sharpe": 0.13172487,
+   "total_return": -0.20410421,
+   "turnover_per_period": 0.03027725,
+   "vol_ann": 0.82008765
+  },
+  "no_trade": {
+   "max_drawdown": 0.0,
+   "mean": 0.0,
+   "sharpe": 0.0,
+   "total_return": 0.0
+  }
+ },
+ "configs": {
+  "B1": {
+   "base": {
+    "alpha_vs_ew": {
+     "alpha": -0.00415629,
+     "alpha_ci90": [
+      -0.00625182,
+      -0.00204352
+     ],
+     "beta": 0.97229705
+    },
+    "by_year_return": {
+     "2024": -0.29198257,
+     "2025": -0.77654804
+    },
+    "cost_per_period": 0.00454208,
+    "dsr": 3.905e-05,
+    "entries": 371,
+    "exposure": 1.0,
+    "gross_per_period": {
+     "ci90": [
+      -0.00367062,
+      0.00570911
+     ],
+     "mean": 0.00067885
+    },
+    "max_drawdown": -0.86730327,
+    "mean": -0.00386853,
+    "net_per_period": {
+     "ci90": [
+      -0.00841597,
+      0.00132639
+     ],
+     "mean": -0.00386853
+    },
+    "periods": 365,
+    "periods_fully_abstained": 0.0,
+    "position_concentration": {
+     "best_trade": 0.1644306,
+     "n": 1095,
+     "top1pct_share": 4.0896984,
+     "top5pct_share": 12.15156503,
+     "total": 0.24778124,
+     "total_without_top5": -0.2762229
+    },
+    "selection_excess_gross": {
+     "ci90": [
+      -0.00190261,
+      0.00205244
+     ],
+     "mean": -1.585e-05
+    },
+    "sharpe": -1.5202402,
+    "slot_abstention": 0.0,
+    "thirds_mean_net": [
+     -0.00499709,
+     -0.0010636,
+     -0.00555875
+    ],
+    "thirds_positive": 0,
+    "top_coins_share": {
+     "DOGE-USD": 1.07728428,
+     "HBAR-USD": 0.70642471,
+     "SUI-USD": 1.53688367
+    },
+    "total_return": -0.84179212,
+    "turnover_per_period": 0.34409735,
+    "vol_ann": 0.92880827,
+    "vol_scaled_to_ew_ann_return": -1.24673021
+   },
+   "calibration": {},
+   "cost_grid": {
+    "0.0050": {
+     "ew_mean_net": 0.00054366,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00104364,
+     "net_ci90": [
+      -0.00548183,
+      0.00401689
+     ],
+     "sharpe": -0.40938163
+    },
+    "0.0080": {
+     "ew_mean_net": 0.00045304,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00207713,
+     "net_ci90": [
+      -0.00657529,
+      0.00301679
+     ],
+     "sharpe": -0.81548674
+    },
+    "0.0106": {
+     "ew_mean_net": 0.0003745,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00297283,
+     "net_ci90": [
+      -0.00751197,
+      0.00217562
+     ],
+     "sharpe": -1.16779568
+    },
+    "0.0132": {
+     "ew_mean_net": 0.00029596,
+     "exposure": 1.0,
+     "label": "Coinbase base (assumed)",
+     "mean_net": -0.00386853,
+     "net_ci90": [
+      -0.00841597,
+      0.00132639
+     ],
+     "sharpe": -1.5202402
+    },
+    "0.0192": {
+     "ew_mean_net": 0.00011472,
+     "exposure": 1.0,
+     "label": "Coinbase stress",
+     "mean_net": -0.00593552,
+     "net_ci90": [
+      -0.01056681,
+      -0.00069059
+     ],
+     "sharpe": -2.33309317
+    },
+    "0.0252": {
+     "ew_mean_net": -6.653e-05,
+     "exposure": 1.0,
+     "label": "Coinbase stress (1.20% taker tier)",
+     "mean_net": -0.0080025,
+     "net_ci90": [
+      -0.01279887,
+      -0.00269123
+     ],
+     "sharpe": -3.14346235
+    }
+   },
+   "rank_ic": {
+    "ci90": [
+     -0.0588588,
+     -0.01512256
+    ],
+    "mean": -0.03782844,
+    "periods": 365
+   },
+   "time_exit_sensitivity": {
+    "max_drawdown": -0.99324635,
+    "mean": -0.01251237,
+    "sharpe": -4.96479317,
+    "total_return": -0.9934199,
+    "turnover": 0.99863014,
+    "vol_ann": 0.91988048
+   }
+  },
+  "B2": {
+   "base": {
+    "alpha_vs_ew": {
+     "alpha": -0.01112838,
+     "alpha_ci90": [
+      -0.01247073,
+      -0.00969673
+     ],
+     "beta": 1.04051101
+    },
+    "by_year_return": {
+     "2024": -0.80422938,
+     "2025": -0.93973788
+    },
+    "cost_per_period": 0.01038504,
+    "dsr": 0.0,
+    "entries": 857,
+    "exposure": 1.0,
+    "gross_per_period": {
+     "ci90": [
+      -0.00427214,
+      0.00373725
+     ],
+     "mean": -0.00045023
+    },
+    "max_drawdown": -0.98912586,
+    "mean": -0.01082042,
+    "net_per_period": {
+     "ci90": [
+      -0.01465042,
+      -0.00670964
+     ],
+     "mean": -0.01082042
+    },
+    "periods": 365,
+    "periods_fully_abstained": 0.0,
+    "position_concentration": {
+     "best_trade": 0.13103706,
+     "n": 1095,
+     "top1pct_share": -5.26484464,
+     "top5pct_share": -16.62812703,
+     "total": -0.16433534,
+     "total_without_top5": -0.62525453
+    },
+    "selection_excess_gross": {
+     "ci90": [
+      -0.00261635,
+      0.00029263
+     ],
+     "mean": -0.00114494
+    },
+    "sharpe": -4.11615132,
+    "slot_abstention": 0.0,
+    "thirds_mean_net": [
+     -0.00996375,
+     -0.00977762,
+     -0.0127356
+    ],
+    "thirds_positive": 0,
+    "top_coins_share": {
+     "BONK-USD": -0.68887196,
+     "SUI-USD": -1.41314607,
+     "UNI-USD": -0.65058282
+    },
+    "total_return": -0.98820245,
+    "turnover_per_period": 0.78674551,
+    "vol_ann": 0.95950188,
+    "vol_scaled_to_ew_ann_return": -3.37560488
+   },
+   "calibration": {},
+   "cost_grid": {
+    "0.0050": {
+     "ew_mean_net": 0.00054366,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00437834,
+     "net_ci90": [
+      -0.00818681,
+      -0.00023079
+     ],
+     "sharpe": -1.66151807
+    },
+    "0.0080": {
+     "ew_mean_net": 0.00045304,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.0067352,
+     "net_ci90": [
+      -0.01056254,
+      -0.00259756
+     ],
+     "sharpe": -2.55863233
+    },
+    "0.0106": {
+     "ew_mean_net": 0.0003745,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00877781,
+     "net_ci90": [
+      -0.01261397,
+      -0.00464482
+     ],
+     "sharpe": -3.33712139
+    },
+    "0.0132": {
+     "ew_mean_net": 0.00029596,
+     "exposure": 1.0,
+     "label": "Coinbase base (assumed)",
+     "mean_net": -0.01082042,
+     "net_ci90": [
+      -0.01465042,
+      -0.00670964
+     ],
+     "sharpe": -4.11615132
+    },
+    "0.0192": {
+     "ew_mean_net": 0.00011472,
+     "exposure": 1.0,
+     "label": "Coinbase stress",
+     "mean_net": -0.01553415,
+     "net_ci90": [
+      -0.01939155,
+      -0.01144564
+     ],
+     "sharpe": -5.91398903
+    },
+    "0.0252": {
+     "ew_mean_net": -6.653e-05,
+     "exposure": 1.0,
+     "label": "Coinbase stress (1.20% taker tier)",
+     "mean_net": -0.02024787,
+     "net_ci90": [
+      -0.02413565,
+      -0.0161814
+     ],
+     "sharpe": -7.70830522
+    }
+   },
+   "rank_ic": {
+    "ci90": [
+     0.01254906,
+     0.0569644
+    ],
+    "mean": 0.0350422,
+    "periods": 365
+   },
+   "time_exit_sensitivity": {
+    "max_drawdown": -0.99605414,
+    "mean": -0.0136254,
+    "sharpe": -5.22626141,
+    "total_return": -0.99579325,
+    "turnover": 0.99863014,
+    "vol_ann": 0.95159225
+   }
+  },
+  "M1": {
+   "abstention_value": {
+    "abstaining_minus_forced_net": {
+     "ci90": [
+      0.00234385,
+      0.01062725
+     ],
+     "mean": 0.00669411
+    },
+    "forced_net_mean": -0.00883069,
+    "forced_net_on_other_periods": -0.0183392,
+    "forced_net_on_those_periods": -0.00807114,
+    "forced_sharpe": -3.44487594,
+    "periods_with_unfilled_slots": 338
+   },
+   "base": {
+    "alpha_vs_ew": {
+     "alpha": -0.00217263,
+     "alpha_ci90": [
+      -0.00329621,
+      -0.00101025
+     ],
+     "beta": 0.12181552
+    },
+    "by_year_return": {
+     "2024": -0.06058578,
+     "2025": -0.5348762
+    },
+    "cost_per_period": 0.00144312,
+    "dsr": 1e-08,
+    "entries": 120,
+    "exposure": 0.1260274,
+    "gross_per_period": {
+     "ci90": [
+      -0.00185275,
+      0.00045782
+     ],
+     "mean": -0.00069627
+    },
+    "max_drawdown": -0.61237282,
+    "mean": -0.00213658,
+    "net_per_period": {
+     "ci90": [
+      -0.00339568,
+      -0.00090323
+     ],
+     "mean": -0.00213658
+    },
+    "periods": 365,
+    "periods_fully_abstained": 0.8,
+    "position_concentration": {
+     "best_trade": 0.06274493,
+     "n": 138,
+     "top1pct_share": -0.24689312,
+     "top5pct_share": -1.34769713,
+     "total": -0.25413801,
+     "total_without_top5": -0.51980292
+    },
+    "selection_excess_gross": {
+     "ci90": [
+      -0.00187907,
+      0.00012819
+     ],
+     "mean": -0.00088225
+    },
+    "sharpe": -2.56808692,
+    "slot_abstention": 0.8739726,
+    "thirds_mean_net": [
+     0.00029291,
+     -0.00358632,
+     -0.00312443
+    ],
+    "thirds_positive": 1,
+    "top_coins_share": {
+     "AAVE-USD": -0.21565051,
+     "AERO-USD": -0.37368896,
+     "ONDO-USD": -0.22948268
+    },
+    "total_return": -0.56305609,
+    "turnover_per_period": 0.10932713,
+    "vol_ann": 0.3036705,
+    "vol_scaled_to_ew_ann_return": -2.10605638
+   },
+   "calibration": {
+    "deciles": [
+     {
+      "n": 685,
+      "pred": -0.01636,
+      "realised": -0.00122
+     },
+     {
+      "n": 685,
+      "pred": -0.00923,
+      "realised": 0.00209
+     },
+     {
+      "n": 685,
+      "pred": -0.00646,
+      "realised": 0.00398
+     },
+     {
+      "n": 685,
+      "pred": -0.00433,
+      "realised": 0.00584
+     },
+     {
+      "n": 685,
+      "pred": -0.0025,
+      "realised": 0.00463
+     },
+     {
+      "n": 685,
+      "pred": -0.00066,
+      "realised": -0.00426
+     },
+     {
+      "n": 685,
+      "pred": 0.00115,
+      "realised": -0.00412
+     },
+     {
+      "n": 685,
+      "pred": 0.00326,
+      "realised": -0.00805
+     },
+     {
+      "n": 685,
+      "pred": 0.00642,
+      "realised": -0.00064
+     },
+     {
+      "n": 685,
+      "pred": 0.01614,
+      "realised": -0.00573
+     }
+    ],
+    "n": 6850,
+    "share_pred_above_base_rt": 0.05284672,
+    "slope_realised_on_predicted": -0.20360495
+   },
+   "cost_grid": {
+    "0.0050": {
+     "ew_mean_net": 0.00054366,
+     "exposure": 0.44474886,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00334029,
+     "net_ci90": [
+      -0.00617394,
+      -0.00016385
+     ],
+     "sharpe": -2.02031404
+    },
+    "0.0080": {
+     "ew_mean_net": 0.00045304,
+     "exposure": 0.29863014,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00236794,
+     "net_ci90": [
+      -0.00437048,
+      -0.00018494
+     ],
+     "sharpe": -1.84336462
+    },
+    "0.0106": {
+     "ew_mean_net": 0.0003745,
+     "exposure": 0.19543379,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00263131,
+     "net_ci90": [
+      -0.0040838,
+      -0.00114169
+     ],
+     "sharpe": -2.69499241
+    },
+    "0.0132": {
+     "ew_mean_net": 0.00029596,
+     "exposure": 0.1260274,
+     "label": "Coinbase base (assumed)",
+     "mean_net": -0.00213658,
+     "net_ci90": [
+      -0.00339568,
+      -0.00090323
+     ],
+     "sharpe": -2.56808692
+    },
+    "0.0192": {
+     "ew_mean_net": 0.00011472,
+     "exposure": 0.06392694,
+     "label": "Coinbase stress",
+     "mean_net": -0.00128908,
+     "net_ci90": [
+      -0.00217903,
+      -0.00046266
+     ],
+     "sharpe": -2.12125459
+    },
+    "0.0252": {
+     "ew_mean_net": -6.653e-05,
+     "exposure": 0.03926941,
+     "label": "Coinbase stress (1.20% taker tier)",
+     "mean_net": -0.00093039,
+     "net_ci90": [
+      -0.00164813,
+      -0.00024304
+     ],
+     "sharpe": -2.02026047
+    }
+   },
+   "rank_ic": {
+    "ci90": [
+     -0.01378605,
+     0.03427681
+    ],
+    "mean": 0.00995125,
+    "periods": 365
+   },
+   "time_exit_sensitivity": {
+    "max_drawdown": -0.63368724,
+    "mean": -0.00234873,
+    "sharpe": -2.79508046,
+    "total_return": -0.59609611,
+    "turnover": 0.12554074,
+    "vol_ann": 0.30671301
+   }
+  },
+  "M2": {
+   "base": {
+    "alpha_vs_ew": {
+     "alpha": -0.00841379,
+     "alpha_ci90": [
+      -0.01048452,
+      -0.00649324
+     ],
+     "beta": 0.92005118
+    },
+    "by_year_return": {
+     "2024": -0.6394314,
+     "2025": -0.90402484
+    },
+    "cost_per_period": 0.00886584,
+    "dsr": 1e-08,
+    "entries": 735,
+    "exposure": 1.0,
+    "gross_per_period": {
+     "ci90": [
+      -0.00326605,
+      0.00499769
+     ],
+     "mean": 0.00072462
+    },
+    "max_drawdown": -0.96503839,
+    "mean": -0.00814149,
+    "net_per_period": {
+     "ci90": [
+      -0.01232506,
+      -0.00369088
+     ],
+     "mean": -0.00814149
+    },
+    "periods": 365,
+    "periods_fully_abstained": 0.0,
+    "position_concentration": {
+     "best_trade": 0.1644306,
+     "n": 1095,
+     "top1pct_share": 3.6507682,
+     "top5pct_share": 10.10112508,
+     "total": 0.2644862,
+     "total_without_top5": -0.28226732
+    },
+    "selection_excess_gross": {
+     "ci90": [
+      -0.00180173,
+      0.00181415
+     ],
+     "mean": 2.992e-05
+    },
+    "sharpe": -3.42785268,
+    "slot_abstention": 0.0,
+    "thirds_mean_net": [
+     -0.00760442,
+     -0.00577322,
+     -0.01107084
+    ],
+    "thirds_positive": 0,
+    "top_coins_share": {
+     "DOGE-USD": 1.00705771,
+     "HBAR-USD": 0.73844005,
+     "PEPE-USD": 0.47766762
+    },
+    "total_return": -0.96539437,
+    "turnover_per_period": 0.67165425,
+    "vol_ann": 0.86691103,
+    "vol_scaled_to_ew_ann_return": -2.81113967
+   },
+   "calibration": {
+    "base_rate": 0.24631333,
+    "brier_skill_vs_base_rate": 0.01387525,
+    "ece": 0.03035437,
+    "n": 6849,
+    "reliability": [
+     {
+      "gap": -0.0327,
+      "n": 685,
+      "observed": 0.1197,
+      "predicted": 0.1524
+     },
+     {
+      "gap": -0.0315,
+      "n": 685,
+      "observed": 0.1577,
+      "predicted": 0.1891
+     },
+     {
+      "gap": 0.0037,
+      "n": 685,
+      "observed": 0.2102,
+      "predicted": 0.2065
+     },
+     {
+      "gap": 0.042,
+      "n": 685,
+      "observed": 0.2628,
+      "predicted": 0.2208
+     },
+     {
+      "gap": 0.034,
+      "n": 685,
+      "observed": 0.2686,
+      "predicted": 0.2347
+     },
+     {
+      "gap": -0.0064,
+      "n": 684,
+      "observed": 0.2427,
+      "predicted": 0.2491
+     },
+     {
+      "gap": 0.0464,
+      "n": 685,
+      "observed": 0.3124,
+      "predicted": 0.266
+     },
+     {
+      "gap": -0.0008,
+      "n": 685,
+      "observed": 0.2861,
+      "predicted": 0.287
+     },
+     {
+      "gap": -0.0115,
+      "n": 685,
+      "observed": 0.3051,
+      "predicted": 0.3166
+     },
+     {
+      "gap": -0.0945,
+      "n": 685,
+      "observed": 0.2978,
+      "predicted": 0.3923
+     }
+    ]
+   },
+   "cost_grid": {
+    "0.0050": {
+     "ew_mean_net": 0.00054366,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00263375,
+     "net_ci90": [
+      -0.00668878,
+      0.00166615
+     ],
+     "sharpe": -1.10741389
+    },
+    "0.0080": {
+     "ew_mean_net": 0.00045304,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00464878,
+     "net_ci90": [
+      -0.00872121,
+      -0.00030824
+     ],
+     "sharpe": -1.95620464
+    },
+    "0.0106": {
+     "ew_mean_net": 0.0003745,
+     "exposure": 1.0,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00639513,
+     "net_ci90": [
+      -0.01050921,
+      -0.00199237
+     ],
+     "sharpe": -2.69216512
+    },
+    "0.0132": {
+     "ew_mean_net": 0.00029596,
+     "exposure": 1.0,
+     "label": "Coinbase base (assumed)",
+     "mean_net": -0.00814149,
+     "net_ci90": [
+      -0.01232506,
+      -0.00369088
+     ],
+     "sharpe": -3.42785268
+    },
+    "0.0192": {
+     "ew_mean_net": 0.00011472,
+     "exposure": 1.0,
+     "label": "Coinbase stress",
+     "mean_net": -0.01217154,
+     "net_ci90": [
+      -0.01645231,
+      -0.00763311
+     ],
+     "sharpe": -5.12147562
+    },
+    "0.0252": {
+     "ew_mean_net": -6.653e-05,
+     "exposure": 1.0,
+     "label": "Coinbase stress (1.20% taker tier)",
+     "mean_net": -0.01620159,
+     "net_ci90": [
+      -0.02057349,
+      -0.01156679
+     ],
+     "sharpe": -6.80381556
+    }
+   },
+   "rank_ic": {
+    "ci90": [
+     0.00172065,
+     0.05558939
+    ],
+    "mean": 0.02920115,
+    "periods": 365
+   },
+   "time_exit_sensitivity": {
+    "max_drawdown": -0.99287381,
+    "mean": -0.01246693,
+    "sharpe": -5.30123636,
+    "total_return": -0.99294637,
+    "turnover": 0.99863014,
+    "vol_ann": 0.85837124
+   }
+  },
+  "M3": {
+   "abstention_value": {
+    "abstaining_minus_forced_net": {
+     "ci90": [
+      0.00581343,
+      0.01226941
+     ],
+     "mean": 0.0091259
+    },
+    "forced_net_mean": -0.0104615,
+    "forced_net_on_other_periods": -0.01131797,
+    "forced_net_on_those_periods": -0.01039309,
+    "forced_sharpe": -4.04840478,
+    "periods_with_unfilled_slots": 338
+   },
+   "base": {
+    "alpha_vs_ew": {
+     "alpha": -0.00140892,
+     "alpha_ci90": [
+      -0.00255341,
+      -0.0001898
+     ],
+     "beta": 0.2477378
+    },
+    "by_year_return": {
+     "2024": -0.09140333,
+     "2025": -0.38375182
+    },
+    "cost_per_period": 0.001568,
+    "dsr": 9.839e-05,
+    "entries": 129,
+    "exposure": 0.15707763,
+    "gross_per_period": {
+     "ci90": [
+      -0.00117803,
+      0.00168693
+     ],
+     "mean": 0.00023364
+    },
+    "max_drawdown": -0.5068437,
+    "mean": -0.0013356,
+    "net_per_period": {
+     "ci90": [
+      -0.0028429,
+      0.00019802
+     ],
+     "mean": -0.0013356
+    },
+    "periods": 365,
+    "periods_fully_abstained": 0.73972603,
+    "position_concentration": {
+     "best_trade": 0.07711454,
+     "n": 172,
+     "top1pct_share": 1.70394378,
+     "top5pct_share": 6.32793627,
+     "total": 0.08527913,
+     "total_without_top5": -0.24313583
+    },
+    "selection_excess_gross": {
+     "ci90": [
+      -0.00056467,
+      0.00077747
+     ],
+     "mean": 5.425e-05
+    },
+    "sharpe": -1.14344644,
+    "slot_abstention": 0.84292237,
+    "thirds_mean_net": [
+     -0.00037861,
+     -0.00204413,
+     -0.00158611
+    ],
+    "thirds_positive": 0,
+    "top_coins_share": {
+     "AERO-USD": 0.81105452,
+     "ONDO-USD": 0.84868172,
+     "XCN-USD": 2.01873792
+    },
+    "total_return": -0.44007896,
+    "turnover_per_period": 0.11878756,
+    "vol_ann": 0.42633752,
+    "vol_scaled_to_ew_ann_return": -0.93772631
+   },
+   "calibration": {
+    "deciles": [
+     {
+      "n": 685,
+      "pred": -0.02244,
+      "realised": -0.00459
+     },
+     {
+      "n": 685,
+      "pred": -0.00956,
+      "realised": 0.0041
+     },
+     {
+      "n": 685,
+      "pred": -0.00582,
+      "realised": -0.00346
+     },
+     {
+      "n": 685,
+      "pred": -0.00328,
+      "realised": -0.00158
+     },
+     {
+      "n": 685,
+      "pred": -0.00127,
+      "realised": 0.00452
+     },
+     {
+      "n": 685,
+      "pred": 0.00038,
+      "realised": -0.0051
+     },
+     {
+      "n": 685,
+      "pred": 0.00194,
+      "realised": 0.00423
+     },
+     {
+      "n": 685,
+      "pred": 0.00355,
+      "realised": 0.00471
+     },
+     {
+      "n": 685,
+      "pred": 0.00608,
+      "realised": -0.00251
+     },
+     {
+      "n": 685,
+      "pred": 0.01583,
+      "realised": -0.0078
+     }
+    ],
+    "n": 6850,
+    "share_pred_above_base_rt": 0.03854015,
+    "slope_realised_on_predicted": 0.01204256
+   },
+   "cost_grid": {
+    "0.0050": {
+     "ew_mean_net": 0.00054366,
+     "exposure": 0.4109589,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00157721,
+     "net_ci90": [
+      -0.00453378,
+      0.00138815
+     ],
+     "sharpe": -0.87404306
+    },
+    "0.0080": {
+     "ew_mean_net": 0.00045304,
+     "exposure": 0.2739726,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00138872,
+     "net_ci90": [
+      -0.00359095,
+      0.00084994
+     ],
+     "sharpe": -0.93952143
+    },
+    "0.0106": {
+     "ew_mean_net": 0.0003745,
+     "exposure": 0.21187215,
+     "label": "hypothetical lower Coinbase fee level",
+     "mean_net": -0.00175101,
+     "net_ci90": [
+      -0.00358843,
+      0.00014795
+     ],
+     "sharpe": -1.31960767
+    },
+    "0.0132": {
+     "ew_mean_net": 0.00029596,
+     "exposure": 0.15707763,
+     "label": "Coinbase base (assumed)",
+     "mean_net": -0.0013356,
+     "net_ci90": [
+      -0.0028429,
+      0.00019802
+     ],
+     "sharpe": -1.14344644
+    },
+    "0.0192": {
+     "ew_mean_net": 0.00011472,
+     "exposure": 0.09497717,
+     "label": "Coinbase stress",
+     "mean_net": -0.00089783,
+     "net_ci90": [
+      -0.00215954,
+      0.00031805
+     ],
+     "sharpe": -0.95013083
+    },
+    "0.0252": {
+     "ew_mean_net": -6.653e-05,
+     "exposure": 0.06484018,
+     "label": "Coinbase stress (1.20% taker tier)",
+     "mean_net": -0.00060323,
+     "net_ci90": [
+      -0.00159649,
+      0.00031058
+     ],
+     "sharpe": -0.78662558
+    }
+   },
+   "rank_ic": {
+    "ci90": [
+     -0.03303104,
+     0.01710526
+    ],
+    "mean": -0.00772348,
+    "periods": 365
+   },
+   "time_exit_sensitivity": {
+    "max_drawdown": -0.58678571,
+    "mean": -0.00184358,
+    "sharpe": -1.58255099,
+    "total_return": -0.53492852,
+    "turnover": 0.15709758,
+    "vol_ann": 0.42520458
+   }
+  }
+ },
+ "horizon": "p1a",
+ "periods": 365,
+ "phase": "validation",
+ "range": [
+  "2024-07-01T00:00:00+00:00",
+  "2025-06-30T00:00:00+00:00"
+ ],
+ "train_rows": 22087
+}

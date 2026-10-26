@@ -1,0 +1,77 @@
+{
+ "b1_turnover_per_period": 0.71656178,
+ "coins_per_period": {
+  "max": 46,
+  "median": 16.0,
+  "min": 4
+ },
+ "decision": "PROCEED",
+ "ew_universe_mean_gross": 0.00205191,
+ "horizon": "p1b",
+ "oracle_selection_excess_mean": 0.13548934,
+ "periods": 174,
+ "periods_used": 174,
+ "phase": "gate",
+ "required_rho": {
+  "0.0050": {
+   "label": "hypothetical lower Coinbase fee level",
+   "rho_star_tau025": 0.01,
+   "rho_star_tau1": 0.05,
+   "rho_star_tau_b1": 0.04
+  },
+  "0.0080": {
+   "label": "hypothetical lower Coinbase fee level",
+   "rho_star_tau025": 0.02,
+   "rho_star_tau1": 0.08,
+   "rho_star_tau_b1": 0.06
+  },
+  "0.0106": {
+   "label": "hypothetical lower Coinbase fee level",
+   "rho_star_tau025": 0.03,
+   "rho_star_tau1": 0.11,
+   "rho_star_tau_b1": 0.08
+  },
+  "0.0132": {
+   "label": "Coinbase base (assumed)",
+   "rho_star_tau025": 0.03,
+   "rho_star_tau1": 0.13,
+   "rho_star_tau_b1": 0.09
+  },
+  "0.0192": {
+   "label": "Coinbase stress",
+   "rho_star_tau025": 0.05,
+   "rho_star_tau1": 0.18,
+   "rho_star_tau_b1": 0.13
+  },
+  "0.0252": {
+   "label": "Coinbase stress (1.20% taker tier)",
+   "rho_star_tau025": 0.06,
+   "rho_star_tau1": 0.24,
+   "rho_star_tau_b1": 0.17
+  }
+ },
+ "rule": "stop if rho*(B1 turnover, base cost) > 0.15 or oracle < cost at B1 turnover",
+ "synthetic_excess_by_rho": {
+  "0.00": 0.0002301,
+  "0.05": 0.00536989,
+  "0.10": 0.01058407,
+  "0.15": 0.01593909,
+  "0.20": 0.02162537,
+  "0.25": 0.02725649,
+  "0.30": 0.03300688,
+  "0.35": 0.03911115,
+  "0.40": 0.04516519,
+  "0.45": 0.05134208,
+  "0.50": 0.05784468,
+  "0.55": 0.064703,
+  "0.60": 0.0714454,
+  "0.65": 0.07862494,
+  "0.70": 0.08613101,
+  "0.75": 0.09393623,
+  "0.80": 0.1022706,
+  "0.85": 0.11054345,
+  "0.90": 0.11923421,
+  "0.95": 0.12787235,
+  "1.00": 0.13548934
+ }
+}
