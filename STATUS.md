@@ -23,6 +23,7 @@ costs.** We do not have one.
 |---|---|
 | Test suite | CI green on every pushed commit; the latest is in the PR's checks |
 | Scheduled paper runs on `main` | `paper-crypto-intraday` runs 2–12, `paper-daily` run 6 (06:52), `paper-watchdog` runs 1–3, all green ([Actions](https://github.com/brendenhuntzinger1/trading/actions)) |
+| `paper-stocks-intraday` in a live market session | Manual dispatch 2026-10-26 14:18 UTC ([run 1](https://github.com/brendenhuntzinger1/trading/actions/runs/40338433073)): the engine ran the session (simulated equity $999.90, one diagnostic XLE position), wrote its heartbeat and saved state (`paper-state@b338e2a`). GitHub's scheduler fired **none** of the 13:07–14:07 slots (incident 18), so schedule reliability is still unverified |
 | Alert delivery | Watchdog run 1 (03:49) opened [issue #2](https://github.com/brendenhuntzinger1/trading/issues/2) (`paper-alert`, missed crypto run); run 2 (03:56) closed it automatically when the condition cleared |
 | State recovery | Save → fresh clone → restore round trip (test, and on Actions every run since). State lives on branch `paper-state` |
 | Duplicate prevention | Same-day re-runs add no orders, fills or marks (test, and Actions run 4: 2 → 1 mark per day, orders and fills unchanged) |
@@ -40,7 +41,6 @@ costs.** We do not have one.
 ## Running, not yet verified
 | Item | Gap |
 |---|---|
-| `paper-stocks-intraday` | Scheduled 13:07–21:37 UTC on weekdays. It has not yet had a market session on `main` (first: 2026-10-26) |
 | GitHub's scheduler | It ran far fewer 15-minute crypto slots than scheduled (incident 18). The runner catches up on missed bars, so no data is lost, but decisions run late. Real intraday trading would need an always-on host |
 | Broker paper fills in workflows | The Alpaca paper adapter is **not wired to any workflow**: there are no repository secrets. Every scheduled-run fill is simulated by tradelab |
 
