@@ -1,0 +1,41 @@
+{
+ "dev": {
+  "qualifiers": {
+   "B0": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C1": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C2": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C3": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C4": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   }
+  }
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "check": "headline coverage of eligible names (>50% of 2020Q1)",
+ "eligible": 984,
+ "covered": 789,
+ "coverage": 0.802,
+ "by_rank_band": {
+  "1-200": 0.875,
+  "201-500": 0.825,
+  "501-1000": 0.751
+ },
+ "threshold": 0.7,
+ "passed": true,
+ "note": "2020Q1 measured first: the earlier 8-name probe showed coverage rising from 2016 to 2022, so 2020 is the binding year of the development window"
+}

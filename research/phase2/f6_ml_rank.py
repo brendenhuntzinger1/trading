@@ -101,16 +101,18 @@ def daily_ic(d: pd.DataFrame, pred: pd.Series) -> float:
     return float(x.groupby(level=0).apply(lambda g: g.p.corr(g.y, method="spearman")).mean())
 
 
-def weights_from(pred: pd.DataFrame, shape_like: pd.DataFrame, cost_cut: float | None = None) -> pd.DataFrame:
+def weights_from(pred: pd.DataFrame, shape_like: pd.DataFrame, cost_cut: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Top-N by prediction at t, entered at t+1. `cost_cut` (date t x symbol): a name is held only if its
+    calibrated expected demeaned return exceeds its own modelled round-trip cost (C4)."""
     p = pred["pred"].unstack()
     if cost_cut is not None:
-        p = p.where(pred["exp_dem"].unstack() > cost_cut)
+        p = p.where(pred["exp_dem"].unstack() > cost_cut.reindex_like(p))
     r = p.rank(axis=1, ascending=False, method="first")
     w = (r <= N).astype(float) / N
     return w.reindex(index=shape_like.index, columns=shape_like.columns).fillna(0.0).shift(1).fillna(0.0)
 
 
-def dev() -> dict:
+def dev(only: list[str] | None = None) -> dict:
     a, r, comp = load_panels()
     elig, dvol = xs.eligibility(r["close"], r["volume"], allowed=comp, top_n=1000)
     cols = list(elig.columns[elig.any()])
@@ -123,16 +125,23 @@ def dev() -> dict:
     specs = {"ridge_reversal": ("ridge", FAMILIES["reversal"]), "ridge_all": ("ridge", ALL), "hgb_all": ("hgb", ALL)}
     for fam, feats in FAMILIES.items():
         specs[f"hgb_{fam}"] = ("hgb", feats)
+    if only:
+        need = {configs_needed for c, configs_needed in {"B0": "ridge_reversal", "C1": "ridge_all", "C2": "hgb_all",
+                                                           "C4": "hgb_all"}.items() if c in only}
+        specs = {k: v for k, v in specs.items() if k in need}
     for name, (model, feats) in specs.items():
         preds[name] = {y: fit_predict(d, feats, model, y) for y in years}
     ic = {name: {y: daily_ic(d, p["pred"]) for y, p in by.items()} for name, by in preds.items()}
-    pre = {k: float(np.mean([ic[f"hgb_{k}"][y] for y in (2017, 2018, 2019)])) for k in FAMILIES}
-    best = max(pre, key=pre.get)
+    pre = {k: float(np.mean([ic[f"hgb_{k}"][y] for y in (2017, 2018, 2019)])) for k in FAMILIES if f"hgb_{k}" in ic}
+    best = max(pre, key=pre.get) if pre else "momentum"
     configs = {"B0": "ridge_reversal", "C1": "ridge_all", "C2": "hgb_all", "C3": f"hgb_{best}", "C4": "hgb_all"}
     opens = a["open"][cols]
     ret = target
     hs = ev.measured_half_spread(dvol[cols], elig, "09:31").shift(1)   # Amendment 1
-    rt_cost = 2 * (2e-4 + ev.SLIP_BASE + ev.FEES_PER_SIDE)
+    # C4: the modelled round trip per name, known at t (Amendment 1 measured band median at 09:31, both sides).
+    # The first F6 run used a flat 2 bp half-spread here, which is not the registered cost model (correction noted
+    # in research/phase2/results/f6_dev.json -> c4_correction).
+    rt_cost = 2 * (ev.measured_half_spread(dvol[cols], elig, "09:31") + ev.SLIP_BASE + ev.FEES_PER_SIDE)
     cw = xs.control_weights(elig).where(opens.notna(), 0.0)
     keep = (elig.index >= pd.Timestamp(DEV[0])) & (elig.index <= pd.Timestamp(DEV[1]))
     cp = ev.backtest_weights(cw[keep], ret[keep], hs[keep])
@@ -140,6 +149,8 @@ def dev() -> dict:
            "rank_ic_by_year": ic, "configs": {}}
     quals, metrics = {}, {}
     for cfg, name in configs.items():
+        if only and cfg not in only:
+            continue
         pr = pd.concat([preds[name][y] for y in (2020, 2021, 2022)])
         w = weights_from(pr, elig, cost_cut=rt_cost if cfg == "C4" else None).where(opens.notna(), 0.0)
         p = ev.backtest_weights(w[keep], ret[keep], hs[keep])
@@ -154,14 +165,30 @@ def dev() -> dict:
         out["configs"][cfg] = {"spec": name, "summary": summ, "qualifiers": q}
         quals[cfg] = q
         metrics[cfg] = {"net_mean_bp": summ["net"]["mean_bp"], "net_sharpe": summ["net"]["sharpe"], "model": name}
-    stages.record_dev(FAMILY, quals, metrics)
     RESULTS.mkdir(parents=True, exist_ok=True)
+    if only:                                     # correction run: merge into the full development result
+        full = json.loads((RESULTS / "f6_dev.json").read_text())
+        for cfg in only:
+            full["configs"][f"{cfg}_first_run_superseded"] = full["configs"][cfg]
+            full["configs"][cfg] = out["configs"][cfg]
+        full["c4_correction"] = ("C4's cost filter first used a flat 2 bp half-spread instead of the registered "
+                                 "Amendment-1 per-name measured cost; rerun with the registered cost model.")
+        (RESULTS / "f6_dev.json").write_text(json.dumps(full, indent=1, default=float))
+        allq = {k: v["qualifiers"] for k, v in full["configs"].items() if "_superseded" not in k}
+        stages._save(FAMILY, {**stages._load(FAMILY), "dev": {"qualifiers": allq}})
+        from tradelab.research.registry import record
+        for cfg in only:
+            record("result", f"p2_{FAMILY}_dev_correction:{cfg}", {"family": FAMILY, "config": cfg}, "development",
+                   "implementation correction of a registered config (not a new trial)",
+                   metrics={"is_trial": False, "qualifiers": quals[cfg], **metrics[cfg]})
+        return full
+    stages.record_dev(FAMILY, quals, metrics)
     (RESULTS / "f6_dev.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
 
 if __name__ == "__main__":
-    r = dev()
+    r = dev(sys.argv[1].split(",") if len(sys.argv) > 1 else None)
     print("C3 family:", r["c3_family_chosen_on_2017_2019_ic"])
     for k, v in r["configs"].items():
         s = v["summary"]
