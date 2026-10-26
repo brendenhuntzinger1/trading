@@ -121,7 +121,7 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
     cfgs = {k: orb.CONFIGS[k] for k in configs}
     acc = {k: {"rule": [], "rule_nostop": [], "direction": [], "basket": [],
                "abst": {"doji": 0, "short_signal_long_only": 0, "armed_not_triggered": 0, "days_nothing_selected": 0,
-                        "excluded_no_open_bar": 0},
+                        "excluded_no_open_bar": 0, "basket_no_fill": 0},
                "not_traded_fwd": []} for k in cfgs}
     spy_rows = []
     for day in days:
@@ -156,8 +156,11 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
             if not chosen:
                 a["abst"]["days_nothing_selected"] += 1
             for r, rng, b in chosen:
-                a["basket"].append(_row(source, day, r.symbol, orb.simulate(b, o, c, orb.LONG, r.atr, "market",
-                                                                             use_stop=False), "market", r.atr, r.rv, cm))
+                bk = orb.simulate(b, o, c, orb.LONG, r.atr, "market", use_stop=False)
+                if bk.triggered:          # no bar after 09:35 (e.g. halted all day): nothing to buy, no fill invented
+                    a["basket"].append(_row(source, day, r.symbol, bk, "market", r.atr, r.rv, cm))
+                else:
+                    a["abst"]["basket_no_fill"] += 1
                 d = rng.direction
                 if d == 0:
                     a["abst"]["doji"] += 1

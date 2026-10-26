@@ -234,3 +234,18 @@ def test_validation_stays_unread_if_primary_fails_development(iso):
         "dev_rv5_top20": {"qualified": True}}}))
     with pytest.raises(SystemExit, match="B16"):
         study.phase_selection(Untouchable(), "validation")
+
+
+def test_halted_stock_is_skipped_by_every_benchmark_not_a_crash():
+    """Incident 19: a selected stock with no bar after 09:35 (halted all day) made the basket benchmark record an
+    unfilled trade and crash on its missing entry time. It must count as 'basket_no_fill' and invent nothing."""
+    class Halted(Fixture):
+        def minute_bars(self, symbols, day):
+            out = super().minute_bars(symbols, day)
+            if "D" in out:
+                o, _ = session_bounds(day)
+                out["D"] = out["D"][out["D"].index < o + pd.Timedelta(minutes=5)]    # opening range only
+            return out
+    out = study.run_period(Halted(), "dev", ["primary"], placebo_reps=5)
+    ab = out["configs"]["primary"]["rule"]["abstention"]
+    assert ab["basket_no_fill"] >= 1
