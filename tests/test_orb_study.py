@@ -131,7 +131,7 @@ def test_selection_windows_refuse_consumed_data(iso):
     study.RESULTS.mkdir(parents=True)
     (study.RESULTS / "gates.json").write_text(json.dumps({"pass": True, "quotes_available": True}))
     study.CONSUMED_LEDGER.write_text(json.dumps({"entries": [
-        {"scope": "stocks.us.intraday", "start": "2019-01-01", "end": "2019-06-30", "study": "X"}]}))
+        {"scope": "stocks.us.intraday", "start": "2021-01-01", "end": "2021-06-30", "study": "X"}]}))
     with pytest.raises(ConsumedDataError):
         study.phase_selection(Untouchable(), "dev")
 
