@@ -30,9 +30,9 @@ costs.** We do not have one.
 | Item | Gap |
 |---|---|
 | Scheduled runs | None has happened: GitHub schedules run only from `main`, and merging is not authorised |
-| Alert delivery | Built and tested with a stub. **No destination is approved.** The proposed one is a GitHub issue in this repository (label `paper-alert`). Until approved, alerts go only to the run log and job summary |
+| Alert delivery | **Approved by the owner on 2026-10-26:** GitHub issues labelled `paper-alert` in this repository, deduplicated per key. The repository is **public**, so alert issues are publicly visible. Delivery is tested only with a stub until the first real alert fires |
 | Intraday paper workflows, watchdog | Cannot be dispatched before they exist on `main` |
-| Broker paper fills | Not connected. Every fill is **simulated by tradelab** |
+| Broker paper fills | An Alpaca **paper** adapter exists (`tradelab/broker/alpaca_paper.py`). One $10 BTC round trip was verified on 2026-10-26. **No workflow uses it**, because there are no repository secrets. Every scheduled-run fill is still simulated by tradelab |
 
 ## What merging would activate (after approval)
 | Workflow | Schedule | Runs | What it is |
@@ -98,7 +98,6 @@ All of them run with public data only, write simulated state to `paper-state`, a
 4. The final window is read only if a configuration qualifies.
 
 ## Decisions waiting on you
-- Approve an alert destination (proposed: a GitHub issue in this repository), or name another.
 - Merge authorisation, after the readiness items above.
 - Coinbase fee tier, which you read from your account. It is not a secret.
 
