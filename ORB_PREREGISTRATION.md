@@ -367,3 +367,13 @@ so one company is counted once.
   are not independent evidence.
 - The §8 sanity gate (development gross R against the paper's +0.08R) applies to the new development period.
 - Nothing else changes, in particular the trial set, the freeze rule (B10), and Amendment 2's stop rule.
+
+# Amendment 5 (2026-10-26, while development was running and before any development result existed)
+
+## B16. Validation is read only if the primary configuration qualifies in development
+- If `primary` fails any development qualifier (sanity gate; beats direction-only; beats placebo), the study
+  stops after development.
+- The validation window (2022–2023) then stays **unread**, and remains available to a later, separately
+  registered study.
+- Validating a configuration that can no longer be frozen (B10) could not change any decision. It would
+  only consume data, which is the error P1 made with its final window.

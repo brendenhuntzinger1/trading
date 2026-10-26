@@ -347,6 +347,12 @@ def phase_gates(verify_dir: Path = VERIFY_DIR) -> dict:
 def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dict:
     if not _read("gates")["pass"]:
         sys.exit("data gates failed: the study does not run (B7)")
+    if phase == "validation":    # Amendment 5, B16: validation is read only if primary qualified in development
+        q = _read("dev")["qualifiers"].get("primary", {})
+        if not q.get("qualified"):
+            record("result", "orb_stop_after_dev", {"primary_dev_qualifiers": q}, "..".join(PERIODS["validation"]),
+                   "B16: primary did not qualify in development; validation window stays unread")
+            sys.exit(f"B16: primary did not qualify in development ({q}); validation stays UNREAD")
     consumed.check_selection_window(SCOPE, *PERIODS[phase], path=CONSUMED_LEDGER)
     out = run_period(source, phase, list(orb.CONFIGS), placebo_reps)
     if phase == "dev":
@@ -356,7 +362,7 @@ def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dic
     else:
         out["qualifiers"] = validation_qualifiers(out)
     js = _write(phase, out)
-    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3", "prereg_orb_amendment4"]},
+    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3", "prereg_orb_amendment4", "prereg_orb_amendment5"]},
            "..".join(PERIODS[phase]), f"ORB {phase}", metrics={"qualifiers": js["qualifiers"]})
     return js
 

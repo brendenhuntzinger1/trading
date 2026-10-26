@@ -223,3 +223,14 @@ def test_quote_batching_matches_single_symbol_rule(tmp_path):
     assert src.cache.get("quotes", "BBB_20220601T2000")[0]["bp"] == 20.0
     assert src.cache.get("quotes", "CCC_20220601T2000") == []
     assert a is not None
+
+
+def test_validation_stays_unread_if_primary_fails_development(iso):
+    """Amendment 5, B16: no validation data is touched unless primary qualified in development."""
+    study.RESULTS.mkdir(parents=True)
+    (study.RESULTS / "gates.json").write_text(json.dumps({"pass": True, "quotes_available": True}))
+    (study.RESULTS / "dev.json").write_text(json.dumps({"qualifiers": {
+        "primary": {"sanity_gate": True, "beats_direction": False, "beats_placebo": True, "qualified": False},
+        "dev_rv5_top20": {"qualified": True}}}))
+    with pytest.raises(SystemExit, match="B16"):
+        study.phase_selection(Untouchable(), "validation")
