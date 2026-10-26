@@ -308,3 +308,47 @@ for example "reversal only without volume", which a single sort cannot express.
 
 Feature-family diagnostics (per-family rank correlation and decile spreads) are reported for all five
 families. They are diagnostics, not extra trials.
+
+---
+
+## Round 2 (owner, 2026-10-26 ~14:00 UTC: "do a better job"; treated as approval to continue past the 6-family limit)
+The phase-1 criteria (D1–D4, V1–V4, E1–E5), chronology and Amendment 1 cost rules are unchanged. Every new
+configuration is a counted trial.
+
+## F7. Machine-learning ranking executed at the close (liquid US stocks)
+**Motivation (post-result, disclosed).**
+- F6 found a small but consistent ranking signal (daily rank correlation 0.010–0.027 every development year).
+- That signal was 5–10× too small for open-to-open execution, which pays the measured 09:31 spread (5–26 bp).
+- The measured 15:59 spread is 1.4–2.5 bp.
+- F7 tests whether the **same model family** survives when traded at the cheapest point of the day.
+- This is a new registered hypothesis about execution timing. It does not rescue F6: F6's results stay
+  rejected, and F7 reads only data that F6 did not use for its decision.
+  - The development window is the same 2020–22, already seen by F6 for open-to-open returns.
+  - **Disclosed:** F7's development read is therefore not independent of F6.
+  - Only F7's validation (2023-01 → 2024-06) and final windows count as unseen evidence.
+
+**Rule.**
+- **Universe:** the F4 universe, the point-in-time top 500 by dollar volume as of *t*−1. Its 14:30–16:00 bars
+  are cached.
+- **Decision at 15:30 ET** on session *t*:
+  - features are F6's families computed from daily bars through *t*−1, with the 15:30 price replacing *t*'s
+    close (gap = 15:30 price / open *t*... see below);
+  - every feature uses only data available at 15:30.
+- **Execution:**
+  - buy at the close of *t* (15:59 closing-quote proxy = close of the 15:30 bar) and sell at the close of
+    *t*+1;
+  - costs: Amendment 1 measured band-median half-spreads at 15:59 on both sides.
+- **Label for training:** close *t* → close *t*+1 return, cross-sectionally demeaned and ranked.
+- **Training:** walk-forward as in F6, annual refits.
+  - The intraday 15:30 price exists only from 2019-12, where F4's windows begin.
+  - So training on 2016–2019 uses the *t* close as a stand-in for the 15:30 price (labelled). Development
+    predictions for 2020–22 use the true 15:30 price.
+- **Control:** equal weight across the eligible universe, close *t* → close *t*+1, same costs.
+
+| Config | Definition |
+|---|---|
+| **F7-B0 (baseline)** | Ridge on the reversal family (1-day return to 15:30, 5-day, gap, intraday to 15:30) |
+| F7-C1 | Gradient-boosted trees on all families (F6-C2 hyperparameters) |
+| F7-C2 | C1 with the cost filter: hold only names whose calibrated expected demeaned return exceeds their own measured 15:59 round trip |
+| F7-C3 | C1, top 10 instead of top 20 (higher conviction, same total exposure) |
+| F7-C4 | C1 held 2 sessions (half the book rebalanced each day) |
