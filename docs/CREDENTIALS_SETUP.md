@@ -22,8 +22,8 @@ offered, add them as environment variables:
 
 | Variable | Value |
 |---|---|
-| `TRADELAB_PAPER_APCA_KEY_ID` | the paper key ID |
-| `TRADELAB_PAPER_APCA_SECRET_KEY` | the paper secret |
+| `TRADELAB_PAPER_APCA_API_KEY_ID` | the paper key ID |
+| `TRADELAB_PAPER_APCA_API_SECRET_KEY` | the paper secret |
 | `TRADELAB_PAPER_APCA_BASE_URL` | `https://paper-api.alpaca.markets` |
 
 A new session picks them up. The names start with `TRADELAB_PAPER_` on purpose:

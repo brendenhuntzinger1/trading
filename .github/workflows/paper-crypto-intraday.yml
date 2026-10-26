@@ -1,0 +1,31 @@
+# Crypto intraday PAPER engine, one pass per run (processes every new 5-minute bar since the last run).
+# All setups are REJECTED research strategies run only to exercise the live path; see EVIDENCE_BOARD.md.
+name: paper-crypto-intraday
+on:
+  schedule:
+    - cron: "4,19,34,49 * * * *"   # every 15 minutes, off the hour (GitHub delays top-of-hour schedules)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: paper-state            # shared by every paper workflow: state writes never interleave
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.lock
+      - name: Restore paper state
+        run: scripts/paper_state.sh restore
+      - name: Run (PAPER, simulated fills)
+        env:
+          TRADELAB_MODE: paper
+        run: python -m tradelab.intraday.live_crypto --once
+      - name: Save paper state
+        if: always()
+        run: scripts/paper_state.sh save "crypto intraday $(date -u +%FT%TZ)"

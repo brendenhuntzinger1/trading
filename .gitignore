@@ -12,3 +12,4 @@ research/intraday/decision/out/*S2*.csv
 .pytest_cache/
 .env
 *.pem
+legacy/data
