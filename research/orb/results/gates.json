@@ -1,0 +1,12 @@
+{
+ "gates": {
+  "B7_1_sip_access": true,
+  "B7_2_timestamps": true,
+  "B7_3_coverage": true,
+  "B7_4_spreads": true,
+  "B7_5_corporate_actions": true
+ },
+ "pass": true,
+ "quotes_available": true,
+ "report": "verify_2026-10-26.json"
+}
