@@ -85,3 +85,39 @@ is **not authorised**.
   - 2024–2026-07-24 is marked consumed only if the final window is read.
 - **Reproduction:** results may be re-run deterministically. Any configuration change after a window is read
   is refused, as for P1 and ORB.
+
+## Amendment 1 (2026-10-26 ~10:00 UTC): development gate, after a harness defect
+
+Written after the validation fetch was stopped at 09:50 UTC. At that point no 2022–2023 outcome had been
+computed to completion, saved or read: no frame file existed.
+
+**The defect (incident 20).** ORB registered direction-only as "entered at 09:35 at market, held to close …
+without the breakout trigger" (ORB B5.4). The harness recorded it **only on stock-days where the breakout later
+triggered**. That conditions on the future. Stock-days whose price never reached the opening-range high after
+09:35 were dropped, and those are the losers. Every development figure quoted under "Where the idea came from"
+(+81 bp gross, +60 bp net, …) comes from that defective benchmark. **H3's motivating evidence is therefore
+invalid.** The rule itself is unchanged, and the harness is now fixed with a regression test.
+
+**Disclosure.** Before writing this amendment I estimated the corrected development gross from ORB's stored
+aggregates:
+- 4,058 triggered stock-days at +81 bp;
+- 898 never-triggered stock-days at −379 bp;
+- combined, about −2 bp gross per trade, so roughly −25 bp after costs.
+
+That estimate is why this gate exists. It can only **stop** H3. It cannot select, tune or revive anything.
+
+**A1 (development gate, the same principle as ORB B16).**
+- H3's validation (2022–2023) is read only if H3-L, computed with the corrected harness on the
+  hypothesis-generation window (2020-01-02 → 2021-12-31), meets **all four validation qualifiers** there:
+  - 1/20 equal weights;
+  - measured costs;
+  - the same code as validation.
+- If it does not:
+  - H3 is **rejected in development**;
+  - the validation and final windows stay unread;
+  - the research budget is spent.
+- `research/h3/study.py` enforces this: `fetch` and `validation` refuse unless `dev_check` passed.
+
+**Consumed data.** The ledger entry for 2022–2023 (`stocks.us.intraday.first_candle`) was written when the fetch
+started. It stays, conservatively, with its note corrected: marked at fetch start; stopped before any outcome
+was computed or read.

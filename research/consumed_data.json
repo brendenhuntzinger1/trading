@@ -54,7 +54,7 @@
    "start": "2022-01-03",
    "end": "2023-12-29",
    "study": "H3 validation",
-   "note": "marked before the first read",
+   "note": "marked when the H3 validation fetch started (09:37:59 UTC); the fetch was stopped at 09:50 UTC (incident 20) before any outcome was computed to completion, saved or read. Kept conservatively; H3 Amendment 1 gates any read on the corrected development check",
    "recorded_at": "2026-10-26T09:37:59+00:00"
   }
  ]

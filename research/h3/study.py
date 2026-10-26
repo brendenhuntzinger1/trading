@@ -1,5 +1,6 @@
 """H3: first-candle continuation on US stocks in play. Pre-registration: H3_PREREGISTRATION.md.
 
+    python research/h3/study.py dev_check         # Amendment 1: corrected 2020-21 frames must meet the qualifiers
     python research/h3/study.py fetch 2022        # one validation year per process (warms the cache, saves frames)
     python research/h3/study.py fetch 2023
     python research/h3/study.py validation        # qualifiers from the saved frames
@@ -28,15 +29,25 @@ from tradelab.research import consumed                           # noqa: E402
 from tradelab.research.registry import record                    # noqa: E402
 
 SCOPE = "stocks.us.intraday.first_candle"
-PERIODS = {"validation": ("2022-01-03", "2023-12-29"), "final": ("2024-01-02", "2026-07-24")}
+PERIODS = {"dev": ("2020-01-02", "2021-12-31"), "validation": ("2022-01-03", "2023-12-29"),
+           "final": ("2024-01-02", "2026-07-24")}
 SLOT_WEIGHT = 1 / 20                         # equal weight, top 20 slots, gross <= 1x
 FRAMES = ROOT / "data" / "stocks" / "h3_frames"
+DEV_FRAMES = ROOT / "data" / "stocks" / "frames"       # research/orb/dump_dev_frames.py (ORB primary, 2020-21)
 RESULTS = ROOT / "research" / "h3" / "results"
 CONSUMED_LEDGER = consumed.LEDGER
 
 
+def _require_dev_pass() -> None:
+    """Amendment 1: nothing about the validation window is touched unless the development check qualified."""
+    p = RESULTS / "dev_check.json"
+    if not p.exists() or not json.loads(p.read_text())["qualifiers"]["qualified"]:
+        sys.exit("H3 Amendment 1: the development check has not passed; validation and final stay UNREAD")
+
+
 def fetch(year: str, source=None) -> Path:
     """Run ORB's period loop on one validation year with the primary and long/short configs; save frames."""
+    _require_dev_pass()
     start, end = PERIODS["validation"]
     lo, hi = max(start, f"{year}-01-01"), min(end, f"{year}-12-31")
     consumed.mark_consumed(SCOPE, *PERIODS["validation"], "H3 validation", "marked before the first read",
@@ -54,10 +65,13 @@ def fetch(year: str, source=None) -> Path:
     return p
 
 
-def _load(config: str, name: str) -> pd.DataFrame:
-    parts = [pickle.loads(p.read_bytes())[config][name] for p in sorted(FRAMES.glob("validation_*.pkl"))]
-    f = pd.concat([x for x in parts if len(x)], ignore_index=True) if parts else pd.DataFrame()
+def _equal(parts: list[pd.DataFrame]) -> pd.DataFrame:
+    f = pd.concat([x for x in parts if len(x)], ignore_index=True) if any(len(x) for x in parts) else pd.DataFrame()
     return f.assign(weight=SLOT_WEIGHT) if len(f) else f
+
+
+def _load(config: str, name: str) -> pd.DataFrame:
+    return _equal([pickle.loads(p.read_bytes())[config][name] for p in sorted(FRAMES.glob("validation_*.pkl"))])
 
 
 def stats(f: pd.DataFrame, days: list[str]) -> dict:
@@ -77,12 +91,8 @@ def stats(f: pd.DataFrame, days: list[str]) -> dict:
             "portfolio_net": ev.series_stats(ev.daily(f, days, "net_all"))}
 
 
-def validation() -> dict:
-    h3 = _load("primary", "direction")
-    basket = _load("primary", "basket")
-    ls = _load("long_short", "direction")
-    if h3.empty:
-        sys.exit("no validation frames: run `fetch 2022` and `fetch 2023` first")
+def _evaluate(h3: pd.DataFrame, basket: pd.DataFrame, ls: pd.DataFrame) -> dict:
+    """The registered qualifiers. Shared by the development check (A1) and validation, so both use one code path."""
     days = sorted(set(basket.day))
     d_h3, d_bk = ev.daily(h3, days, "net_all"), ev.daily(basket, days, "net_all")
     # matched exposure: scale the basket to H3's daily gross exposure
@@ -100,10 +110,41 @@ def validation() -> dict:
          "positive_without_top5pct": s["net_bp_without_top5pct"] > 0}
     q["qualified"] = all(q.values())
     out["qualifiers"] = q
+    return out
+
+
+def dev_check() -> dict:
+    """Amendment 1: H3-L on the corrected 2020-21 frames (equal 1/20 weights, measured costs) must meet all four
+    qualifiers before anything about the validation window is touched."""
+    frames = [pickle.loads(p.read_bytes()) for p in sorted(DEV_FRAMES.glob("dev_primary_*_of_*.pkl"))]
+    h3, basket = _equal([f["direction"] for f in frames]), _equal([f["basket"] for f in frames])
+    if h3.empty:
+        sys.exit("no development frames: run research/orb/dump_dev_frames.py first")
+    out = _evaluate(h3, basket, pd.DataFrame())
+    out["what"] = ("H3 Amendment 1 development check: ORB primary selection, 2020-01-02..2021-12-31, direction-only "
+                   "corrected for incident 20 (no conditioning on a later breakout)")
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    (RESULTS / "dev_check.json").write_text(json.dumps(out, indent=1, default=float))
+    record("result", "h3_dev_check", {"prereg": "prereg_h3", "amendment": "h3_amendment1"}, "..".join(PERIODS["dev"]),
+           "H3 A1 development check", metrics={"qualifiers": out["qualifiers"], "net_bp": out["H3-L"]["net_bp"],
+                                               "trades": out["H3-L"]["trades"]})
+    if not out["qualifiers"]["qualified"]:
+        record("result", "h3_stop_after_dev", {}, "..".join(PERIODS["validation"]),
+               "H3-L failed the A1 development check; validation and final stay unread; research budget spent")
+    return out
+
+
+def validation() -> dict:
+    _require_dev_pass()
+    h3 = _load("primary", "direction")
+    if h3.empty:
+        sys.exit("no validation frames: run `fetch 2022` and `fetch 2023` first")
+    out = _evaluate(h3, _load("primary", "basket"), _load("long_short", "direction"))
     RESULTS.mkdir(parents=True, exist_ok=True)
     (RESULTS / "validation.json").write_text(json.dumps(out, indent=1, default=float))
+    s = out["H3-L"]
     record("result", "h3_validation", {"prereg": "prereg_h3"}, "..".join(PERIODS["validation"]), "H3 validation",
-           metrics={"qualifiers": q, "net_bp": s["net_bp"], "trades": s["trades"]})
+           metrics={"qualifiers": out["qualifiers"], "net_bp": s["net_bp"], "trades": s["trades"]})
     return out
 
 
@@ -118,10 +159,12 @@ def final() -> None:
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["fetch", "validation", "final"])
+    ap.add_argument("phase", choices=["dev_check", "fetch", "validation", "final"])
     ap.add_argument("year", nargs="?")
     a = ap.parse_args(argv)
-    if a.phase == "fetch":
+    if a.phase == "dev_check":
+        print(json.dumps(dev_check()["qualifiers"], indent=1))
+    elif a.phase == "fetch":
         print(fetch(a.year))
     elif a.phase == "validation":
         print(json.dumps(validation()["qualifiers"], indent=1))

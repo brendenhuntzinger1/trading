@@ -249,3 +249,31 @@ def test_halted_stock_is_skipped_by_every_benchmark_not_a_crash():
     out = study.run_period(Halted(), "dev", ["primary"], placebo_reps=5)
     ab = out["configs"]["primary"]["rule"]["abstention"]
     assert ab["basket_no_fill"] >= 1
+
+
+def test_direction_benchmark_does_not_depend_on_a_later_breakout():
+    """Incident 20: direction-only (enter at 09:35 in the first candle's direction, hold to close; ORB B5.4) was
+    recorded only on stock-days where the breakout stop order later triggered. That conditions on the future: a
+    stock that never reached its opening-range high after 09:35 was dropped, and those were the losers. Every
+    non-doji stock-day the configuration may trade must enter the benchmark, triggered or not."""
+    class NeverBreaks(Fixture):
+        def minute_bars(self, symbols, day):
+            out = super().minute_bars(symbols, day)
+            if "A" in out:                                     # bullish first candle, then a steady slide
+                b = out["A"].copy()
+                k = np.arange(len(b) - 5)
+                close = b.close.iloc[4] * np.exp(-0.0005 * (k + 1))
+                op = np.r_[b.close.iloc[4], close[:-1]]
+                b.iloc[5:, b.columns.get_loc("open")] = op
+                b.iloc[5:, b.columns.get_loc("close")] = close
+                b.iloc[5:, b.columns.get_loc("high")] = np.maximum(op, close) * 1.0001
+                b.iloc[5:, b.columns.get_loc("low")] = np.minimum(op, close) * 0.9995
+                out["A"] = b
+            return out
+    p = study.run_period(NeverBreaks(), "dev", ["primary"], placebo_reps=0)["configs"]["primary"]
+    assert p["rule"]["abstention"]["armed_not_triggered"] >= 6
+    d = p["_frames"]["direction"]
+    a = d[d.symbol == "A"]
+    assert len(a) == 6                                         # one per session, although the breakout never came
+    assert (a.gross < 0).all()
+    assert not (p["_frames"]["rule"].symbol == "A").any()

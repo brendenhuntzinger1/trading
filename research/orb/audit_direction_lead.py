@@ -4,6 +4,10 @@ not a candidate (ORB B10). This audit decides only whether it is worth a separat
 
 Reads data/stocks/frames/dev_primary_*_of_*.pkl (research/orb/dump_dev_frames.py) and writes
 research/orb/audits/direction_lead_dev.json.
+
+Incident 20: the first version of this audit (direction_lead_dev_LOOKAHEAD.json) ran on frames whose direction-only
+benchmark had been recorded only when the breakout later triggered. The frames are now regenerated without that
+conditioning, and the decomposition is reported against the corrected benchmark.
 """
 from __future__ import annotations
 
@@ -63,11 +67,18 @@ def main():
     master = {a["symbol"] for a in json.loads(gzip.decompress((CACHE / "assets" / "us_equity_all.json.gz").read_bytes()))}
     out = {
         "what": "ORB development 2020-01-02..2021-12-31 (inside the paper's 2016-2023 sample); primary filters "
-                "(RV>=1, top 20, 1x cap). Benchmarks are not candidates (B10).",
+                "(RV>=1, top 20, 1x cap). Benchmarks are not candidates (B10). Direction-only corrected for incident "
+                "20: entered at 09:35 on every non-doji long-eligible stock-day, whether or not the breakout came.",
         "direction_only": summary(direction, days),
         "basket_long_all_selected": summary(basket, days),
         "rule_primary": summary(rule, days),
         "direction_trades_in_names_absent_from_asset_master": int((~direction.symbol.isin(master)).sum()),
+        "paired_daily_net": {
+            "rule_minus_direction": ev.paired_ci(ev.daily(rule, days, "net_all"), ev.daily(direction, days, "net_all")),
+            "rule_nostop_minus_direction (entry-trigger value)": ev.paired_ci(
+                ev.daily(load("rule_nostop"), days, "net_all"), ev.daily(direction, days, "net_all")),
+            "direction_minus_basket": ev.paired_ci(ev.daily(direction, days, "net_all"),
+                                                   ev.daily(basket, days, "net_all"))},
     }
     p = ROOT / "research" / "orb" / "audits" / "direction_lead_dev.json"
     p.write_text(json.dumps(out, indent=1, default=float))

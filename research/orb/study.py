@@ -171,20 +171,21 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
                     if fwd.triggered:
                         a["not_traded_fwd"].append({"reason": "short_signal_long_only", "gross": fwd.gross})
                     continue
+                # direction-only (B5.4) is decided at 09:35, before anyone knows whether the breakout will come
+                # (incident 20: it used to be recorded only when the breakout later triggered)
+                dr = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
+                if dr.triggered:
+                    a["direction"].append(_row(source, day, r.symbol, dr, "market", r.atr, r.rv, cm))
                 level = rng.high if d > 0 else rng.low
                 rule = orb.simulate(b, o, c, d, r.atr, "stop", level=level, stop_frac=cfg.stop_atr_frac)
                 if not rule.triggered:
                     a["abst"]["armed_not_triggered"] += 1
-                    fwd = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
-                    if fwd.triggered:
-                        a["not_traded_fwd"].append({"reason": "armed_not_triggered", "gross": fwd.gross})
+                    if dr.triggered:
+                        a["not_traded_fwd"].append({"reason": "armed_not_triggered", "gross": dr.gross})
                     continue
                 a["rule"].append(_row(source, day, r.symbol, rule, "stop", r.atr, r.rv, cm))
                 ns = orb.simulate(b, o, c, d, r.atr, "stop", level=level, use_stop=False)
                 a["rule_nostop"].append(_row(source, day, r.symbol, ns, "stop", r.atr, r.rv, cm))
-                dr = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
-                if dr.triggered:
-                    a["direction"].append(_row(source, day, r.symbol, dr, "market", r.atr, r.rv, cm))
     spy_df = pd.DataFrame(spy_rows)
     if not spy_df.empty:
         spy_df["weight"] = 1.0
