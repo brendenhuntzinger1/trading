@@ -59,3 +59,17 @@ is not robust to cost uncertainty.
 - Taxes. In the US every sale is a taxable event; short-term gains are taxed as income. This is not tax advice.
 - Funding and transfer costs, such as bank deposits, crypto network fees and card fees.
 - Operating costs, which ARCHITECTURE.md handles separately (hosting, data, LLM).
+
+## Measured since 2026-10-26 (supersedes "no quote data" above for US stocks)
+- **SIP NBBO quoted half-spread, in-play stocks** (data gate B7.4, 30 stock-days, 2023):
+  - 09:35–10:30 ET: median 4.0 bp, 90th percentile 10.3 bp;
+  - 15:59 ET: median 1.5 bp (`research/stocks/verify_2026-10-26.json`).
+- **ORB / H3 per-trade costs:**
+  - measured entry and exit half-spreads for 99% of trades, plus assumed slippage (1 bp per side) and fees;
+  - total about 26 bp (ORB) and 23 bp (H3) per round trip.
+- **Alpaca crypto paper, one $10 BTC round trip:**
+  - fee 0.25% per side;
+  - buy 4.7 bp and sell 1.1 bp from mid;
+  - about 0.56% all-in.
+  - That is one simulated sample (`research/execution/`).
+- **Phase-2 cost tiers** (assumptions where unmeasured): `PHASE2_PROTOCOL.md` §3.

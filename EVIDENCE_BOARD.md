@@ -1,7 +1,7 @@
 # Evidence board
 
 Updated 2026-10-26 (P1, ORB and H3 rows; incident 20 corrections). Operational status, including whether paper jobs actually ran: `STATUS.md`. Gross and net are per trade on the untouched test period unless noted; intervals are
-90% day-block bootstrap. Costs come from COSTS.md and are assumed, not measured.
+90% day-block bootstrap. Costs come from COSTS.md and are assumed, except the ORB and H3 rows, which use measured SIP spreads for 99% of trades plus assumed slippage.
 
 Four separate gates:
 - **Software works:** the engine reproduces the research and passes its tests.

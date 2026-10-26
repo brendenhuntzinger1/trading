@@ -140,7 +140,8 @@ correction and prevention.
   - P1's final window read without a candidate;
   - a "refuse second run" rule mistaken for overfitting protection;
   - the owner's email sent once to sec.gov;
-  - ORB's trade count mistyped as 4,048 in four documents (it is 4,058; corrected).
+  - ORB's trade count was written as 4,048 in four documents. It has 4,058 trades; 4,048 is the count with a
+    computed cost, used for the per-trade interval. Both are now stated.
 
 Each software defect has a regression test. **No ordinary trading losses were recorded, because nothing traded
 as a candidate.**
@@ -184,10 +185,10 @@ draft [PR #3](https://github.com/brendenhuntzinger1/trading/pull/3). It changes 
 - Under `RESEARCH_BUDGET.md`, three hypotheses have been tested and rejected, so the rule is to stop, keep
   the platform and the paper benchmarks running, and recommend no trading. I see no evidence that argues
   otherwise.
-- The only remaining idea (C1, bearish-candle shorts) rests on one favourable year of development data, with
+- The only remaining idea (item C.1, bearish-candle shorts) rests on one favourable year of development data, with
   borrow costs unmodelled.
 - If you'd rather reopen research, the budget's own rule asks for a new information source first. Borrow-fee
-  data, or months of forward crypto data at a cheaper venue (C2), would qualify. Tell me which, and I will
+  data, or months of forward crypto data at a cheaper venue (item C.2), would qualify. Tell me which, and I will
   pre-register it before touching any data.
 
 Housekeeping, whatever you decide: **rotate the Alpaca paper key** you pasted in chat. If you want workflows

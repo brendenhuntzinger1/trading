@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-26T11:33:05+00:00",
+ "generated_at": "2026-10-26T11:39:50+00:00",
  "datasets": [
   {
    "dataset": "Crypto daily (BTC, ETH, SOL; holdout LTC, BCH, ETC)",
@@ -12,7 +12,7 @@
    "first": "2017-01-01T00:00:00+00:00",
    "last": "2026-10-25T00:00:00+00:00",
    "last_min_across_files": "2026-10-24T00:00:00+00:00",
-   "freshness_hours": 35.6,
+   "freshness_hours": 35.7,
    "used_by": "daily crypto strategies, holdout"
   },
   {
@@ -26,7 +26,7 @@
    "first": "2020-01-01T00:00:00+00:00",
    "last": "2026-10-25T16:00:00+00:00",
    "last_min_across_files": "2026-10-25T16:00:00+00:00",
-   "freshness_hours": 19.6,
+   "freshness_hours": 19.7,
    "used_by": "C1/C2 context"
   },
   {
@@ -40,7 +40,7 @@
    "first": "2019-12-01T00:00:00+00:00",
    "last": "2026-10-25T00:00:00+00:00",
    "last_min_across_files": "2026-10-25T00:00:00+00:00",
-   "freshness_hours": 35.6,
+   "freshness_hours": 35.7,
    "used_by": "C1, C2"
   },
   {
@@ -54,7 +54,7 @@
    "first": "2019-12-01T00:00:00+00:00",
    "last": "2026-10-25T00:00:00+00:00",
    "last_min_across_files": "2026-10-25T00:00:00+00:00",
-   "freshness_hours": 35.6,
+   "freshness_hours": 35.7,
    "used_by": "C1, C2"
   },
   {
@@ -68,7 +68,7 @@
    "first": "2017-01-01T00:00:00+00:00",
    "last": "2026-10-24T00:00:00+00:00",
    "last_min_across_files": "2022-05-27T00:00:00+00:00",
-   "freshness_hours": 59.6,
+   "freshness_hours": 59.7,
    "used_by": "P1, holdout universe"
   },
   {
@@ -82,7 +82,7 @@
    "first": "2000-01-03T14:30:00+00:00",
    "last": "2026-10-23T13:30:00+00:00",
    "last_min_across_files": "2026-10-23T13:30:00+00:00",
-   "freshness_hours": 70.1,
+   "freshness_hours": 70.2,
    "used_by": "S2, S2-ETF"
   },
   {
@@ -96,7 +96,7 @@
    "first": "2023-11-27T14:30:00+00:00",
    "last": "2026-10-23T20:00:00+00:00",
    "last_min_across_files": "2026-10-23T20:00:00+00:00",
-   "freshness_hours": 63.6,
+   "freshness_hours": 63.7,
    "used_by": "S1, S2"
   },
   {
@@ -110,7 +110,7 @@
    "first": "2026-07-31T13:30:00+00:00",
    "last": "2026-10-23T20:00:00+00:00",
    "last_min_across_files": "2026-10-23T20:00:00+00:00",
-   "freshness_hours": 63.6,
+   "freshness_hours": 63.7,
    "used_by": "S3 exploratory"
   },
   {
@@ -124,8 +124,22 @@
    "first": "2015-01-02T00:00:00+00:00",
    "last": "2026-10-23T00:00:00+00:00",
    "last_min_across_files": "2026-10-23T00:00:00+00:00",
-   "freshness_hours": 83.6,
+   "freshness_hours": 83.7,
    "used_by": "S2X"
+  },
+  {
+   "dataset": "Crypto hourly point-in-time panel (P1)",
+   "path": "data/pit/hourly/*.csv",
+   "files": 113,
+   "rows": 3892926,
+   "resolution": "1 hour",
+   "venue": "Coinbase Exchange public candles",
+   "adjustment": "unadjusted",
+   "first": "2021-01-01T00:00:00+00:00",
+   "last": "2026-10-26T00:00:00+00:00",
+   "last_min_across_files": "2022-05-27T16:00:00+00:00",
+   "freshness_hours": 11.7,
+   "used_by": "P1a/P1b"
   },
   {
    "dataset": "Paper runner daily candles",
@@ -138,7 +152,7 @@
    "first": "2017-01-01T00:00:00+00:00",
    "last": "2026-10-24T00:00:00+00:00",
    "last_min_across_files": "2026-10-24T00:00:00+00:00",
-   "freshness_hours": 59.6,
+   "freshness_hours": 59.7,
    "used_by": "paper-daily"
   },
   {
@@ -151,7 +165,7 @@
    "adjustment": "raw (unadjusted)",
    "first": "2020-01-02",
    "last": "2022-01-06",
-   "freshness_hours": 42107.6,
+   "freshness_hours": 42107.7,
    "used_by": "ORB development, H3 development check, data gates"
   },
   {
@@ -164,7 +178,7 @@
    "adjustment": "raw (unadjusted)",
    "first": "2019-12-11",
    "last": "2023-01-03",
-   "freshness_hours": 33419.6,
+   "freshness_hours": 33419.7,
    "used_by": "ORB development, H3 development check, data gates"
   },
   {
@@ -177,7 +191,7 @@
    "adjustment": "raw (unadjusted)",
    "first": "2020-01-02",
    "last": "2022-01-06",
-   "freshness_hours": 42107.6,
+   "freshness_hours": 42107.7,
    "used_by": "ORB development, H3 development check, data gates"
   },
   {
@@ -190,7 +204,7 @@
    "adjustment": "raw and split-adjusted copies",
    "first": "2019-11-23",
    "last": "2021-12-31",
-   "freshness_hours": 42251.6,
+   "freshness_hours": 42251.7,
    "used_by": "ORB/H3 candidate selection (ADV, ATR, relative volume)"
   },
   {
@@ -203,7 +217,7 @@
    "adjustment": "raw and split-adjusted copies",
    "first": "2021-11-24",
    "last": "2023-12-29",
-   "freshness_hours": 24779.6,
+   "freshness_hours": 24779.7,
    "used_by": "ORB/H3 candidate selection (ADV, ATR, relative volume)"
   },
   {
@@ -230,7 +244,7 @@
    "first": "2018 (calendar)",
    "last": "2027 (calendar); news from 2026-10-25",
    "freshness_hours": null,
-   "used_by": "event pipeline (not used by any tested strategy)"
+   "used_by": "event pipeline; macro calendar used by the calendar de-risking strategy (trial:calendar, test3:calendar)"
   }
  ]
 }

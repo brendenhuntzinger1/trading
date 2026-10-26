@@ -28,6 +28,7 @@ CSV_SETS = [
     ("stocks/hourly/*.csv", "US stocks hourly (S&P 100 + ETFs)", "1 hour", "Yahoo chart API (unofficial)", "split-adjusted by Yahoo", "S1, S2"),
     ("stocks/m5/*.csv", "US stocks 5-minute (last 60 sessions)", "5 min", "Yahoo chart API (unofficial)", "split-adjusted by Yahoo", "S3 exploratory"),
     ("s2x/*.csv", "29 ETFs daily (S2X replication)", "1 day", "Yahoo chart API (unofficial)", "split-adjusted by Yahoo", "S2X"),
+    ("pit/hourly/*.csv", "Crypto hourly point-in-time panel (P1)", "1 hour", "Coinbase Exchange public candles", "unadjusted", "P1a/P1b"),
     ("paper/*.csv", "Paper runner daily candles", "1 day", "Coinbase Exchange public candles", "unadjusted", "paper-daily"),
 ]
 
@@ -135,7 +136,7 @@ def other(now: datetime) -> list[dict]:
         out.append({"dataset": "Macro/event calendar and cached release pages", "path": "data/events/", "files": len(ev),
                     "rows": None, "resolution": "event", "venue": "Fed, BLS, BEA, SEC, CFTC, exchange status, CoinDesk RSS",
                     "adjustment": "n/a", "first": "2018 (calendar)", "last": "2027 (calendar); news from 2026-10-25",
-                    "freshness_hours": None, "used_by": "event pipeline (not used by any tested strategy)"})
+                    "freshness_hours": None, "used_by": "event pipeline; macro calendar used by the calendar de-risking strategy (trial:calendar, test3:calendar)"})
     return out
 
 
