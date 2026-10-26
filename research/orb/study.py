@@ -121,7 +121,7 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
     cfgs = {k: orb.CONFIGS[k] for k in configs}
     acc = {k: {"rule": [], "rule_nostop": [], "direction": [], "basket": [],
                "abst": {"doji": 0, "short_signal_long_only": 0, "armed_not_triggered": 0, "days_nothing_selected": 0,
-                        "excluded_no_open_bar": 0},
+                        "excluded_no_open_bar": 0, "basket_no_fill": 0},
                "not_traded_fwd": []} for k in cfgs}
     spy_rows = []
     for day in days:
@@ -156,8 +156,11 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
             if not chosen:
                 a["abst"]["days_nothing_selected"] += 1
             for r, rng, b in chosen:
-                a["basket"].append(_row(source, day, r.symbol, orb.simulate(b, o, c, orb.LONG, r.atr, "market",
-                                                                             use_stop=False), "market", r.atr, r.rv, cm))
+                bk = orb.simulate(b, o, c, orb.LONG, r.atr, "market", use_stop=False)
+                if bk.triggered:          # no bar after 09:35 (e.g. halted all day): nothing to buy, no fill invented
+                    a["basket"].append(_row(source, day, r.symbol, bk, "market", r.atr, r.rv, cm))
+                else:
+                    a["abst"]["basket_no_fill"] += 1
                 d = rng.direction
                 if d == 0:
                     a["abst"]["doji"] += 1
@@ -168,20 +171,21 @@ def run_period(source, phase: str, configs: list[str], placebo_reps: int = PLACE
                     if fwd.triggered:
                         a["not_traded_fwd"].append({"reason": "short_signal_long_only", "gross": fwd.gross})
                     continue
+                # direction-only (B5.4) is decided at 09:35, before anyone knows whether the breakout will come
+                # (incident 20: it used to be recorded only when the breakout later triggered)
+                dr = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
+                if dr.triggered:
+                    a["direction"].append(_row(source, day, r.symbol, dr, "market", r.atr, r.rv, cm))
                 level = rng.high if d > 0 else rng.low
                 rule = orb.simulate(b, o, c, d, r.atr, "stop", level=level, stop_frac=cfg.stop_atr_frac)
                 if not rule.triggered:
                     a["abst"]["armed_not_triggered"] += 1
-                    fwd = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
-                    if fwd.triggered:
-                        a["not_traded_fwd"].append({"reason": "armed_not_triggered", "gross": fwd.gross})
+                    if dr.triggered:
+                        a["not_traded_fwd"].append({"reason": "armed_not_triggered", "gross": dr.gross})
                     continue
                 a["rule"].append(_row(source, day, r.symbol, rule, "stop", r.atr, r.rv, cm))
                 ns = orb.simulate(b, o, c, d, r.atr, "stop", level=level, use_stop=False)
                 a["rule_nostop"].append(_row(source, day, r.symbol, ns, "stop", r.atr, r.rv, cm))
-                dr = orb.simulate(b, o, c, d, r.atr, "market", use_stop=False)
-                if dr.triggered:
-                    a["direction"].append(_row(source, day, r.symbol, dr, "market", r.atr, r.rv, cm))
     spy_df = pd.DataFrame(spy_rows)
     if not spy_df.empty:
         spy_df["weight"] = 1.0
@@ -347,6 +351,12 @@ def phase_gates(verify_dir: Path = VERIFY_DIR) -> dict:
 def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dict:
     if not _read("gates")["pass"]:
         sys.exit("data gates failed: the study does not run (B7)")
+    if phase == "validation":    # Amendment 5, B16: validation is read only if primary qualified in development
+        q = _read("dev")["qualifiers"].get("primary", {})
+        if not q.get("qualified"):
+            record("result", "orb_stop_after_dev", {"primary_dev_qualifiers": q}, "..".join(PERIODS["validation"]),
+                   "B16: primary did not qualify in development; validation window stays unread")
+            sys.exit(f"B16: primary did not qualify in development ({q}); validation stays UNREAD")
     consumed.check_selection_window(SCOPE, *PERIODS[phase], path=CONSUMED_LEDGER)
     out = run_period(source, phase, list(orb.CONFIGS), placebo_reps)
     if phase == "dev":
@@ -356,7 +366,7 @@ def phase_selection(source, phase: str, placebo_reps: int = PLACEBO_REPS) -> dic
     else:
         out["qualifiers"] = validation_qualifiers(out)
     js = _write(phase, out)
-    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3", "prereg_orb_amendment4"]},
+    record("result", f"orb_{phase}", {"prereg": "prereg_orb", "amendments": ["prereg_orb_amendment1", "prereg_orb_amendment2", "prereg_orb_amendment3", "prereg_orb_amendment4", "prereg_orb_amendment5"]},
            "..".join(PERIODS[phase]), f"ORB {phase}", metrics={"qualifiers": js["qualifiers"]})
     return js
 

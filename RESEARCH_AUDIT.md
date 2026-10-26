@@ -81,7 +81,7 @@ that intraday trading cannot work.
 | S1 intraday momentum | ✔ gross ≈ 0 in all 3 periods | — | — | ◐ hourly bars force 10:30, not 10:00 | ◐ fill at the 15:30 first trade is assumed | — |
 | S2 gap reversal, stocks | ◐ now ≈ 6 bp | ✔ 6 bp < 8 bp | — | ◐ survivorship inflates 2000–2015 | ◐ opening spread assumed | ✔ 28 bp → 6 bp after 2015 |
 | S2-ETF | ✔ did not replicate on 29 new ETFs | ◐ | ◐ (548 trades) | — | ◐ opening spread assumed | ◐ |
-| S3 / ORB | unknown | likely: the paper's own +0.08R ≈ 2–5 bp vs 20 bp | — | ✔ needs consolidated (SIP) minute data, unverified | ✔ the paper charged no spread or slippage | unknown (paper sample only) |
+| S3 / ORB | unknown | likely: the paper's own +0.08R ≈ 2–5 bp vs 20 bp | — | ✔ needed consolidated (SIP) minute data (verified 2026-10-26; ORB then rejected in development, STATUS.md) | ✔ the paper charged no spread or slippage | unknown (paper sample only) |
 | C1 cascade reversal | ✔ gross ≈ 0 | — | — | ◐ no order-book or liquidation data | ◐ maker queue unmodelled | — |
 | C2 crypto momentum | ◐ (+35–61 bp, CIs include 0) | ✔ ≤ 61 bp vs 132 bp | ✔ (74 test trades) | — | — | — |
 | Daily trend/rotation (phase 3) | ✔ vs fixed allocation | ◐ | — | — | — | ◐ |

@@ -199,3 +199,81 @@ def test_universe_adds_delisted_tickers_and_dedupes_mapped_symbols(tmp_path):
     src._or_bars = lambda day: {"FB": bar, "META": bar}
     c = src.candidates("2022-06-01")
     assert list(c.symbol) == ["FB"]
+
+
+def test_quote_batching_matches_single_symbol_rule(tmp_path):
+    """One request per minute for every symbol of the day, with the same 2 s / 60 s rule per symbol."""
+    from research.orb.data import AlpacaSource
+    calls = []
+
+    class FakeClient:
+        def quotes_multi(self, symbols, start, end):
+            calls.append((tuple(symbols), (end - start).total_seconds()))
+            if (end - start).total_seconds() == 2:
+                return 200, {"AAA": [{"t": "2022-06-01T19:59:59.5Z", "bp": 10.0, "ap": 10.02, "bs": 1, "as": 1}]}
+            return 200, {"BBB": [{"t": "2022-06-01T19:59:30Z", "bp": 20.0, "ap": 20.1, "bs": 1, "as": 1}]}
+
+    src = AlpacaSource(FakeClient(), "2022-01-03", "2022-12-30", cache=tmp_path)
+    src._day_syms["2022-06-01"] = {"AAA", "BBB", "CCC"}
+    m = pd.Timestamp("2022-06-01T19:59:00Z")
+    a = src.half_spread("AAA", m)
+    assert calls == [(("AAA", "BBB", "CCC"), 2.0), (("BBB", "CCC"), 60.0)]
+    b, c = src.half_spread("BBB", m), src.half_spread("CCC", m)
+    assert len(calls) == 2                                   # BBB and CCC came from the cache
+    assert src.cache.get("quotes", "BBB_20220601T2000")[0]["bp"] == 20.0
+    assert src.cache.get("quotes", "CCC_20220601T2000") == []
+    assert a is not None
+
+
+def test_validation_stays_unread_if_primary_fails_development(iso):
+    """Amendment 5, B16: no validation data is touched unless primary qualified in development."""
+    study.RESULTS.mkdir(parents=True)
+    (study.RESULTS / "gates.json").write_text(json.dumps({"pass": True, "quotes_available": True}))
+    (study.RESULTS / "dev.json").write_text(json.dumps({"qualifiers": {
+        "primary": {"sanity_gate": True, "beats_direction": False, "beats_placebo": True, "qualified": False},
+        "dev_rv5_top20": {"qualified": True}}}))
+    with pytest.raises(SystemExit, match="B16"):
+        study.phase_selection(Untouchable(), "validation")
+
+
+def test_halted_stock_is_skipped_by_every_benchmark_not_a_crash():
+    """Incident 19: a selected stock with no bar after 09:35 (halted all day) made the basket benchmark record an
+    unfilled trade and crash on its missing entry time. It must count as 'basket_no_fill' and invent nothing."""
+    class Halted(Fixture):
+        def minute_bars(self, symbols, day):
+            out = super().minute_bars(symbols, day)
+            if "D" in out:
+                o, _ = session_bounds(day)
+                out["D"] = out["D"][out["D"].index < o + pd.Timedelta(minutes=5)]    # opening range only
+            return out
+    out = study.run_period(Halted(), "dev", ["primary"], placebo_reps=5)
+    ab = out["configs"]["primary"]["rule"]["abstention"]
+    assert ab["basket_no_fill"] >= 1
+
+
+def test_direction_benchmark_does_not_depend_on_a_later_breakout():
+    """Incident 20: direction-only (enter at 09:35 in the first candle's direction, hold to close; ORB B5.4) was
+    recorded only on stock-days where the breakout stop order later triggered. That conditions on the future: a
+    stock that never reached its opening-range high after 09:35 was dropped, and those were the losers. Every
+    non-doji stock-day the configuration may trade must enter the benchmark, triggered or not."""
+    class NeverBreaks(Fixture):
+        def minute_bars(self, symbols, day):
+            out = super().minute_bars(symbols, day)
+            if "A" in out:                                     # bullish first candle, then a steady slide
+                b = out["A"].copy()
+                k = np.arange(len(b) - 5)
+                close = b.close.iloc[4] * np.exp(-0.0005 * (k + 1))
+                op = np.r_[b.close.iloc[4], close[:-1]]
+                b.iloc[5:, b.columns.get_loc("open")] = op
+                b.iloc[5:, b.columns.get_loc("close")] = close
+                b.iloc[5:, b.columns.get_loc("high")] = np.maximum(op, close) * 1.0001
+                b.iloc[5:, b.columns.get_loc("low")] = np.minimum(op, close) * 0.9995
+                out["A"] = b
+            return out
+    p = study.run_period(NeverBreaks(), "dev", ["primary"], placebo_reps=0)["configs"]["primary"]
+    assert p["rule"]["abstention"]["armed_not_triggered"] >= 6
+    d = p["_frames"]["direction"]
+    a = d[d.symbol == "A"]
+    assert len(a) == 6                                         # one per session, although the breakout never came
+    assert (a.gross < 0).all()
+    assert not (p["_frames"]["rule"].symbol == "A").any()

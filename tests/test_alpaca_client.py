@@ -115,3 +115,35 @@ def test_bars_multi_skips_non_tickers_and_drops_symbols_alpaca_rejects():
     st, out = c.bars_multi(["SPY", "BADX", "021CVR014"], "2023-01-01", "2023-01-05", timeframe="1Day")
     assert st == 200 and list(out) == ["SPY"] and c.rejected_symbols == {"BADX"}
     assert all("021CVR014" not in u for u in sent)
+
+
+def test_transport_errors_are_retried_not_fatal(monkeypatch):
+    import urllib.error
+    from tradelab.pit import alpaca_sip
+    from tradelab.pit.alpaca_sip import AlpacaData, http_get
+
+    def refuse(req, timeout=30):
+        raise urllib.error.URLError(ConnectionRefusedError(111, "Connection refused"))
+    monkeypatch.setattr(alpaca_sip.urllib.request, "urlopen", refuse)
+    st, body = http_get("https://data.alpaca.markets/v2/stocks/bars?symbols=SPY", {})
+    assert st == 599 and "transport" in body["message"]
+
+    calls = []
+    def flaky(url, headers):
+        calls.append(url)
+        return (599, {}) if len(calls) < 3 else (200, {"bars": {}})
+    c = AlpacaData("k", "s", transport=flaky, sleep=lambda s: None)
+    st, _ = c._get("https://data.alpaca.markets/v2/stocks/bars?symbols=SPY")
+    assert st == 200 and len(calls) == 3
+
+
+def test_news_is_a_read_only_data_endpoint_and_is_paged():
+    al.check_endpoint(f"{al.NEWS_URL}?symbols=AAPL&start=2024-01-01")
+    pages = iter([(200, {"news": [{"id": 1, "headline": "a", "symbols": ["AAPL"], "created_at": "2024-01-02T13:00:00Z"}],
+                         "next_page_token": "t"}),
+                  (200, {"news": [{"id": 2, "headline": "b", "symbols": ["AAPL"], "created_at": "2024-01-03T13:00:00Z"}],
+                         "next_page_token": None})])
+    c, calls, _ = _client(list(pages))
+    st, rows = c.news(["AAPL"], "2024-01-01", "2024-01-05")
+    assert st == 200 and [r["id"] for r in rows] == [1, 2] and len(calls) == 2
+    assert all(u.startswith(al.NEWS_URL) for u in calls)

@@ -1,0 +1,42 @@
+{
+ "dev": {
+  "qualifiers": {
+   "B0": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C1": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C2": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C3": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   },
+   "C4": {
+    "D1": false,
+    "D2": false,
+    "D3": false,
+    "D4": false,
+    "qualified": false
+   }
+  }
+ },
+ "stopped": "Stage B: no configuration dev-qualified; validation and final unread. No gross advantage over the equal-weight eligible control in any config (B0 -6.6 bp/day [-19.7,+6.2]; best C1 5-day reversal +5.5 [-10.1,+21.4]); stress-state conditioning (C3) adds nothing (-1.8). Costs are large because open-to-open trading pays the measured 09:31 spread (median 5-26 bp half-spread by liquidity band) on ~100% daily turnover, but the rejection does not depend on them: gross alone fails. Selection recomputed independently on 4 days, 0 mismatches. Lesson: in 2020-22 large/mid caps, 1-day and 5-day open-to-open reversal is not a usable gross signal; opening execution is the most expensive minute of the day."
+}
