@@ -1,0 +1,142 @@
+{
+ "what": "ORB development 2020-01-02..2021-12-31 (inside the paper's 2016-2023 sample); primary filters (RV>=1, top 20, 1x cap). Benchmarks are not candidates (B10).",
+ "direction_only": {
+  "trades": 4058,
+  "days_with_trades": 505,
+  "gross_bp": 80.94675794915247,
+  "cost_bp": 22.649041979429484,
+  "net_bp": 59.81738285239851,
+  "median_net_bp": 24.710058189298987,
+  "hit_rate_net": 0.5416461310990636,
+  "measured_spread_share": 0.992114342040414,
+  "portfolio_net": {
+   "mean_daily": 0.007414868712571106,
+   "sharpe": 1.8570828812257612,
+   "max_drawdown": -0.48280177285394776,
+   "total_return": 15.748054348320967
+  },
+  "share_of_pnl_top1pct_trades": 1.452497995416998,
+  "share_of_pnl_top5pct_trades": 2.6834424168175386,
+  "net_bp_without_top1pct_trades": 45.539990917669115,
+  "net_bp_without_top5pct_trades": 34.33096194439948,
+  "top10_symbols_share": 0.7390686694966104,
+  "top10_symbols": {
+   "DDD": 0.6268,
+   "FLNA": 0.6239,
+   "ACH": 0.2976,
+   "AMTX": 0.2196,
+   "BKKT": 0.2154,
+   "AZUL": 0.1904,
+   "BTBT": 0.1579,
+   "AFRM": 0.1534,
+   "DSL": 0.1477,
+   "JKS": 0.1348
+  },
+  "top10_days_share": 0.7144508354054816,
+  "by_year_net_bp": {
+   "2020": 63.051269056503685,
+   "2021": 56.62499765584849
+  },
+  "by_half_net_bp": {
+   "2020H1": 74.15523869466173,
+   "2020H2": 53.554181852067956,
+   "2021H1": 75.71956326447037,
+   "2021H2": 38.486079219169206
+  },
+  "meme_names_trades": 10,
+  "net_bp_excluding_meme_names": 59.32934453523171
+ },
+ "basket_long_all_selected": {
+  "trades": 10099,
+  "days_with_trades": 505,
+  "gross_bp": -19.228745675101425,
+  "cost_bp": 23.03188470920971,
+  "net_bp": -40.56496435375468,
+  "median_net_bp": -32.050651659107935,
+  "hit_rate_net": 0.4433112189325676,
+  "measured_spread_share": 0.99148430537677,
+  "portfolio_net": {
+   "mean_daily": -0.004020911354899123,
+   "sharpe": -3.285257015879005,
+   "max_drawdown": -0.8881183353872489,
+   "total_return": -0.8812180840821672
+  },
+  "share_of_pnl_top1pct_trades": -0.6671928879041555,
+  "share_of_pnl_top5pct_trades": -1.6604930096918342,
+  "net_bp_without_top1pct_trades": -68.30748082530042,
+  "net_bp_without_top5pct_trades": -113.62054913275486,
+  "top10_symbols_share": -0.14136136546372047,
+  "top10_symbols": {
+   "DDD": 0.0468,
+   "VIR": 0.0376,
+   "GRWG": 0.031,
+   "ERNA": 0.0281,
+   "TCO": 0.0264,
+   "JMIA": 0.0245,
+   "INO": 0.0241,
+   "W": 0.0235,
+   "AFRM": 0.0227,
+   "GOGO": 0.0223
+  },
+  "top10_days_share": -0.2588539246375726,
+  "by_year_net_bp": {
+   "2020": -19.27627554733052,
+   "2021": -61.77301418742724
+  },
+  "by_half_net_bp": {
+   "2020H1": -8.31222057609715,
+   "2020H2": -29.772221630250346,
+   "2021H1": -60.84873696631981,
+   "2021H2": -62.66755789259476
+  },
+  "meme_names_trades": 23,
+  "net_bp_excluding_meme_names": -40.07099550178355
+ },
+ "rule_primary": {
+  "trades": 4058,
+  "days_with_trades": 505,
+  "gross_bp": -9.161392811839928,
+  "cost_bp": 26.198719733812375,
+  "net_bp": -35.38186119040057,
+  "median_net_bp": -58.96171700665073,
+  "hit_rate_net": 0.10694923607688517,
+  "measured_spread_share": 0.9975357318876293,
+  "portfolio_net": {
+   "mean_daily": -0.005322065058506026,
+   "sharpe": -6.547055582403406,
+   "max_drawdown": -0.9368853049307884,
+   "total_return": -0.9351409688789895
+  },
+  "share_of_pnl_top1pct_trades": -0.40417701017170615,
+  "share_of_pnl_top5pct_trades": -0.40417701017170615,
+  "net_bp_without_top1pct_trades": -39.28422498915316,
+  "net_bp_without_top5pct_trades": -40.32296627436569,
+  "top10_symbols_share": -0.24388125871887129,
+  "top10_symbols": {
+   "DSL": 0.138,
+   "FAS": 0.0817,
+   "AMRN": 0.077,
+   "LABU": 0.0653,
+   "SKIN": 0.0633,
+   "DNB": 0.0585,
+   "CNQ": 0.0468,
+   "BHC": 0.0467,
+   "JKS": 0.043,
+   "ZEN": 0.0352
+  },
+  "top10_days_share": -0.24673854849804758,
+  "by_year_net_bp": {
+   "2020": -28.708466003438286,
+   "2021": -42.0223663074419
+  },
+  "by_half_net_bp": {
+   "2020H1": -14.900644114735647,
+   "2020H2": -40.68972125931532,
+   "2021H1": -45.38392667662382,
+   "2021H2": -38.83823954699798
+  },
+  "meme_names_trades": 10,
+  "net_bp_excluding_meme_names": -35.51431822441784
+ },
+ "direction_trades_in_names_absent_from_asset_master": 213
+}
